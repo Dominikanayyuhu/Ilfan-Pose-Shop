@@ -3,188 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilfan's Poses | Store</title>
+    <title>Ilfan's Poses</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { 
-            --neon: #00f2ff; 
-            --purple: #bc13fe;
-            --bg: #0a0a0a; 
-        }
-        body { 
-            background: var(--bg); 
-            color: white; 
-            font-family: 'Segoe UI', sans-serif; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh;
-        }
-        
-        header { padding: 50px; text-align: center; }
-        h1 { 
-            font-size: 3.5rem; 
-            text-shadow: 0 0 15px var(--neon), 0 0 30px var(--purple); 
-            margin: 0; 
-            letter-spacing: 3px;
-        }
-        
-        .shop-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 30px; 
-            padding: 40px; 
-            width: 90%; 
-            max-width: 1200px; 
-        }
-        
-        .pose-card { 
-            background: #111; 
-            border: 1px solid #333; 
-            border-radius: 20px; 
-            padding: 20px; 
-            text-align: center; 
-            transition: 0.4s; 
-        }
-        .pose-card:hover { 
-            border-color: var(--neon); 
-            box-shadow: 0 0 25px rgba(0, 242, 255, 0.3); 
-            transform: translateY(-10px); 
-        }
-        .pose-card img { 
-            width: 100%; 
-            border-radius: 15px; 
-            margin-bottom: 20px; 
-            border: 1px solid #222;
-        }
-        
-        .order-btn { 
-            background: transparent; 
-            border: 2px solid var(--neon); 
-            color: var(--neon); 
-            padding: 12px 0; 
-            border-radius: 50px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            transition: 0.3s; 
-            width: 100%;
-            font-size: 1rem;
-        }
-        .order-btn:hover { 
-            background: var(--neon); 
-            color: black; 
-            box-shadow: 0 0 20px var(--neon); 
+        :root {
+            --primary-color: #00ff88;
+            --bg-dark: #0a0a0b;
+            --card-bg: #161618;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a5;
         }
 
-        /* Экран ожидания */
-        #status-screen { 
-            display: none; 
-            text-align: center; 
-            margin-top: 80px; 
-            background: rgba(20, 20, 20, 0.9);
-            padding: 40px;
-            border-radius: 30px;
-            border: 1px solid var(--purple);
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        .timer { 
-            font-size: 5rem; 
-            color: var(--neon); 
-            font-family: 'Courier New', monospace; 
-            margin: 20px 0;
-            text-shadow: 0 0 10px var(--neon);
+
+        header {
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(to bottom, #111, transparent);
         }
-        
-        /* Всплывающее уведомление */
-        #thanks-popup { 
-            position: fixed; 
-            top: -100px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: linear-gradient(90deg, var(--neon), var(--purple)); 
-            color: white; 
-            padding: 20px 50px; 
-            border-radius: 0 0 25px 25px; 
-            font-weight: bold; 
-            font-size: 1.2rem;
-            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            z-index: 1000; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            margin: 0;
+            color: var(--primary-color);
+            text-transform: uppercase;
         }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .pose-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #222;
+            transition: transform 0.3s ease;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .pose-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .image-container {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .order-btn {
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            width: 100%;
+        }
+
+        .order-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+            transform: scale(1.02);
+        }
+
+        #status-screen {
+            display: none;
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .loader {
+            border: 4px solid #222;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="thanks-popup">THANK YOU FOR YOUR PURCHASE!</div>
-
     <header id="site-header">
-        <h1>ILFAN'S POSES</h1>
-        <p style="color: #888; font-size: 1.1rem; margin-top: 10px;">Exclusive Roblox Posings & Designs</p>
+        <h1>Ilfan's Poses</h1>
     </header>
 
-    <main id="main-content" class="shop-container">
+    <div class="container" id="main-content">
         <div class="pose-card">
-            <img src="pose1.jpg" alt="Pose 1">
-            <h3>ICE REAVER POSE</h3>
-            <button class="order-btn" onclick="startOrder(60)">Order Now!</button>
+            <div class="image-container">
+                <img src="photo_2025-12-21_18-27-40.jpg" alt="Pose 1">
+            </div>
+            <div class="info">
+                <span class="price">20 Robux</span>
+                <button class="order-btn" onclick="startOrder(60)">Order Now!</button>
+            </div>
         </div>
+    </div>
 
-        <div class="pose-card">
-            <img src="https://via.placeholder.com/300x300/111/bc13fe?text=NEW+POSE" alt="Pose 2">
-            <h3>COMING SOON</h3>
-            <button class="order-btn" onclick="startOrder(30)">Order Now!</button>
-        </div>
-    </main>
-
-    <section id="status-screen">
-        <h2 style="color: white; letter-spacing: 2px;">PLEASE WAIT...</h2>
-        <p style="color: #aaa;">Your order is in progress</p>
-        <div id="timer" class="timer">60:00</div>
-        <p style="color: var(--purple);">Ilfan is working on your masterpiece</p>
-    </section>
+    <div id="status-screen">
+        <div class="loader"></div>
+        <h2>Waiting for verification...</h2>
+        <p style="color: var(--text-dim)">Please complete the payment in Telegram and send the screen record. Ilfan is checking your order.</p>
+    </div>
 
     <script>
-        function startOrder(minutes) {
-            // 1. Открываем твой Телеграм
-            window.open("https://t.me/HokhikyanHokhikyans", "_blank");
+        function startOrder(price) {
+            // Здесь я уже вписал имя твоего бота
+            const botUsername = 'ZakazIlfanaBot'; 
             
-            // 2. Переключаем экраны
+            const url = `https://t.me/${botUsername}?start=order_${price}`;
+            
+            window.open(url, "_blank");
+            
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('site-header').style.display = 'none';
             document.getElementById('status-screen').style.display = 'block';
-            
-            // 3. Запуск таймера
-            let seconds = minutes * 60;
-            const timerElement = document.getElementById('timer');
-            
-            const countdown = setInterval(() => {
-                let m = Math.floor(seconds / 60);
-                let s = seconds % 60;
-                timerElement.innerText = `${m}:${s < 10 ? '0' + s : s}`;
-                
-                if (seconds <= 0) {
-                    clearInterval(countdown);
-                    showThanks();
-                }
-                seconds--;
-            }, 1000);
-        }
-
-        function showThanks() {
-            // Прячем таймер, возвращаем витрину
-            document.getElementById('status-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'grid';
-            document.getElementById('site-header').style.display = 'block';
-            
-            // Показываем плавное "Thank you"
-            const popup = document.getElementById('thanks-popup');
-            popup.style.top = "0";
-            
-            // Прячем через 5 секунд
-            setTimeout(() => { 
-                popup.style.top = "-100px"; 
-            }, 5000);
         }
     </script>
+
 </body>
 </html>
