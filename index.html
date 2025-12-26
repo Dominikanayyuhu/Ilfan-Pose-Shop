@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ilfan's Poses | Store</title>
+    <style>
+        :root { 
+            --neon: #00f2ff; 
+            --purple: #bc13fe;
+            --bg: #0a0a0a; 
+        }
+        body { 
+            background: var(--bg); 
+            color: white; 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh;
+        }
+        
+        header { padding: 50px; text-align: center; }
+        h1 { 
+            font-size: 3.5rem; 
+            text-shadow: 0 0 15px var(--neon), 0 0 30px var(--purple); 
+            margin: 0; 
+            letter-spacing: 3px;
+        }
+        
+        .shop-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 30px; 
+            padding: 40px; 
+            width: 90%; 
+            max-width: 1200px; 
+        }
+        
+        .pose-card { 
+            background: #111; 
+            border: 1px solid #333; 
+            border-radius: 20px; 
+            padding: 20px; 
+            text-align: center; 
+            transition: 0.4s; 
+        }
+        .pose-card:hover { 
+            border-color: var(--neon); 
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.3); 
+            transform: translateY(-10px); 
+        }
+        .pose-card img { 
+            width: 100%; 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+            border: 1px solid #222;
+        }
+        
+        .order-btn { 
+            background: transparent; 
+            border: 2px solid var(--neon); 
+            color: var(--neon); 
+            padding: 12px 0; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            transition: 0.3s; 
+            width: 100%;
+            font-size: 1rem;
+        }
+        .order-btn:hover { 
+            background: var(--neon); 
+            color: black; 
+            box-shadow: 0 0 20px var(--neon); 
+        }
+
+        /* Экран ожидания */
+        #status-screen { 
+            display: none; 
+            text-align: center; 
+            margin-top: 80px; 
+            background: rgba(20, 20, 20, 0.9);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid var(--purple);
+        }
+        .timer { 
+            font-size: 5rem; 
+            color: var(--neon); 
+            font-family: 'Courier New', monospace; 
+            margin: 20px 0;
+            text-shadow: 0 0 10px var(--neon);
+        }
+        
+        /* Всплывающее уведомление */
+        #thanks-popup { 
+            position: fixed; 
+            top: -100px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: linear-gradient(90deg, var(--neon), var(--purple)); 
+            color: white; 
+            padding: 20px 50px; 
+            border-radius: 0 0 25px 25px; 
+            font-weight: bold; 
+            font-size: 1.2rem;
+            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            z-index: 1000; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="thanks-popup">THANK YOU FOR YOUR PURCHASE!</div>
+
+    <header id="site-header">
+        <h1>ILFAN'S POSES</h1>
+        <p style="color: #888; font-size: 1.1rem; margin-top: 10px;">Exclusive Roblox Posings & Designs</p>
+    </header>
+
+    <main id="main-content" class="shop-container">
+        <div class="pose-card">
+            <img src="pose1.jpg" alt="Pose 1">
+            <h3>ICE REAVER POSE</h3>
+            <button class="order-btn" onclick="startOrder(60)">Order Now!</button>
+        </div>
+
+        <div class="pose-card">
+            <img src="https://via.placeholder.com/300x300/111/bc13fe?text=NEW+POSE" alt="Pose 2">
+            <h3>COMING SOON</h3>
+            <button class="order-btn" onclick="startOrder(30)">Order Now!</button>
+        </div>
+    </main>
+
+    <section id="status-screen">
+        <h2 style="color: white; letter-spacing: 2px;">PLEASE WAIT...</h2>
+        <p style="color: #aaa;">Your order is in progress</p>
+        <div id="timer" class="timer">60:00</div>
+        <p style="color: var(--purple);">Ilfan is working on your masterpiece</p>
+    </section>
+
+    <script>
+        function startOrder(minutes) {
+            // 1. Открываем твой Телеграм
+            window.open("https://t.me/HokhikyanHokhikyans", "_blank");
+            
+            // 2. Переключаем экраны
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('site-header').style.display = 'none';
+            document.getElementById('status-screen').style.display = 'block';
+            
+            // 3. Запуск таймера
+            let seconds = minutes * 60;
+            const timerElement = document.getElementById('timer');
+            
+            const countdown = setInterval(() => {
+                let m = Math.floor(seconds / 60);
+                let s = seconds % 60;
+                timerElement.innerText = `${m}:${s < 10 ? '0' + s : s}`;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    showThanks();
+                }
+                seconds--;
+            }, 1000);
+        }
+
+        function showThanks() {
+            // Прячем таймер, возвращаем витрину
+            document.getElementById('status-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'grid';
+            document.getElementById('site-header').style.display = 'block';
+            
+            // Показываем плавное "Thank you"
+            const popup = document.getElementById('thanks-popup');
+            popup.style.top = "0";
+            
+            // Прячем через 5 секунд
+            setTimeout(() => { 
+                popup.style.top = "-100px"; 
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
