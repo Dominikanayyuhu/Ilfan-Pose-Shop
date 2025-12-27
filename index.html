@@ -3,246 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilfan's Poses</title>
+    <title>Ilfan's Poses | Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ВАЖНО: Весь дизайн тут */
-        body {
-            background-color: #000; /* Настоящий черный */
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
+        :root { --main: #00ff88; --gold: #ffcc00; --bg: #000; }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg); color: white;
+            font-family: 'Poppins', sans-serif; overflow: hidden;
         }
 
-        /* Анимированный фон (те самые частицы/свечение) */
-        .background {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-            z-index: -1;
+        /* ФОН С ЗЕЛЕНЫМИ ЛИНИЯМИ (PLEXUS) */
+        #canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.6;
         }
 
-        header h1 {
-            font-size: 3rem;
-            color: #00ff88;
-            text-transform: uppercase;
-            letter-spacing: 10px;
-            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-            margin-bottom: 50px;
-            animation: fadeIn 1.5s ease;
+        /* ВЕРХНЯЯ ПАНЕЛЬ: ЯЗЫК */
+        .top-nav {
+            position: absolute; top: 20px; right: 40px; z-index: 100;
+        }
+        .lang-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid white;
+            color: white; padding: 5px 15px; border-radius: 20px;
+            cursor: pointer; font-size: 14px; font-weight: bold;
+            display: flex; align-items: center; gap: 5px;
         }
 
-        /* Карточка с плавным эффектом */
-        .slider {
-            display: flex;
-            align-items: center;
-            gap: 50px;
+        header { text-align: center; padding-top: 40px; }
+        h1 {
+            font-size: 3rem; color: var(--main); letter-spacing: 5px;
+            text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); margin: 0;
         }
 
-        .card {
-            width: 320px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px;
-            padding: 25px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            display: none;
-            animation: zoomIn 0.5s ease forwards;
+        /* ОСНОВНОЙ КОНТЕЙНЕР */
+        .container {
+            display: flex; align-items: center; justify-content: center;
+            height: 70vh; gap: 50px;
         }
 
-        .card.active { display: block; }
-
-        .card img {
-            width: 100%;
-            border-radius: 25px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        .buy-btn {
-            background: linear-gradient(45deg, #00ff88, #00d4ff);
-            border: none;
-            padding: 15px 40px;
-            color: black;
-            font-weight: bold;
-            border-radius: 20px;
-            margin-top: 20px;
-            width: 100%;
-            cursor: pointer;
+        /* ОТЗЫВЫ (СЛЕВА) */
+        .rev-section {
+            display: flex; flex-direction: column; align-items: center; cursor: pointer;
             transition: 0.3s;
         }
+        .rev-section:hover { transform: scale(1.1); }
+        .rev-icon {
+            width: 70px; height: 70px; border: 2px solid var(--gold);
+            border-radius: 20px; display: flex; align-items: center;
+            justify-content: center; font-size: 30px; color: var(--gold);
+            background: rgba(255, 204, 0, 0.1);
+        }
+        .rev-text { color: var(--gold); font-size: 12px; font-weight: bold; margin-top: 8px; }
 
-        .buy-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px #00ff88; }
+        /* КАРТОЧКА (БОЛЬШЕ) */
+        .card-box {
+            position: relative; width: 420px; /* Увеличено */
+            background: #111; border-radius: 40px; padding: 20px;
+            border: 1px solid #333; text-align: center;
+            box-shadow: 0 0 50px rgba(0,0,0,1); display: none;
+        }
+        .card-box.active { display: block; animation: zoomIn 0.5s ease; }
+        .card-box img { width: 100%; border-radius: 30px; margin-bottom: 20px; }
 
-        /* КНОПКА ВХОДА (ПРАВЫЙ НИЖНИЙ УГОЛ) */
+        .order-btn {
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            border: none; padding: 18px; width: 90%; border-radius: 20px;
+            font-weight: 800; cursor: pointer; color: black; font-size: 16px;
+        }
+
+        /* СТРЕЛКИ (ЖЕЛТЫЕ) */
+        .arrow {
+            font-size: 3rem; color: var(--gold); cursor: pointer;
+            user-select: none; transition: 0.3s;
+        }
+        .arrow:hover { transform: scale(1.2); }
+
+        /* КНОПКА ВХОДА (В УГЛУ) */
         .auth-fab {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            width: 70px;
-            height: 70px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #00ff88;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #00ff88;
-            font-size: 30px;
-            cursor: pointer;
-            z-index: 1000;
-            transition: 0.3s;
+            position: fixed; bottom: 30px; right: 30px;
+            width: 60px; height: 60px; background: var(--main);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; color: black;
+            cursor: pointer; z-index: 1000; box-shadow: 0 0 20px var(--main);
         }
 
-        .auth-fab:hover { background: #00ff88; color: black; box-shadow: 0 0 30px #00ff88; }
-
-        .user-name {
-            position: fixed;
-            bottom: 60px;
-            right: 130px;
-            color: #00ff88;
-            font-weight: bold;
-            display: none;
-            text-shadow: 0 0 10px #00ff88;
-        }
-
-        /* МОДАЛКА В СТИЛЕ ГЛАССМОРФИЗМ */
+        /* МОДАЛКИ */
         .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(15px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: none;
+            justify-content: center; align-items: center; z-index: 2000;
         }
-
         .modal-content {
-            background: rgba(20,20,20,0.8);
-            border: 1px solid #333;
-            padding: 40px;
-            border-radius: 40px;
-            width: 350px;
-            text-align: center;
+            background: #111; padding: 30px; border-radius: 30px;
+            width: 350px; border: 1px solid #444; text-align: center;
         }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 10px; box-sizing: border-box; }
 
-        input {
-            width: 100%;
-            background: #111;
-            border: 1px solid #333;
-            padding: 15px;
-            border-radius: 15px;
-            color: white;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-
-        .arrow { font-size: 3rem; color: #222; cursor: pointer; transition: 0.3s; }
-        .arrow:hover { color: #00ff88; }
-
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <div class="background"></div>
+    <canvas id="canvas"></canvas>
 
-    <header><h1>ILFAN POSES</h1></header>
-
-    <div class="slider">
-        <div class="arrow" onclick="change(-1)">❮</div>
-        <div class="card active"><img src="pose1.jpg"><button class="buy-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
-        <div class="card"><img src="pose2.jpg"><button class="buy-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
-        <div class="card"><img src="pose3.jpg"><button class="buy-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
-        <div class="arrow" onclick="change(1)">❯</div>
+    <div class="top-nav">
+        <button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i> <span id="lang-name">EN</span></button>
     </div>
 
-    <div id="u-label" class="user-name"></div>
-    <div class="auth-fab" onclick="openLogin()">
-        <i class="fas fa-user-circle"></i>
+    <header><h1>ILFAN'S POSES</h1></header>
+
+    <div class="container">
+        <div class="rev-section" onclick="openRev()">
+            <div class="rev-icon"><i class="fas fa-comments"></i></div>
+            <div class="rev-text">REVIEWS</div>
+        </div>
+
+        <div class="arrow" onclick="move(-1)">❮</div>
+
+        <div class="card-box active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()">ORDER NOW</button></div>
+        <div class="card-box"><img src="pose2.jpg"><button class="order-btn" onclick="buy()">ORDER NOW</button></div>
+        <div class="card-box"><img src="pose3.jpg"><button class="order-btn" onclick="buy()">ORDER NOW</button></div>
+
+        <div class="arrow" onclick="move(1)">❯</div>
     </div>
 
-    <div class="modal" id="modal">
+    <div class="auth-fab" onclick="openAuth()"><i class="fas fa-user"></i></div>
+
+    <div class="modal" id="auth-modal">
         <div class="modal-content">
-            <div id="form">
-                <h2 style="color:#00ff88">АККАУНТ</h2>
-                <input type="text" id="u" placeholder="Никнейм">
-                <input type="password" id="p" placeholder="Пароль">
-                <button class="buy-btn" onclick="auth()">ВОЙТИ / СОЗДАТЬ</button>
+            <h2 id="modal-title" style="color:var(--main)">ACCOUNT</h2>
+            <div id="auth-inputs">
+                <input type="text" id="u-name" placeholder="Username">
+                <input type="password" id="u-pass" placeholder="Password">
+                <button class="order-btn" onclick="handleLogin()">CONTINUE</button>
             </div>
-            <div id="profile" style="display:none;">
-                <h2 id="hi" style="color:#00ff88"></h2>
-                <button class="buy-btn" style="background:#222; color:white;" onclick="exit()">ВЫЙТИ</button>
+            <div id="profile-area" style="display:none;">
+                <h3 id="hi-user"></h3>
+                <button class="order-btn" style="background:#333; color:white" onclick="logout()">LOGOUT</button>
             </div>
-            <p onclick="closeLogin()" style="color:#555; cursor:pointer; margin-top:20px;">Закрыть</p>
+            <p onclick="closeModals()" style="cursor:pointer; color:#666; margin-top:15px;">CLOSE</p>
+        </div>
+    </div>
+
+    <div class="modal" id="rev-modal">
+        <div class="modal-content" style="width: 400px;">
+            <h2 style="color:var(--gold)">REVIEWS</h2>
+            <div id="rev-list" style="max-height: 200px; overflow-y: auto; text-align: left; margin-bottom: 15px;"></div>
+            <input type="text" id="rev-msg" placeholder="Your review...">
+            <button class="order-btn" style="background:var(--gold)" onclick="addRev()">SEND</button>
+            <p onclick="closeModals()" style="cursor:pointer; color:#666; margin-top:15px;">CLOSE</p>
         </div>
     </div>
 
     <script>
-        // ЛОГИКА СЛАЙДЕРА
-        let current = 0;
-        const cards = document.querySelectorAll('.card');
-        function change(n) {
-            cards[current].classList.remove('active');
-            current = (current + n + cards.length) % cards.length;
-            cards[current].classList.add('active');
+        // --- ДИЗАЙН: ЛИНИИ (PLEXUS) ---
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            points = [];
+            for(let i=0; i<80; i++) points.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5});
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.strokeStyle = '#00ff88'; ctx.fillStyle = '#00ff88'; ctx.lineWidth = 0.5;
+            points.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx *= -1;
+                if(p.y<0 || p.y>canvas.height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                points.forEach(p2 => {
+                    let d = Math.hypot(p.x-p2.x, p.y-p2.y);
+                    if(d<150) { ctx.globalAlpha = 1 - d/150; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+                });
+            });
+            requestAnimationFrame(draw);
+        }
+        initCanvas(); draw();
+
+        // --- ЛОГИКА СЛАЙДЕРА ---
+        let cur = 0;
+        const cards = document.querySelectorAll('.card-box');
+        function move(d) {
+            cards[cur].classList.remove('active');
+            cur = (cur + d + cards.length) % cards.length;
+            cards[cur].classList.add('active');
         }
 
-        // ЛОГИКА ВХОДА
-        let user = JSON.parse(localStorage.getItem('ilfan_session')) || null;
-
-        function openLogin() {
-            document.getElementById('modal').style.display = 'flex';
+        // --- ЛОГИКА АККАУНТОВ ---
+        let user = JSON.parse(localStorage.getItem('ilfan_user')) || null;
+        function openAuth() {
+            document.getElementById('auth-modal').style.display = 'flex';
             if(user) {
-                document.getElementById('form').style.display = 'none';
-                document.getElementById('profile').style.display = 'block';
-                document.getElementById('hi').innerText = "Привет, " + user.name;
+                document.getElementById('auth-inputs').style.display = 'none';
+                document.getElementById('profile-area').style.display = 'block';
+                document.getElementById('hi-user').innerText = "Hi, " + user.name;
             }
         }
-
-        function closeLogin() { document.getElementById('modal').style.display = 'none'; }
-
-        function auth() {
-            const u = document.getElementById('u').value.trim();
-            const p = document.getElementById('p').value.trim();
-            if(!u || !p) return alert("Заполни всё!");
-
-            let users = JSON.parse(localStorage.getItem('ilfan_users') || '{}');
-            if(!users[u]) {
-                users[u] = p;
-                localStorage.setItem('ilfan_users', JSON.stringify(users));
-                alert("Аккаунт создан!");
-            }
-            if(users[u] === p) {
-                user = { name: u };
-                localStorage.setItem('ilfan_session', JSON.stringify(user));
+        function handleLogin() {
+            const u = document.getElementById('u-name').value.trim();
+            const p = document.getElementById('u-pass').value.trim();
+            if(!u || !p) return;
+            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
+            if(!db[u]) { db[u] = p; localStorage.setItem('ilfan_db', JSON.stringify(db)); }
+            if(db[u] === p) {
+                user = {name: u};
+                localStorage.setItem('ilfan_user', JSON.stringify(user));
                 location.reload();
-            } else { alert("Ошибка!"); }
+            } else alert("Wrong password!");
+        }
+        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
+
+        // --- ОТЗЫВЫ ---
+        function openRev() {
+            if(!user) { alert("Please login first!"); openAuth(); return; }
+            document.getElementById('rev-modal').style.display = 'flex';
+            loadRevs();
+        }
+        function addRev() {
+            const msg = document.getElementById('rev-msg').value;
+            if(!msg) return;
+            let revs = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
+            revs.push({u: user.name, m: msg});
+            localStorage.setItem('ilfan_revs', JSON.stringify(revs));
+            document.getElementById('rev-msg').value = '';
+            loadRevs();
+        }
+        function loadRevs() {
+            const list = document.getElementById('rev-list');
+            let revs = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
+            list.innerHTML = revs.map(r => `<div style="margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;"><b style="color:var(--main)">@${r.u}</b>: ${r.m}</div>`).join('');
         }
 
-        function exit() {
-            localStorage.removeItem('ilfan_session');
-            location.reload();
-        }
-
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        function toggleLang() { let n = document.getElementById('lang-name'); n.innerText = n.innerText === 'EN' ? 'RU' : 'EN'; }
         function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
-
-        window.onload = () => {
-            if(user) {
-                document.getElementById('u-label').innerText = user.name;
-                document.getElementById('u-label').style.display = 'block';
-            }
-        }
     </script>
 </body>
 </html>
-
