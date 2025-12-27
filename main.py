@@ -4,9 +4,10 @@ from flask import Flask
 from threading import Thread
 import os
 
+# --- Веб-сервер для Render ---
 app = Flask('')
 @app.route('/')
-def home(): return "Бот работает!"
+def home(): return "Бот Ильфана работает!"
 
 def run():
     port = int(os.environ.get("PORT", 8080))
@@ -15,6 +16,7 @@ def run():
 def keep_alive():
     Thread(target=run).start()
 
+# --- Настройки бота ---
 API_TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
 ADMIN_ID = 2039589760 
 bot = telebot.TeleBot(API_TOKEN)
@@ -68,17 +70,19 @@ def handle_chars(message):
             pay_method = user_orders[cid]['payment_method']
             
             if pay_method == "мм2 годли":
-                bot.send_message(cid, "🔪 Пожалуйста, свяжитесь с владельцем (@HokhikyanHokhikyans) для передачи предметов.")
-                send_final_report(cid)
+                # Для годли видео не нужно - сразу кнопка подтверждения
+                markup = types.InlineKeyboardMarkup()
+                markup.add(types.InlineKeyboardButton("✅ Я ОПЛАТИЛ(А)", callback_data="confirm_pay"))
+                bot.send_message(cid, "🔪 Пожалуйста, свяжитесь с владельцем (@HokhikyanHokhikyans) для передачи предметов. После этого нажмите кнопку ниже:", reply_markup=markup)
             else:
                 user_orders[cid]['state'] = 'WAITING_VIDEO'
                 if pay_method == "Робуксы":
                     link = "https://www.roblox.com/games/18925562723/"
-                    bot.send_message(cid, f"💵 Оплатите тут: {link}\n🎬 И пришли видео-доказательство оплаты:")
+                    bot.send_message(cid, f"💵 Оплатите тут: {link}\n🎬 После оплаты пришли видео-доказательство:")
                 else:
-                    bot.send_message(cid, "🌟 Оплатите по юзернейму @HokhikyanHokhikyans\n🎬 И пришли видео-доказательство отправки звёзд:")
+                    bot.send_message(cid, "🌟 Оплатите по юзернейму @HokhikyanHokhikyans\n🎬 После оплаты пришли видео-доказательство отправки звёзд:")
         else:
-            bot.send_message(cid, f"⚠️ Больше 10 персонажей нельзя, напишите число меньше {num}")
+            bot.send_message(cid, f"⚠️ Напишите число меньше {num}")
     else:
         bot.send_message(cid, "Пожалуйста, введи число.")
 
@@ -86,22 +90,33 @@ def handle_chars(message):
 def handle_video(message):
     cid = message.chat.id
     user_orders[cid]['video_id'] = message.video.file_id if message.video else message.video_note.file_id
-    send_final_report(cid)
+    
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("✅ Я ОПЛАТИЛ(А)", callback_data="confirm_pay"))
+    bot.send_message(cid, "Видео получено! Нажмите кнопку для завершения заказа:", reply_markup=markup)
 
-def send_final_report(cid):
-    order = user_orders[cid]
-    summary = (f"🔔 НОВЫЙ ЗАКАЗ!\n"
-               f"👤 Заказчик: {order['nickname']}\n"
-               f"👥 Кол-во персонажей: {order['chars_count']}\n"
-               f"💰 Оплата: {order['payment_method']}")
-    
-    bot.send_message(ADMIN_ID, summary)
-    bot.send_photo(ADMIN_ID, order['photo_id'], caption="Выбранный фон")
-    if 'video_id' in order:
-        bot.send_video(ADMIN_ID, order['video_id'], caption="Видео-доказательство")
-    
-    bot.send_message(cid, "🚀 Все данные переданы! Ожидайте заказ. Владелец скоро свяжется с вами.")
-    del user_orders[cid]
+@bot.callback_query_handler(func=lambda call: call.data == "confirm_pay")
+def final_step(call):
+    cid = call.message.chat.id
+    if cid in user_orders:
+        order = user_orders[cid]
+        summary = (f"🔔 НОВЫЙ ЗАКАЗ!\n"
+                   f"👤 Заказчик: {order.get('nickname')}\n"
+                   f"👥 Кол-во персонажей: {order.get('chars_count')}\n"
+                   f"💰 Оплата: {order.get('payment_method')}")
+        
+        # Отправка тебе (админу)
+        bot.send_message(ADMIN_ID, summary)
+        bot.send_photo(ADMIN_ID, order['photo_id'], caption="Выбранный фон")
+        if 'video_id' in order:
+            bot.send_video(ADMIN_ID, order['video_id'], caption="Видео оплаты")
+        
+        # Ответ клиенту
+        bot.send_message(cid, "🚀 Все данные переданы! Ожидайте заказ. Владелец скоро свяжется с вами.")
+        del user_orders[cid]
+        bot.answer_callback_query(call.id, "Заказ отправлен!")
+    else:
+        bot.send_message(cid, "Ошибка. Нажмите /start")
 
 if __name__ == "__main__":
     keep_alive()
