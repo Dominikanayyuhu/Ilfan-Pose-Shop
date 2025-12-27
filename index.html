@@ -3,282 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilfan's Premium Poses</title>
+    <title>Ilfan's Poses</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        /* ОСНОВНОЙ СТИЛЬ (Тот самый стильный черный) */
-        :root { --main: #00ff88; --gold: #ffcc00; --bg: #0a0a0a; --card: #141414; }
-        
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: var(--bg); 
-            color: white; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            min-height: 100vh;
+        /* Глобальные стили - ФОН ВСЕГДА ЧЕРНЫЙ */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505 !important; /* Ультра-черный */
+            color: white;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             overflow-x: hidden;
         }
 
-        header { margin-top: 80px; text-align: center; animation: fadeIn 1s ease; }
-        h1 { font-size: 2.5rem; letter-spacing: 5px; color: var(--main); text-shadow: 0 0 20px rgba(0,255,136,0.3); }
+        /* Анимированный фон (эффект свечения) */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
+            z-index: -1;
+        }
 
-        /* СЛАЙДЕР С ПЛАВНЫМ ПЕРЕХОДОМ */
-        .main-container { display: flex; align-items: center; justify-content: center; gap: 30px; margin-top: 40px; }
-        
-        .card { 
-            background: var(--card); 
-            border-radius: 30px; 
-            padding: 20px; 
-            width: 300px; 
+        header {
+            text-align: center;
+            padding: 50px 0 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 8px;
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* Контейнер слайдера */
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .card {
+            background: #111;
             border: 1px solid #222;
-            display: none; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transition: 0.5s;
-        }
-        .card.active { display: block; animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .card img { width: 100%; border-radius: 20px; transition: 0.3s; }
-        .card img:hover { transform: scale(1.02); }
-
-        .order-btn { 
-            background: linear-gradient(45deg, var(--main), #00d4ff); 
-            border: none; padding: 15px; width: 100%; border-radius: 15px; 
-            font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s;
-        }
-        .order-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,255,136,0.3); }
-
-        /* КНОПКА ВХОДА (ПРАВЫЙ НИЖНИЙ УГОЛ) */
-        .auth-fab {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 60px; height: 60px; background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: var(--main); cursor: pointer; z-index: 1000;
-            transition: 0.4s;
-        }
-        .auth-fab:hover { background: var(--main); color: black; transform: rotate(360deg); }
-        
-        .user-badge {
-            position: fixed; bottom: 43px; right: 100px;
-            background: rgba(0,255,136,0.1); padding: 5px 15px;
-            border-radius: 20px; border: 1px solid var(--main);
-            color: var(--main); font-size: 14px; display: none; font-weight: bold;
-        }
-
-        /* МОДАЛЬНЫЕ ОКНА */
-        .modal { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
-            display: none; justify-content: center; align-items: center; z-index: 2000;
-        }
-        .modal-content { 
-            background: #111; padding: 40px; border-radius: 40px; 
-            width: 90%; max-width: 350px; border: 1px solid #222; text-align: center;
-        }
-        
-        .tab-box { display: flex; gap: 20px; margin-bottom: 25px; border-bottom: 1px solid #222; }
-        .tab { flex: 1; padding-bottom: 10px; cursor: pointer; color: #555; font-weight: bold; transition: 0.3s; }
-        .tab.active { color: var(--main); border-bottom: 2px solid var(--main); }
-
-        input { 
-            width: 100%; background: #1a1a1a; border: 1px solid #333; 
-            padding: 15px; border-radius: 15px; color: white; margin-bottom: 15px; 
-            box-sizing: border-box; outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: var(--main); background: #222; }
-
-        /* АНИМАЦИИ */
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* ОТЗЫВЫ */
-        .rev-trigger { 
-            cursor: pointer; padding: 20px; border-radius: 25px; 
-            border: 1px solid var(--gold); background: rgba(255,204,0,0.05);
+            border-radius: 30px;
+            padding: 15px;
+            width: 300px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            display: none; /* Скрыто по умолчанию для JS */
+            text-align: center;
             transition: 0.3s;
         }
-        .rev-trigger:hover { background: rgba(255,204,0,0.1); }
-        .del-btn { color: #ff4d4d; float: right; cursor: pointer; display: none; }
-        .admin-mode .del-btn { display: block; }
+
+        .card.active {
+            display: block;
+            animation: cardShow 0.6s ease-out;
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+
+        .order-btn {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .order-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00ff88;
+        }
+
+        /* КНОПКА ВХОДА В УГЛУ */
+        .auth-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00ff88;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        .auth-btn:hover {
+            background: #00ff88;
+            color: black;
+        }
+
+        .user-name-tag {
+            position: fixed;
+            bottom: 45px;
+            right: 100px;
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* МОДАЛКИ */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 30px;
+            border-radius: 30px;
+            width: 320px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        .arrow {
+            font-size: 30px;
+            color: #333;
+            cursor: pointer;
+            transition: 0.3s;
+            user-select: none;
+        }
+
+        .arrow:hover { color: #00ff88; }
+
+        @keyframes cardShow {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-    <div id="user-badge" class="user-badge"></div>
-    <div class="auth-fab" onclick="toggleAuthModal()"><i class="fas fa-fingerprint"></i></div>
+    <div class="bg-glow"></div>
 
-    <header><h1>ILFAN POSES</h1></header>
+    <header>
+        <h1>ILFAN'S POSES</h1>
+    </header>
 
-    <div class="main-container">
-        <div class="rev-trigger" onclick="toggleRev(true)">
-            <i class="fas fa-comment-dots" style="color:var(--gold); font-size: 2rem;"></i>
-            <div style="color:var(--gold); font-size: 10px; font-weight: bold; margin-top: 5px;">REVIEWS</div>
+    <div class="slider-wrapper">
+        <div class="arrow" onclick="move(-1)">❮</div>
+        
+        <div class="card active">
+            <img src="pose1.jpg" alt="Pose 1">
+            <button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button>
+        </div>
+        <div class="card">
+            <img src="pose2.jpg" alt="Pose 2">
+            <button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button>
+        </div>
+        <div class="card">
+            <img src="pose3.jpg" alt="Pose 3">
+            <button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button>
         </div>
 
-        <button style="background:none; border:none; color:#333; cursor:pointer; font-size: 2rem;" onclick="change(-1)">❮</button>
-        <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()">ORDER NOW</button></div>
-        <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()">ORDER NOW</button></div>
-        <button style="background:none; border:none; color:#333; cursor:pointer; font-size: 2rem;" onclick="change(1)">❯</button>
+        <div class="arrow" onclick="move(1)">❯</div>
+    </div>
+
+    <div id="user-tag" class="user-name-tag"></div>
+    <div class="auth-btn" onclick="openAuth()">
+        <i class="fas fa-user-shield"></i>
     </div>
 
     <div class="modal" id="auth-modal">
         <div class="modal-content">
-            <div id="auth-form-side">
-                <div class="tab-box">
-                    <div id="tab-login" class="tab active" onclick="setTab('login')">ВХОД</div>
-                    <div id="tab-reg" class="tab" onclick="setTab('reg')">РЕГИСТРАЦИЯ</div>
-                </div>
-                <input type="text" id="u-name" placeholder="Никнейм">
-                <input type="password" id="u-pass" placeholder="Пароль">
-                <button class="order-btn" onclick="processAuth()">ПРОДОЛЖИТЬ</button>
+            <div id="auth-form">
+                <h3 id="form-title">Вход</h3>
+                <input type="text" id="login-u" placeholder="Никнейм">
+                <input type="password" id="login-p" placeholder="Пароль">
+                <button class="order-btn" onclick="doAuth()">Войти / Регистрация</button>
+                <p style="font-size: 11px; color: #555; margin-top: 15px;">Если аккаунта нет, он создастся автоматически</p>
             </div>
-            <div id="profile-side" style="display:none;">
-                <h2 id="hello-user" style="color:var(--main);"></h2>
-                <button class="order-btn" style="background:#222; color:white;" onclick="logOut()">ВЫЙТИ</button>
+            <div id="user-view" style="display:none;">
+                <h2 id="hi-name" style="color:#00ff88"></h2>
+                <button class="order-btn" style="background:#222; color:white;" onclick="logout()">Выйти</button>
             </div>
-            <p onclick="toggleAuthModal()" style="margin-top:20px; cursor:pointer; color:#444; font-size: 12px;">ЗАКРЫТЬ</p>
-        </div>
-    </div>
-
-    <div class="modal" id="rev-modal">
-        <div class="modal-content" id="rev-area">
-            <h2 style="color:var(--gold)">ОТЗЫВЫ</h2>
-            <div id="rev-list" style="max-height: 250px; overflow-y: auto; text-align: left; margin-bottom: 20px;"></div>
-            <input type="text" id="rev-input" placeholder="Напишите что-нибудь...">
-            <button class="order-btn" onclick="sendRev()">ОТПРАВИТЬ</button>
-            <p onclick="toggleRev(false)" style="margin-top:20px; cursor:pointer; color:#444; font-size: 12px;">ЗАКРЫТЬ</p>
+            <p onclick="closeAuth()" style="cursor:pointer; color:#444; margin-top:20px;">Закрыть</p>
         </div>
     </div>
 
     <script>
-        // ЛОГИКА АККАУНТОВ
-        let user = JSON.parse(localStorage.getItem('session_user')) || null;
-        let mode = 'login';
+        // ЛОГИКА СЛАЙДЕРА
+        let currentCard = 0;
+        const cards = document.querySelectorAll('.card');
+        
+        function move(dir) {
+            cards[currentCard].classList.remove('active');
+            currentCard = (currentCard + dir + cards.length) % cards.length;
+            cards[currentCard].classList.add('active');
+        }
 
-        function checkTimeout() {
-            const last = localStorage.getItem('last_act');
-            const now = new Date().getTime();
-            if(user && last && (now - last > 4 * 24 * 60 * 60 * 1000)) {
-                logOut();
+        // ЛОГИКА АККАУНТОВ (Всё в одном)
+        let currentUser = JSON.parse(localStorage.getItem('ilfan_user')) || null;
+
+        function checkSession() {
+            const lastVisit = localStorage.getItem('ilfan_last_visit');
+            const now = Date.now();
+            // 4 дня = 345600000 мс
+            if (currentUser && lastVisit && (now - lastVisit > 345600000)) {
+                logout();
                 alert("Сессия истекла");
             }
-            localStorage.setItem('last_act', now);
+            localStorage.setItem('ilfan_last_visit', now);
         }
 
-        function setTab(t) {
-            mode = t;
-            document.getElementById('tab-login').classList.toggle('active', t === 'login');
-            document.getElementById('tab-reg').classList.toggle('active', t === 'reg');
+        function openAuth() {
+            document.getElementById('auth-modal').style.display = 'flex';
+            if(currentUser) {
+                document.getElementById('auth-form').style.display = 'none';
+                document.getElementById('user-view').style.display = 'block';
+                document.getElementById('hi-name').innerText = "Привет, " + currentUser.name;
+            }
         }
 
-        function processAuth() {
-            const u = document.getElementById('u-name').value.trim();
-            const p = document.getElementById('u-pass').value.trim();
-            if(!u || !p) return alert("Заполни поля");
+        function closeAuth() {
+            document.getElementById('auth-modal').style.display = 'none';
+        }
 
-            let db = JSON.parse(localStorage.getItem('users_db') || '{}');
+        function doAuth() {
+            const u = document.getElementById('login-u').value.trim();
+            const p = document.getElementById('login-p').value.trim();
+            if(!u || !p) return alert("Заполни всё!");
 
-            if(mode === 'reg') {
-                if(db[u]) return alert("Ник занят");
+            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
+
+            // Простая логика: если ника нет - регистрируем, если есть - проверяем пароль
+            if(!db[u]) {
                 db[u] = p;
-                localStorage.setItem('users_db', JSON.stringify(db));
-                alert("Готово! Теперь войди.");
-                setTab('login');
+                localStorage.setItem('ilfan_db', JSON.stringify(db));
+                alert("Аккаунт создан!");
+            }
+
+            if(db[u] === p) {
+                currentUser = { name: u };
+                localStorage.setItem('ilfan_user', JSON.stringify(currentUser));
+                localStorage.setItem('ilfan_last_visit', Date.now());
+                location.reload();
             } else {
-                if(db[u] === p) {
-                    user = { name: u };
-                    localStorage.setItem('session_user', JSON.stringify(user));
-                    localStorage.setItem('last_act', new Date().getTime());
-                    updateUI();
-                    toggleAuthModal();
-                } else { alert("Ошибка входа"); }
+                alert("Неверный пароль!");
             }
         }
 
-        function logOut() {
-            localStorage.removeItem('session_user');
-            user = null;
-            updateUI();
-            toggleAuthModal();
-        }
-
-        function updateUI() {
-            const badge = document.getElementById('user-badge');
-            if(user) {
-                badge.innerText = user.name;
-                badge.style.display = 'block';
-                if(user.name.toLowerCase() === 'ilfan') document.getElementById('rev-area').classList.add('admin-mode');
-            } else {
-                badge.style.display = 'none';
-                document.getElementById('rev-area').classList.remove('admin-mode');
-            }
-        }
-
-        function toggleAuthModal() {
-            const m = document.getElementById('auth-modal');
-            const isOff = m.style.display === 'none' || m.style.display === '';
-            m.style.display = isOff ? 'flex' : 'none';
-            if(user) {
-                document.getElementById('auth-form-side').style.display = 'none';
-                document.getElementById('profile-side').style.display = 'block';
-                document.getElementById('hello-user').innerText = "Hi, " + user.name;
-            } else {
-                document.getElementById('auth-form-side').style.display = 'block';
-                document.getElementById('profile-side').style.display = 'none';
-            }
-        }
-
-        // ЛОГИКА ОТЗЫВОВ
-        function toggleRev(s) {
-            if(s && !user) return toggleAuthModal();
-            document.getElementById('rev-modal').style.display = s ? 'flex' : 'none';
-            if(s) renderRev();
-        }
-
-        function renderRev() {
-            const list = document.getElementById('rev-list');
-            const data = JSON.parse(localStorage.getItem('revs_db') || '[]');
-            list.innerHTML = data.reverse().map((r, i) => `
-                <div style="background:#1a1a1a; padding:15px; border-radius:15px; margin-bottom:10px; border:1px solid #222;">
-                    <span class="del-btn" onclick="delRev(${data.length-1-i})">×</span>
-                    <b style="color:var(--main)">@${r.u}</b><br><span style="color:#aaa">${r.t}</span>
-                </div>
-            `).join('');
-        }
-
-        function sendRev() {
-            const t = document.getElementById('rev-input').value;
-            if(!t.trim()) return;
-            const data = JSON.parse(localStorage.getItem('revs_db') || '[]');
-            data.push({ u: user.name, t: t });
-            localStorage.setItem('revs_db', JSON.stringify(data));
-            document.getElementById('rev-input').value = '';
-            renderRev();
-        }
-
-        function delRev(i) {
-            let data = JSON.parse(localStorage.getItem('revs_db') || '[]');
-            data.splice(i, 1);
-            localStorage.setItem('revs_db', JSON.stringify(data));
-            renderRev();
-        }
-
-        // СЛАЙДЕР
-        let cur = 0;
-        const cards = document.querySelectorAll('.card');
-        function change(n) {
-            cards[cur].classList.remove('active');
-            cur = (cur + n + cards.length) % cards.length;
-            cards[cur].classList.add('active');
+        function logout() {
+            localStorage.removeItem('ilfan_user');
+            location.reload();
         }
 
         function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            checkTimeout();
-            updateUI();
-        });
+        // Инициализация
+        window.onload = () => {
+            checkSession();
+            if(currentUser) {
+                document.getElementById('user-tag').innerText = currentUser.name;
+                document.getElementById('user-tag').style.display = 'block';
+            }
+        };
     </script>
 </body>
 </html>
