@@ -27,16 +27,9 @@
 
         .main-container { position: relative; width: 100%; max-width: 900px; display: flex; justify-content: center; align-items: center; margin-top: 20px; padding: 0 20px; box-sizing: border-box; }
 
-        /* Кнопка ОТЗЫВЫ */
         .open-rev-side { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); text-align: center; cursor: pointer; z-index: 100; }
-        .rev-icon-btn {
-            background: rgba(0,0,0,0.8); border: 2px solid var(--gold); color: var(--gold);
-            width: 70px; height: 70px; border-radius: 20px; display: flex; align-items: center; 
-            justify-content: center; font-size: 1.8rem; margin-bottom: 8px; transition: 0.3s;
-        }
-        .rev-icon-btn:hover { box-shadow: 0 0 25px var(--gold); transform: scale(1.05); }
+        .rev-icon-btn { background: rgba(0,0,0,0.8); border: 2px solid var(--gold); color: var(--gold); width: 70px; height: 70px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 8px; transition: 0.3s; }
 
-        /* Слайдер */
         .slider-box { display: flex; align-items: center; gap: 10px; }
         .card { background: var(--card); border-radius: 30px; overflow: hidden; width: 300px; display: none; border: 2px solid #222; }
         .card.active { display: block; animation: zoomIn 0.4s; }
@@ -45,13 +38,11 @@
         .order-btn { background: linear-gradient(45deg, var(--main), #00d4ff); color: black; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: 900; cursor: pointer; }
         .arrow { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 3rem; padding: 5px; }
 
-        /* Модальное окно отзывов */
         .rev-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3000; }
         .rev-content { background: #111; width: 90%; max-width: 450px; height: 85vh; border-radius: 35px; border: 2px solid var(--gold); position: relative; display: flex; flex-direction: column; padding: 25px; box-sizing: border-box; }
         .close-rev { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #666; cursor: pointer; }
         .rev-list { flex-grow: 1; overflow-y: auto; margin: 15px 0; padding-right: 5px; display: flex; flex-direction: column; }
         .rev-item { background: #18181a; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); }
-        .rev-item b { color: var(--gold); display: block; margin-bottom: 5px; }
         .rev-form { display: flex; flex-direction: column; gap: 8px; background: #000; padding: 15px; border-radius: 20px; border: 1px solid #222; }
         .rev-form input, .rev-form textarea { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 12px; }
         .rev-form button { background: var(--gold); color: black; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; }
@@ -96,7 +87,6 @@
             <div class="rev-icon-btn"><i class="fas fa-comments"></i></div>
             <span id="t-rev-label" style="color:var(--gold); font-weight:bold; font-size:0.8rem;">REVIEWS</span>
         </div>
-
         <div class="slider-box">
             <button class="arrow" onclick="change(-1)"><i class="fas fa-chevron-left"></i></button>
             <div class="card active"><div class="img-box"><img src="pose1.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
@@ -131,26 +121,25 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         function setLang(l) {
-            const d = langs[l] || langs.en;
-            document.getElementById('t-title').innerText = d.title;
-            document.querySelectorAll('.t-buy').forEach(b => b.innerText = d.buy);
-            document.getElementById('t-rev-head').innerText = d.head;
-            document.getElementById('t-rev-label').innerText = d.label;
-            document.getElementById('t-send').innerText = d.send;
-            document.getElementById('u-name').placeholder = d.nick;
-            document.getElementById('u-msg').placeholder = d.msg;
-            document.getElementById('cur-lang').innerText = l.toUpperCase();
-            document.getElementById('lang-list').classList.remove('show');
-            document.body.dir = (['fa', 'ar', 'he'].includes(l)) ? 'rtl' : 'ltr';
-            localStorage.setItem('userLang', l);
+            // Если файл languages.js загружен, берем из него данные
+            if (typeof langs !== 'undefined') {
+                const d = langs[l] || langs.en;
+                document.getElementById('t-title').innerText = d.title;
+                document.querySelectorAll('.t-buy').forEach(b => b.innerText = d.buy);
+                document.getElementById('t-rev-head').innerText = d.head;
+                document.getElementById('t-rev-label').innerText = d.label;
+                document.getElementById('t-send').innerText = d.send;
+                document.getElementById('u-name').placeholder = d.nick;
+                document.getElementById('u-msg').placeholder = d.msg;
+                document.getElementById('cur-lang').innerText = l.toUpperCase();
+                document.getElementById('lang-list').classList.remove('show');
+                document.body.dir = (['fa', 'ar', 'he'].includes(l)) ? 'rtl' : 'ltr';
+                localStorage.setItem('userLang', l);
+            }
         }
 
         function toggleLang() { document.getElementById('lang-list').classList.toggle('show'); }
-        function toggleRev(show) { 
-            document.getElementById('rev-modal').style.display = show ? 'flex' : 'none'; 
-            if(show) loadRev();
-        }
-
+        function toggleRev(show) { document.getElementById('rev-modal').style.display = show ? 'flex' : 'none'; if(show) loadRev(); }
         function loadRev() {
             const list = document.getElementById('rev-list');
             const saved = JSON.parse(localStorage.getItem('ilfan_reviews') || '[]');
@@ -162,7 +151,6 @@
                 list.appendChild(item);
             });
         }
-
         function addRev() {
             const n = document.getElementById('u-name').value;
             const t = document.getElementById('u-msg').value;
@@ -175,8 +163,7 @@
                 loadRev();
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => { setLang(localStorage.getItem('userLang') || 'en'); });
+        document.addEventListener('DOMContentLoaded', () => { setTimeout(() => { setLang(localStorage.getItem('userLang') || 'en'); }, 100); });
         let cur = 0;
         const cards = document.querySelectorAll('.card');
         function change(s) { cards[cur].classList.remove('active'); cur = (cur + s + cards.length) % cards.length; cards[cur].classList.add('active'); }
