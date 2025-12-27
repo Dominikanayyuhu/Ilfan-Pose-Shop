@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,37 +7,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main: #00ff88; --gold: #ffcc00; --bg: #050505; --card: #111112; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
-
-        /* Переключатель языка */
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
+        /* Кнопка смены языка */
         .lang-wrapper { position: fixed; top: 20px; right: 20px; z-index: 2000; }
-        .lang-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--main); color: white; padding: 10px 15px; border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 0 15px rgba(0,255,136,0.2); }
+        .lang-btn { background: rgba(0,0,0,0.8); border: 1px solid var(--main); color: white; padding: 10px 18px; border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: bold; transition: 0.3s; box-shadow: 0 0 15px rgba(0,255,136,0.2); }
         .lang-btn:hover { background: var(--main); color: black; }
-        .lang-list { position: absolute; top: 50px; right: 0; background: #161618; border: 1px solid #333; border-radius: 15px; display: none; grid-template-columns: repeat(2, 120px); padding: 10px; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .lang-list { position: absolute; top: 55px; right: 0; background: #161618; border: 1px solid #333; border-radius: 15px; display: none; grid-template-columns: repeat(2, 140px); padding: 10px; gap: 5px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); max-height: 450px; overflow-y: auto; }
         .lang-list.show { display: grid; animation: fadeIn 0.3s; }
-        .lang-item { padding: 8px; cursor: pointer; border-radius: 5px; font-size: 0.85rem; text-align: center; transition: 0.2s; }
+        .lang-item { padding: 10px; cursor: pointer; border-radius: 8px; font-size: 0.85rem; text-align: center; transition: 0.2s; }
         .lang-item:hover { background: var(--main); color: black; }
 
-        /* Дизайн контента */
-        header { padding: 60px 20px 20px; text-align: center; }
-        h1 { color: var(--main); text-shadow: 0 0 20px rgba(0,255,136,0.3); text-transform: uppercase; margin: 0; }
-        .slider-box { display: flex; align-items: center; justify-content: center; margin: 20px 0; gap: 10px; }
-        .card { background: var(--card); border-radius: 20px; overflow: hidden; width: 320px; display: none; border: 1px solid #222; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-        .card.active { display: block; animation: zoomIn 0.4s; }
-        .img-box img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .info { padding: 20px; text-align: center; }
-        .order-btn { background: var(--main); color: black; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: 900; cursor: pointer; }
-        .arrow { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 3rem; padding: 10px; transition: 0.2s; }
-        .arrow:hover { transform: scale(1.2); color: white; }
+        /* Контент сайта */
+        header { padding: 80px 20px 30px; text-align: center; }
+        h1 { color: var(--main); text-transform: uppercase; margin: 0; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0,255,136,0.3); }
+        
+        .slider-box { display: flex; align-items: center; justify-content: center; margin: 20px 0; position: relative; width: 100%; max-width: 500px; }
+        .card { background: var(--card); border-radius: 25px; overflow: hidden; width: 340px; display: none; border: 1px solid #222; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .card.active { display: block; animation: zoomIn 0.4s ease-out; }
+        .img-box { width: 100%; aspect-ratio: 1/1; background: #000; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .info { padding: 25px; text-align: center; }
+        .order-btn { background: var(--main); color: black; border: none; padding: 16px; width: 100%; border-radius: 50px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .order-btn:hover { transform: scale(1.03); background: white; }
+        
+        .arrow { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 3.5rem; padding: 10px; transition: 0.3s; z-index: 10; }
+        .arrow:hover { color: white; transform: scale(1.2); }
 
         /* Форма отзывов */
-        .input-area { background: var(--card); padding: 25px; border-radius: 20px; width: 320px; border: 1px solid #333; margin: 30px 0; }
-        input, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
-        .send-btn { background: var(--gold); color: black; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .input-area { background: var(--card); padding: 30px; border-radius: 25px; width: 340px; border: 1px solid #333; margin: 40px 0 100px; box-sizing: border-box; }
+        input, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; font-family: inherit; box-sizing: border-box; }
+        .send-btn { background: var(--gold); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .send-btn:hover { background: white; }
 
-        /* Отзывы слева внизу */
-        #review-wall { position: fixed; bottom: 20px; left: 20px; width: 280px; z-index: 1000; }
-        .toast { background: rgba(17,17,18,0.95); border-left: 4px solid var(--gold); padding: 12px; border-radius: 8px; margin-top: 10px; animation: slideIn 0.4s forwards; }
+        /* Всплывающие отзывы (слева снизу) */
+        #review-wall { position: fixed; bottom: 20px; left: 20px; width: 300px; z-index: 1000; pointer-events: none; }
+        .toast { background: rgba(17,17,18,0.98); border-left: 5px solid var(--gold); padding: 15px; border-radius: 12px; margin-top: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideIn 0.4s forwards; pointer-events: auto; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -47,24 +53,28 @@
 <body>
 
     <div class="lang-wrapper">
-        <button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i> <span id="cur-lang">Language</span></button>
+        <button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i> <span id="cur-lang">EN</span></button>
         <div class="lang-list" id="lang-list">
             <div class="lang-item" onclick="setLang('ru')">Русский</div>
             <div class="lang-item" onclick="setLang('en')">English</div>
             <div class="lang-item" onclick="setLang('am')">Հայերեն</div>
-            <div class="lang-item" onclick="setLang('tr')">Türkçe</div>
-            <div class="lang-item" onclick="setLang('fr')">Français</div>
             <div class="lang-item" onclick="setLang('ar')">العربية</div>
-            <div class="lang-item" onclick="setLang('zh')">中文</div>
-            <div class="lang-item" onclick="setLang('ja')">日本語</div>
+            <div class="lang-item" onclick="setLang('fr')">Français</div>
+            <div class="lang-item" onclick="setLang('tr')">Türkçe</div>
             <div class="lang-item" onclick="setLang('ko')">한국어</div>
+            <div class="lang-item" onclick="setLang('ja')">日本語</div>
+            <div class="lang-item" onclick="setLang('zh')">中文</div>
             <div class="lang-item" onclick="setLang('kk')">Қазақша</div>
             <div class="lang-item" onclick="setLang('es')">Español</div>
             <div class="lang-item" onclick="setLang('it')">Italiano</div>
+            <div class="lang-item" onclick="setLang('fa')">فارسی</div>
             <div class="lang-item" onclick="setLang('el')">Ελληνικά</div>
             <div class="lang-item" onclick="setLang('uk')">Українська</div>
+            <div class="lang-item" onclick="setLang('hi')">हिन्दी</div>
             <div class="lang-item" onclick="setLang('uz')">O'zbek</div>
+            <div class="lang-item" onclick="setLang('ky')">Кыргызча</div>
             <div class="lang-item" onclick="setLang('he')">עברית</div>
+            <div class="lang-item" onclick="setLang('vi')">Tiếng Việt</div>
         </div>
     </div>
 
@@ -72,6 +82,7 @@
 
     <div class="slider-box">
         <button class="arrow" onclick="change(-1)"><i class="fas fa-chevron-left"></i></button>
+        
         <div class="card active"><div class="img-box"><img src="pose1.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
         <div class="card"><div class="img-box"><img src="pose2.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
         <div class="card"><div class="img-box"><img src="pose3.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
@@ -83,28 +94,45 @@
         <div class="card"><div class="img-box"><img src="pose9.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
         <div class="card"><div class="img-box"><img src="pose10.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
         <div class="card"><div class="img-box"><img src="pose11.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        
         <button class="arrow" onclick="change(1)"><i class="fas fa-chevron-right"></i></button>
     </div>
 
     <div class="input-area">
-        <h3 id="t-rev-title" style="color:var(--gold); text-align:center; margin-top:0;">Оставить отзыв</h3>
+        <h3 id="t-rev-title" style="color:var(--gold); text-align:center; margin-top:0;">LEAVE A REVIEW</h3>
         <input type="text" id="u-name" placeholder="Roblox Nick">
         <textarea id="u-msg" rows="2" placeholder="Your review..."></textarea>
-        <button class="send-btn" id="t-send" onclick="postReview()">ОТПРАВИТЬ</button>
+        <button class="send-btn" id="t-send" onclick="postReview()">SEND</button>
     </div>
 
     <div id="review-wall"></div>
 
     <script>
-        // Данные переводов
+        // База данных переводов (Исправленная!)
         const langs = {
             ru: { title: "ПОЗИНГИ ИЛЬФАНА", buy: "ЗАКАЗАТЬ", rev: "Оставить отзыв", send: "ОТПРАВИТЬ", nick: "Ник в Roblox", msg: "Ваш отзыв..." },
             en: { title: "ILFAN'S POSES", buy: "ORDER NOW", rev: "Leave a Review", send: "SEND", nick: "Roblox Nick", msg: "Your review..." },
-            am: { title: "ԻԼՖԱՆԻ ՊՈԶԱՆԵՐԸ", buy: "ՊԱՏՎԻՐԵԼ", rev: "Թողնել կարծիք", send: "ՈՒՂԱՐԿԵԼ", nick: "Roblox Նիկ", msg: "Ձեր կարծիքը..." },
-            tr: { title: "ILFAN'IN POZLARI", buy: "SİPARİŞ VER", rev: "Yorum Yap", send: "GÖNDER", nick: "Roblox Adı", msg: "Yorumunuz..." }
-            // Можно добавить остальные языки по аналогии
+            am: { title: "ԻԼՖԱՆԻ ԴԻՐՔԵՐԸ", buy: "ՊԱՏՎԻՐԵԼ", rev: "Թողնել կարծիք", send: "ՈՒՂԱՐԿԵԼ", nick: "Roblox Նիկ", msg: "Ձեր կարծիքը..." },
+            ar: { title: "تصاميم إلفان", buy: "اطلب الآن", rev: "اترك تعليقًا", send: "إرسال", nick: "لقب روبلوكس", msg: "تعليقك..." },
+            fr: { title: "POSES D'ILFAN", buy: "COMMANDER", rev: "Laisser un avis", send: "ENVOYER", nick: "Pseudo Roblox", msg: "Votre avis..." },
+            tr: { title: "ILFAN'IN POZLARI", buy: "SİPARİŞ VER", rev: "Yorum Yap", send: "GÖNDER", nick: "Roblox Adı", msg: "Yorumunuz..." },
+            ko: { title: "일판의 포즈", buy: "지금 주문하세요", rev: "리뷰 남기기", send: "보내기", nick: "로블록스 닉네임", msg: "당신의 리뷰..." },
+            ja: { title: "イルファンのポーズ", buy: "今すぐ注文", rev: "レビューを残す", send: "送信", nick: "ロブロックス名", msg: "あなたのレビュー..." },
+            zh: { title: "ILFAN 的姿势", buy: "立即订购", rev: "发表评论", send: "发送", nick: "Roblox 昵称", msg: "您的评论..." },
+            kk: { title: "ИЛЬФАННЫҢ ПОЗАЛАРЫ", buy: "ТАПСЫРЫС БЕРУ", rev: "Пікір қалдыру", send: "ЖІБЕРУ", nick: "Roblox ник", msg: "Пікіріңіз..." },
+            es: { title: "POSES DE ILFAN", buy: "ORDENAR AHORA", rev: "Dejar un comentario", send: "ENVIAR", nick: "Nick de Roblox", msg: "Tu comentario..." },
+            it: { title: "POSE DI ILFAN", buy: "ORDINA ORA", rev: "Lascia una recensione", send: "INVIA", nick: "Nick Roblox", msg: "La tua recensione..." },
+            fa: { title: "ژست های الفان", buy: "اکنون سفارش دهید", rev: "ثبت نظر", send: "ارسال", nick: "نام کاربری روبلاکس", msg: "نظر شما..." },
+            el: { title: "ΠΟΣΕΙΣ ΤΟΥ ILFAN", buy: "ΠΑΡΑΓΓΕΙΛΤΕ ΤΩΡΑ", rev: "Αφήστε κριτική", send: "ΑΠΟΣΤΟΛΗ", nick: "Όνομα Roblox", msg: "Η κριτική σας..." },
+            uk: { title: "ПОЗИНГИ ІЛЬФАНА", buy: "ЗАМОВИТИ", rev: "Залишити відгук", send: "ВІДПРАВИТИ", nick: "Нік у Roblox", msg: "Ваш відгук..." },
+            hi: { title: "इल्फान की पोज़", buy: "अभी ऑर्डर करें", rev: "समीक्षा लिखें", send: "भेजें", nick: "रोब्लॉक्स निक", msg: "आपकी समीक्षा..." },
+            uz: { title: "ILFAN POZALARI", buy: "BUYURTMA BERISH", rev: "Fikr qoldirish", send: "YUBORISH", nick: "Roblox niki", msg: "Fikringiz..." },
+            ky: { title: "ИЛЬФАНДЫН ПОЗАЛАРЫ", buy: "ТАПШЫРЫК БЕРҮҮ", rev: "Пикир калтыруу", send: "ЖӨНӨТҮҮ", nick: "Roblox ник", msg: "Пикириңиз..." },
+            he: { title: "הפוזות של אילפן", buy: "הזמן עכשיו", rev: "השאר ביקורת", send: "שלח", nick: "כינוי רובלוקס", msg: "הביקורת שלך..." },
+            vi: { title: "TẠO DÁNG CỦA ILFAN", buy: "ĐẶT HÀNG NGAY", rev: "Để lại đánh giá", send: "GỬI", nick: "Nick Roblox", msg: "Đánh giá của bạn..." }
         };
 
+        // Функция переключения языка
         function setLang(l) {
             const d = langs[l] || langs.en;
             document.getElementById('t-title').innerText = d.title;
@@ -113,16 +141,27 @@
             document.getElementById('t-send').innerText = d.send;
             document.getElementById('u-name').placeholder = d.nick;
             document.getElementById('u-msg').placeholder = d.msg;
-            document.getElementById('lang-list').classList.remove('show');
             document.getElementById('cur-lang').innerText = l.toUpperCase();
+            document.getElementById('lang-list').classList.remove('show');
+            
+            // Направление текста справа налево (для арабского и др.)
+            document.body.dir = (['ar', 'he', 'fa'].includes(l)) ? 'rtl' : 'ltr';
         }
 
         function toggleLang() { document.getElementById('lang-list').classList.toggle('show'); }
 
+        // Логика слайдера
         let cur = 0;
         const cards = document.querySelectorAll('.card');
-        function change(s) { cards[cur].classList.remove('active'); cur = (cur+s+cards.length)%cards.length; cards[cur].classList.add('active'); }
+        function change(s) { 
+            cards[cur].classList.remove('active'); 
+            cur = (cur + s + cards.length) % cards.length; 
+            cards[cur].classList.add('active'); 
+        }
+
         function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
+
+        // Функция для отзывов
         function postReview() {
             const n = document.getElementById('u-name').value;
             const m = document.getElementById('u-msg').value;
@@ -131,11 +170,15 @@
                 t.className = 'toast';
                 t.innerHTML = `<b style="color:var(--main)">@${n}</b><p style="margin:5px 0 0 0">${m}</p>`;
                 document.getElementById('review-wall').appendChild(t);
-                document.getElementById('u-name').value = ''; document.getElementById('u-msg').value = '';
-                setTimeout(() => { t.style.opacity = '0'; setTimeout(()=>t.remove(), 500); }, 15000);
+                document.getElementById('u-name').value = ''; 
+                document.getElementById('u-msg').value = '';
+                setTimeout(() => { 
+                    t.style.transition = '0.5s';
+                    t.style.opacity = '0'; 
+                    setTimeout(() => t.remove(), 500); 
+                }, 15000); // Отзыв висит 15 секунд
             }
         }
     </script>
 </body>
 </html>
-
