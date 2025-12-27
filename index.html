@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ilfan's Poses Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="languages.js"></script>
     <style>
         :root { --main: #00ff88; --gold: #ffcc00; --bg: #000; }
 
@@ -14,7 +15,6 @@
             font-family: 'Poppins', sans-serif; overflow: hidden;
         }
 
-        /* ПЛЕКСУС (СОЗВЕЗДИЯ) */
         #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
         .top-bar {
@@ -23,7 +23,6 @@
             box-sizing: border-box; z-index: 100;
         }
 
-        /* МЕНЮ ЯЗЫКОВ (20 ЯЗЫКОВ) */
         .lang-container { position: relative; }
         .lang-btn {
             background: rgba(0,0,0,0.6); border: 1.5px solid white; color: white;
@@ -36,11 +35,9 @@
             flex-direction: column; max-height: 300px; overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 1000;
         }
-        /* Кастомизация скролла меню */
         .lang-menu::-webkit-scrollbar { width: 5px; }
         .lang-menu::-webkit-scrollbar-thumb { background: var(--main); border-radius: 10px; }
-
-        .lang-menu div { padding: 10px 20px; cursor: pointer; transition: 0.3s; white-space: nowrap; font-size: 14px; }
+        .lang-menu div { padding: 10px 20px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .lang-menu div:hover { background: var(--main); color: black; }
 
         .title {
@@ -102,6 +99,7 @@
             backdrop-filter: blur(10px); opacity: 0; transition: 0.4s;
         }
         .modal-overlay.show { display: flex; opacity: 1; }
+        
         .modal-box {
             background: #111; padding: 40px; border-radius: 35px;
             width: 380px; border: 1px solid #333; text-align: center;
@@ -110,7 +108,7 @@
         }
         .modal-overlay.show .modal-box { transform: translateY(0); }
         
-        /* ПЛАВНОЕ ПОЯВЛЕНИЕ ПОЛЕЙ ВНУТРИ */
+        /* ПЛАВНЫЙ ВХОД В АККАУНТ */
         #auth-inputs, #user-info {
             width: 100%;
             animation: slideUp 0.5s ease forwards;
@@ -136,53 +134,32 @@
         <h1 class="title" id="t-main">ILFAN'S POSES</h1>
         <div class="lang-container">
             <button class="lang-btn" onclick="toggleLangMenu()">
-                <i class="fas fa-globe"></i> <span id="cur-lang-label">EN</span>
+                <i class="fas fa-globe"></i> <span id="cur-lang-label">RU</span>
             </button>
-            <div class="lang-menu" id="l-menu">
-                <div onclick="setLang('en')">🇺🇸 English</div>
-                <div onclick="setLang('ru')">🇷🇺 Русский</div>
-                <div onclick="setLang('zh')">🇨🇳 中文 (Chinese)</div>
-                <div onclick="setLang('es')">🇪🇸 Español</div>
-                <div onclick="setLang('fr')">🇫🇷 Français</div>
-                <div onclick="setLang('de')">🇩🇪 Deutsch</div>
-                <div onclick="setLang('ja')">🇯🇵 日本語</div>
-                <div onclick="setLang('ko')">🇰🇷 한국어</div>
-                <div onclick="setLang('ar')">SA العربية</div>
-                <div onclick="setLang('pt')">🇵🇹 Português</div>
-                <div onclick="setLang('it')">🇮🇹 Italiano</div>
-                <div onclick="setLang('tr')">🇹🇷 Türkçe</div>
-                <div onclick="setLang('hi')">🇮🇳 हिन्दी</div>
-                <div onclick="setLang('vi')">🇻🇳 Tiếng Việt</div>
-                <div onclick="setLang('th')">🇹🇭 ไทย</div>
-                <div onclick="setLang('nl')">🇳🇱 Nederlands</div>
-                <div onclick="setLang('pl')">🇵🇱 Polski</div>
-                <div onclick="setLang('id')">🇮🇩 B. Indonesia</div>
-                <div onclick="setLang('sv')">🇸🇪 Svenska</div>
-                <div onclick="setLang('uk')">🇺🇦 Українська</div>
-            </div>
+            <div class="lang-menu" id="l-menu"></div>
         </div>
     </div>
 
     <div class="content">
         <div class="rev-trigger" onclick="openModal('rev-modal')">
             <div class="rev-icon"><i class="fas fa-comment-dots"></i></div>
-            <div class="rev-label" id="t-rev-link">REVIEWS</div>
+            <div class="rev-label" id="t-rev-label">ОТЗЫВЫ</div>
         </div>
 
         <div class="arrow" onclick="nav(-1)">❮</div>
 
         <div class="card-wrapper">
-            <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()" id="b1">ORDER NOW</button></div>
-            <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()" id="b2">ORDER NOW</button></div>
-            <div class="card"><img src="pose3.jpg"><button class="order-btn" onclick="buy()" id="b3">ORDER NOW</button></div>
-            <div class="card"><img src="pose4.jpg"><button class="order-btn" onclick="buy()" id="b4">ORDER NOW</button></div>
-            <div class="card"><img src="pose5.jpg"><button class="order-btn" onclick="buy()" id="b5">ORDER NOW</button></div>
-            <div class="card"><img src="pose6.jpg"><button class="order-btn" onclick="buy()" id="b6">ORDER NOW</button></div>
-            <div class="card"><img src="pose7.jpg"><button class="order-btn" onclick="buy()" id="b7">ORDER NOW</button></div>
-            <div class="card"><img src="pose8.jpg"><button class="order-btn" onclick="buy()" id="b8">ORDER NOW</button></div>
-            <div class="card"><img src="pose9.jpg"><button class="order-btn" onclick="buy()" id="b9">ORDER NOW</button></div>
-            <div class="card"><img src="pose10.jpg"><button class="order-btn" onclick="buy()" id="b10">ORDER NOW</button></div>
-            <div class="card"><img src="pose11.jpg"><button class="order-btn" onclick="buy()" id="b11">ORDER NOW</button></div>
+            <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()" id="b1">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()" id="b2">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose3.jpg"><button class="order-btn" onclick="buy()" id="b3">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose4.jpg"><button class="order-btn" onclick="buy()" id="b4">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose5.jpg"><button class="order-btn" onclick="buy()" id="b5">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose6.jpg"><button class="order-btn" onclick="buy()" id="b6">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose7.jpg"><button class="order-btn" onclick="buy()" id="b7">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose8.jpg"><button class="order-btn" onclick="buy()" id="b8">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose9.jpg"><button class="order-btn" onclick="buy()" id="b9">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose10.jpg"><button class="order-btn" onclick="buy()" id="b10">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose11.jpg"><button class="order-btn" onclick="buy()" id="b11">ЗАКАЗАТЬ</button></div>
         </div>
 
         <div class="arrow" onclick="nav(1)">❯</div>
@@ -192,32 +169,125 @@
 
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-box">
-            <h2 style="color:var(--main)" id="t-acc">ACCOUNT</h2>
+            <h2 style="color:var(--main)" id="t-acc-head">ACCOUNT</h2>
             <div id="auth-inputs">
                 <input type="text" id="u-nick" placeholder="Username">
                 <input type="password" id="u-pass" placeholder="Password">
-                <button class="order-btn" onclick="authHandle()" id="t-cont">CONTINUE</button>
+                <button class="order-btn" onclick="authHandle()" id="t-btn-login">CONTINUE</button>
             </div>
             <div id="user-info" style="display:none;">
                 <h3 id="hi-msg"></h3>
-                <button class="order-btn" style="background:#222; color:white" onclick="logout()" id="t-out">LOGOUT</button>
+                <button class="order-btn" style="background:#222; color:white" onclick="logout()">LOGOUT</button>
             </div>
-            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;" id="t-close1">CLOSE</p>
+            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;">CLOSE</p>
         </div>
     </div>
 
     <div class="modal-overlay" id="rev-modal">
         <div class="modal-box" style="width: 450px;">
-            <h2 style="color:var(--gold)" id="t-rev-head">REVIEWS</h2>
+            <h2 style="color:var(--gold)" id="t-rev-head">ОТЗЫВЫ</h2>
             <div id="rev-list" style="max-height: 250px; overflow-y: auto; text-align: left; padding: 10px; width: 100%;"></div>
-            <input type="text" id="rev-in" placeholder="Write...">
-            <button class="order-btn" style="background:var(--gold)" onclick="sendRev()" id="t-send">SEND</button>
-            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;" id="t-close2">CLOSE</p>
+            <input type="text" id="rev-in" placeholder="...">
+            <button class="order-btn" style="background:var(--gold)" onclick="sendRev()" id="t-send-btn">ОТПРАВИТЬ</button>
+            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;">CLOSE</p>
         </div>
     </div>
 
     <script>
-        // --- ЛИНИИ (ПЛЕКСУС) ---
+        // ГЕНЕРАЦИЯ МЕНЮ (20 ЯЗЫКОВ)
+        const flagMap = {
+            ru: "🇷🇺 RU", en: "🇺🇸 EN", am: "🇦🇲 AM", ar: "🇸🇦 AR", fr: "🇫🇷 FR", 
+            tr: "🇹🇷 TR", ko: "🇰🇷 KO", ja: "🇯🇵 JA", zh: "🇨🇳 ZH", kk: "🇰🇿 KK",
+            es: "🇪🇸 ES", it: "🇮🇹 IT", fa: "🇮🇷 FA", el: "🇬🇷 EL", uk: "🇺🇦 UK",
+            hi: "🇮🇳 HI", uz: "🇺🇿 UZ", ky: "🇰🇬 KY", he: "🇮🇱 HE", vi: "🇻🇳 VI"
+        };
+
+        function renderLangMenu() {
+            const menu = document.getElementById('l-menu');
+            menu.innerHTML = Object.keys(langs).map(k => `<div onclick="setLang('${k}')">${flagMap[k] || k.toUpperCase()}</div>`).join('');
+        }
+
+        function setLang(l) {
+            localStorage.setItem('lang', l);
+            document.getElementById('cur-lang-label').innerText = l.toUpperCase();
+            document.getElementById('l-menu').style.display = 'none';
+            
+            const t = langs[l] || langs['ru'];
+            
+            document.getElementById('t-main').innerText = t.title;
+            document.getElementById('t-rev-label').innerText = t.label;
+            document.getElementById('t-rev-head').innerText = t.head;
+            document.getElementById('t-send-btn').innerText = t.send;
+            document.getElementById('rev-in').placeholder = t.msg;
+            document.getElementById('u-nick').placeholder = t.nick;
+            document.querySelectorAll('.order-btn').forEach(b => { if(b.id.startsWith('b')) b.innerText = t.buy; });
+        }
+
+        function toggleLangMenu() {
+            const m = document.getElementById('l-menu');
+            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        // СЛАЙДЕР
+        let curCard = 0;
+        const cards = document.querySelectorAll('.card');
+        function nav(d) {
+            cards[curCard].classList.remove('active');
+            curCard = (curCard + d + cards.length) % cards.length;
+            cards[curCard].classList.add('active');
+        }
+
+        // АККАУНТ (ВХОД + РЕГИСТРАЦИЯ)
+        let user = JSON.parse(localStorage.getItem('ilfan_user')) || null;
+
+        function openModal(id) {
+            if(id === 'rev-modal' && !user) { alert("Please login!"); return openModal('auth-modal'); }
+            document.getElementById(id).classList.add('show');
+            if(id === 'auth-modal' && user) {
+                document.getElementById('auth-inputs').style.display = 'none';
+                document.getElementById('user-info').style.display = 'block';
+                document.getElementById('hi-msg').innerText = "Hello, " + user.name;
+            }
+            if(id === 'rev-modal') renderRevs();
+        }
+
+        function authHandle() {
+            const u = document.getElementById('u-nick').value.trim();
+            const p = document.getElementById('u-pass').value.trim();
+            if(!u || !p) return;
+            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
+            
+            if(!db[u]) { // Если ника нет - регистрируем
+                db[u] = p;
+                localStorage.setItem('ilfan_db', JSON.stringify(db));
+            }
+            
+            if(db[u] === p) { // Если пароль верный - входим
+                localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
+                location.reload();
+            } else { alert("Error: Wrong password!"); }
+        }
+
+        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
+        function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
+        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
+
+        function sendRev() {
+            const m = document.getElementById('rev-in').value; if(!m) return;
+            let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
+            list.push({u: user.name, t: m});
+            localStorage.setItem('ilfan_revs', JSON.stringify(list));
+            document.getElementById('rev-in').value = '';
+            renderRevs();
+        }
+
+        function renderRevs() {
+            const box = document.getElementById('rev-list');
+            let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
+            box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b style="color:var(--main)">@${i.u}</b>: ${i.t}</div>`).join('');
+        }
+
+        // ПЛЕКСУС
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
@@ -240,95 +310,13 @@
             });
             ctx.globalAlpha = 1; requestAnimationFrame(draw);
         }
-        window.onresize = init; init(); draw();
 
-        // --- ПЕРЕВОД (Расширенный) ---
-        const i18n = {
-            en: { main: "ILFAN'S POSES", rev: "REVIEWS", order: "ORDER NOW", acc: "ACCOUNT", cont: "CONTINUE", out: "LOGOUT", close: "CLOSE", send: "SEND", ph: "Write...", hi: "Hello, ", err: "Wrong Password!" },
-            ru: { main: "ПОЗИНГИ ИЛЬФАНА", rev: "ОТЗЫВЫ", order: "ЗАКАЗАТЬ", acc: "АККАУНТ", cont: "ПРОДОЛЖИТЬ", out: "ВЫЙТИ", close: "ЗАКРЫТЬ", send: "ОТПРАВИТЬ", ph: "Пишите...", hi: "Привет, ", err: "Неверный пароль!" },
-            zh: { main: "ILFAN 的姿势", rev: "评论", order: "现在下单", acc: "账户", cont: "继续", out: "登出", close: "关闭", send: "发送", ph: "写评论...", hi: "你好, ", err: "密码错误!" }
-            // Можно добавить переводы для остальных языков по аналогии
+        window.onload = () => { 
+            init(); draw();
+            renderLangMenu();
+            setLang(localStorage.getItem('lang') || 'ru');
         };
-
-        function setLang(l) {
-            localStorage.setItem('lang', l);
-            document.getElementById('cur-lang-label').innerText = l.toUpperCase();
-            document.getElementById('l-menu').style.display = 'none';
-            const t = i18n[l] || i18n['en'];
-            document.getElementById('t-main').innerText = t.main;
-            document.getElementById('t-rev-link').innerText = t.rev;
-            document.getElementById('t-rev-head').innerText = t.rev;
-            document.querySelectorAll('.order-btn').forEach(b => { if(b.id.startsWith('b')) b.innerText = t.order; });
-            document.getElementById('t-acc').innerText = t.acc;
-            document.getElementById('t-cont').innerText = t.cont;
-            document.getElementById('t-out').innerText = t.out;
-            document.getElementById('t-close1').innerText = t.close;
-            document.getElementById('t-close2').innerText = t.close;
-            document.getElementById('t-send').innerText = t.send;
-            document.getElementById('rev-in').placeholder = t.ph;
-        }
-
-        function toggleLangMenu() {
-            const m = document.getElementById('l-menu');
-            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        // --- СЛАЙДЕР ---
-        let curCard = 0;
-        const cards = document.querySelectorAll('.card');
-        function nav(d) {
-            cards[curCard].classList.remove('active');
-            curCard = (curCard + d + cards.length) % cards.length;
-            cards[curCard].classList.add('active');
-        }
-
-        // --- ВХОД / РЕГИСТРАЦИЯ ---
-        let user = JSON.parse(localStorage.getItem('ilfan_user')) || null;
-
-        function openModal(id) {
-            if(id === 'rev-modal' && !user) { alert("Login first!"); return openModal('auth-modal'); }
-            document.getElementById(id).classList.add('show');
-            if(id === 'auth-modal' && user) {
-                document.getElementById('auth-inputs').style.display = 'none';
-                document.getElementById('user-info').style.display = 'block';
-                document.getElementById('hi-msg').innerText = (i18n[localStorage.getItem('lang')||'en'].hi) + user.name;
-            }
-        }
-
-        function authHandle() {
-            const u = document.getElementById('u-nick').value.trim();
-            const p = document.getElementById('u-pass').value.trim();
-            if(!u || !p) return;
-            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
-            if(!db[u]) { // Регистрация
-                db[u] = p;
-                localStorage.setItem('ilfan_db', JSON.stringify(db));
-            }
-            if(db[u] === p) { // Вход
-                user = {name: u};
-                localStorage.setItem('ilfan_user', JSON.stringify(user));
-                location.reload();
-            } else { alert(i18n[localStorage.getItem('lang')||'en'].err); }
-        }
-
-        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
-        function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
-        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
-        function sendRev() {
-            const m = document.getElementById('rev-in').value; if(!m) return;
-            let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
-            list.push({u: user.name, t: m});
-            localStorage.setItem('ilfan_revs', JSON.stringify(list));
-            document.getElementById('rev-in').value = '';
-            renderRevs();
-        }
-        function renderRevs() {
-            const box = document.getElementById('rev-list');
-            let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
-            box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b style="color:var(--main)">@${i.u}</b>: ${i.t}</div>`).join('');
-        }
-
-        window.onload = () => { setLang(localStorage.getItem('lang') || 'en'); };
+        window.onresize = init;
     </script>
 </body>
 </html>
