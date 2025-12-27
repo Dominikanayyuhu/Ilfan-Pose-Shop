@@ -8,6 +8,7 @@
     <style>
         :root {
             --primary-color: #00ff88;
+            --gold: #ffcc00;
             --bg-dark: #0a0a0b;
             --card-bg: #161618;
             --text-main: #ffffff;
@@ -15,35 +16,28 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             margin: 0;
             display: flex;
             flex-direction: column;
+            align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        header {
-            padding: 40px 20px;
-            text-align: center;
-            background: linear-gradient(to bottom, #111, transparent);
-        }
+        header { padding: 40px 20px; text-align: center; }
+        h1 { color: var(--primary-color); text-transform: uppercase; letter-spacing: 2px; }
 
-        h1 {
-            font-size: 2.5rem;
-            letter-spacing: 2px;
-            margin: 0;
-            color: var(--primary-color);
-            text-transform: uppercase;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            flex-grow: 1;
+        /* Слайдер */
+        .slider-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px 0;
         }
 
         .pose-card {
@@ -51,80 +45,55 @@
             border-radius: 20px;
             overflow: hidden;
             border: 1px solid #222;
-            transition: transform 0.3s ease;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .pose-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-color);
-        }
-
-        .image-container {
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: #111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .info {
-            padding: 25px;
+            width: 320px;
             text-align: center;
+            display: none; /* Скрыты все, кроме активной */
+            animation: slideIn 0.4s ease-out;
         }
 
-        .price {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            display: block;
-        }
+        .pose-card.active { display: block; }
+
+        .image-container { width: 100%; aspect-ratio: 1/1; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .info { padding: 20px; }
+        .order-text { font-size: 1.8rem; font-weight: bold; color: var(--primary-color); display: block; margin-bottom: 10px; }
 
         .order-btn {
             background: var(--primary-color);
             color: #000;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.1rem;
+            padding: 12px 30px;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
             width: 100%;
+            text-transform: uppercase;
         }
 
-        .order-btn:hover {
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
-            transform: scale(1.02);
+        /* Золотые стрелки */
+        .arrow {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            transition: 0.3s;
+        }
+        .arrow i { color: var(--gold); font-size: 3rem; }
+        .arrow:hover i { color: #fff; transform: scale(1.2); }
+
+        /* Отзывы */
+        .reviews { width: 90%; max-width: 400px; margin-top: 40px; }
+        .reviews h3 { border-bottom: 1px solid #333; padding-bottom: 10px; text-transform: uppercase; }
+        .review-item { background: #111; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 3px solid var(--gold); }
+        .stars { color: var(--gold); margin-bottom: 5px; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        #status-screen {
-            display: none;
-            text-align: center;
-            padding: 100px 20px;
-        }
-
-        .loader {
-            border: 4px solid #222;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #status-screen { display: none; text-align: center; padding: 50px; }
     </style>
 </head>
 <body>
@@ -133,38 +102,81 @@
         <h1>Ilfan's Poses</h1>
     </header>
 
-    <div class="container" id="main-content">
-        <div class="pose-card">
-            <div class="image-container">
-                <img src="photo_2025-12-21_18-27-40.jpg" alt="Pose 1">
+    <div id="main-content">
+        <div class="slider-wrapper">
+            <button class="arrow" onclick="moveSlide(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="pose-card active">
+                <div class="image-container"><img src="pose1.jpg" alt="Pose 1"></div>
+                <div class="info">
+                    <span class="order-text">ORDER</span>
+                    <button class="order-btn" onclick="startOrder()">Order Now!</button>
+                </div>
             </div>
-            <div class="info">
-                <span class="price">20 Robux</span>
-                <button class="order-btn" onclick="startOrder(60)">Order Now!</button>
+
+            <div class="pose-card">
+                <div class="image-container"><img src="pose2.jpg" alt="Pose 2"></div>
+                <div class="info">
+                    <span class="order-text">ORDER</span>
+                    <button class="order-btn" onclick="startOrder()">Order Now!</button>
+                </div>
+            </div>
+
+            <div class="pose-card">
+                <div class="image-container"><img src="pose3.jpg" alt="Pose 3"></div>
+                <div class="info">
+                    <span class="order-text">ORDER</span>
+                    <button class="order-btn" onclick="startOrder()">Order Now!</button>
+                </div>
+            </div>
+
+            <button class="arrow" onclick="moveSlide(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="reviews">
+            <h3>Reviews</h3>
+            <div class="review-item">
+                <div class="stars">★★★★★</div>
+                <p>"Best poses ever! Super fast and cool."</p>
+                <small>- @RobloxFanatic123</small>
+            </div>
+            <div class="review-item">
+                <div class="stars">★★★★★</div>
+                <p>"The fire pose is insane! Worth every robux."</p>
+                <small>- @EpicGamer2024</small>
             </div>
         </div>
     </div>
 
     <div id="status-screen">
-        <div class="loader"></div>
+        <div style="border: 4px solid #222; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
         <h2>Waiting for verification...</h2>
-        <p style="color: var(--text-dim)">Please complete the payment in Telegram and send the screen record. Ilfan is checking your order.</p>
+        <p style="color: var(--text-dim)">Please complete the payment in Telegram. Ilfan is checking your order.</p>
     </div>
 
     <script>
-        function startOrder(price) {
-            // Здесь я уже вписал имя твоего бота
+        let slideIndex = 0;
+        const slides = document.querySelectorAll('.pose-card');
+
+        function moveSlide(n) {
+            slides[slideIndex].classList.remove('active');
+            slideIndex = (slideIndex + n + slides.length) % slides.length;
+            slides[slideIndex].classList.add('active');
+        }
+
+        function startOrder() {
             const botUsername = 'ZakazIlfanaBot'; 
-            
-            const url = `https://t.me/${botUsername}?start=order_${price}`;
-            
-            window.open(url, "_blank");
+            window.open(`https://t.me/${botUsername}?start=new_order`, "_blank");
             
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('site-header').style.display = 'none';
             document.getElementById('status-screen').style.display = 'block';
         }
     </script>
-
+    <style> @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } </style>
 </body>
 </html>
