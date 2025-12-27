@@ -10,18 +10,24 @@
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
 
-        /* Языки */
+        /* Языковая панель */
         .lang-wrapper { position: fixed; top: 20px; right: 20px; z-index: 2000; }
         .lang-btn { background: rgba(0,0,0,0.8); border: 2px solid var(--main); color: white; padding: 10px 18px; border-radius: 50px; cursor: pointer; font-weight: bold; }
-        .lang-list { position: absolute; top: 55px; right: 0; background: #161618; border: 1px solid #333; border-radius: 15px; display: none; grid-template-columns: repeat(2, 160px); padding: 10px; gap: 5px; }
+        .lang-list { 
+            position: absolute; top: 55px; right: 0; background: #161618; border: 1px solid #333; 
+            border-radius: 15px; display: none; grid-template-columns: repeat(2, 160px); 
+            padding: 10px; gap: 5px; box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+            max-height: 400px; overflow-y: auto;
+        }
         .lang-list.show { display: grid; }
-        .lang-item { padding: 10px; cursor: pointer; border-radius: 8px; }
+        .lang-item { padding: 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .lang-item:hover { background: rgba(0, 255, 136, 0.1); color: var(--main); }
 
         header { padding: 60px 20px 20px; text-align: center; }
         h1 { font-size: 2.5rem; color: var(--main); text-transform: uppercase; text-shadow: 0 0 20px rgba(0,255,136,0.5); }
 
         /* Контейнер */
-        .main-container { position: relative; width: 100%; max-width: 800px; display: flex; justify-content: center; align-items: center; margin-top: 20px; padding: 0 20px; box-sizing: border-box; }
+        .main-container { position: relative; width: 100%; max-width: 900px; display: flex; justify-content: center; align-items: center; margin-top: 20px; padding: 0 20px; box-sizing: border-box; }
 
         /* Кнопка ОТЗЫВЫ слева */
         .open-rev-side { 
@@ -44,13 +50,13 @@
         .order-btn { background: linear-gradient(45deg, var(--main), #00d4ff); color: black; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: 900; cursor: pointer; }
         .arrow { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 3rem; padding: 5px; }
 
-        /* Модальное окно */
+        /* Окно отзывов */
         .rev-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3000; }
         .rev-content { background: #111; width: 90%; max-width: 450px; height: 85vh; border-radius: 35px; border: 2px solid var(--gold); position: relative; display: flex; flex-direction: column; padding: 25px; box-sizing: border-box; }
         .close-rev { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #666; cursor: pointer; }
         
         .rev-list { flex-grow: 1; overflow-y: auto; margin: 15px 0; padding-right: 5px; display: flex; flex-direction: column; }
-        .rev-item { background: #18181a; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); animation: fadeIn 0.3s; }
+        .rev-item { background: #18181a; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); }
         .rev-item b { color: var(--gold); display: block; margin-bottom: 5px; }
 
         .rev-form { display: flex; flex-direction: column; gap: 8px; background: #000; padding: 15px; border-radius: 20px; border: 1px solid #222; }
@@ -58,9 +64,8 @@
         .rev-form button { background: var(--gold); color: black; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        @media (max-width: 600px) {
+        @media (max-width: 750px) {
             .open-rev-side { position: static; transform: none; margin-bottom: 20px; }
             .main-container { flex-direction: column; }
         }
@@ -74,7 +79,24 @@
         <div class="lang-list" id="lang-list">
             <div class="lang-item" onclick="setLang('ru')">🇷🇺 Русский</div>
             <div class="lang-item" onclick="setLang('en')">🇺🇸 English</div>
+            <div class="lang-item" onclick="setLang('am')">🇦🇲 Հայերեն</div>
+            <div class="lang-item" onclick="setLang('ar')">🇸🇦 العربية</div>
+            <div class="lang-item" onclick="setLang('fr')">🇫🇷 Français</div>
+            <div class="lang-item" onclick="setLang('tr')">🇹🇷 Türkçe</div>
+            <div class="lang-item" onclick="setLang('ko')">🇰🇷 한국어</div>
+            <div class="lang-item" onclick="setLang('ja')">🇯🇵 日本語</div>
+            <div class="lang-item" onclick="setLang('zh')">🇨🇳 中文</div>
+            <div class="lang-item" onclick="setLang('kk')">🇰🇿 Қазақша</div>
+            <div class="lang-item" onclick="setLang('es')">🇪🇸 Español</div>
+            <div class="lang-item" onclick="setLang('it')">🇮🇹 Italiano</div>
             <div class="lang-item" onclick="setLang('fa')">🇮🇷 فارسی</div>
+            <div class="lang-item" onclick="setLang('el')">🇬🇷 Ελληνικά</div>
+            <div class="lang-item" onclick="setLang('uk')">🇺🇦 Українська</div>
+            <div class="lang-item" onclick="setLang('hi')">🇮🇳 हिन्दी</div>
+            <div class="lang-item" onclick="setLang('uz')">🇺🇿 O'zbek</div>
+            <div class="lang-item" onclick="setLang('ky')">🇰🇬 Кыргызча</div>
+            <div class="lang-item" onclick="setLang('he')">🇮🇱 עברית</div>
+            <div class="lang-item" onclick="setLang('vi')">🇻🇳 Tiếng Việt</div>
         </div>
     </div>
 
@@ -121,7 +143,24 @@
         const langs = {
             ru: { title: "ПОЗИНГИ ИЛЬФАНА", buy: "ЗАКАЗАТЬ", head: "ОТЗЫВЫ", send: "ОТПРАВИТЬ", nick: "Ник Roblox", msg: "Ваш отзыв...", label: "ОТЗЫВЫ" },
             en: { title: "ILFAN'S POSES", buy: "ORDER NOW", head: "REVIEWS", send: "SEND", nick: "Roblox Nick", msg: "Your review...", label: "REVIEWS" },
-            fa: { title: "ژست های الفان", buy: "اکنون سفارش دهید", head: "نظرات", send: "ارسال", nick: "نام کاربری", msg: "نظر شما...", label: "نظرات" }
+            am: { title: "ԻԼՖԱՆԻ ԴԻՐՔԵՐԸ", buy: "ՊԱՏՎԻՐԵԼ", head: "ԿԱՐԾԻՔՆԵՐ", send: "ՈՒՂԱՐԿԵԼ", nick: "Roblox Նիկ", msg: "Ձեր կարծիքը...", label: "ԿԱՐԾԻՔՆԵՐ" },
+            ar: { title: "تصاميم إلفان", buy: "اطلب الآن", head: "التعليقات", send: "إرسال", nick: "لقب روبלוקס", msg: "تعليقك...", label: "التعليقات" },
+            fr: { title: "POSES D'ILFAN", buy: "COMMANDER", head: "AVIS", send: "ENVOYER", nick: "Pseudo Roblox", msg: "Votre avis...", label: "AVIS" },
+            tr: { title: "ILFAN'IN POZLARI", buy: "SİPARİŞ VER", head: "YORUMLAR", send: "GÖNDER", nick: "Roblox Adı", msg: "Yorumunuz...", label: "YORUMLAR" },
+            ko: { title: "일판의 포즈", buy: "지금 주문하세요", head: "리뷰", send: "보내기", nick: "로블록스 닉네임", msg: "당신의 리뷰...", label: "리뷰" },
+            ja: { title: "イルファンのポーズ", buy: "今すぐ注文", head: "レビュー", send: "送信", nick: "ロブロックス名", msg: "あなたのレビュー...", label: "レビュー" },
+            zh: { title: "ILFAN 的姿势", buy: "立即订购", head: "评论", send: "发送", nick: "Roblox 昵称", msg: "您的评论...", label: "评论" },
+            kk: { title: "ИЛЬФАННЫҢ ПОЗАЛАРЫ", buy: "ТАПСЫРЫС БЕРУ", head: "ПІКІРЛЕР", send: "ЖІБЕРУ", nick: "Roblox ник", msg: "Пікіріңіз...", label: "ПІКІРЛЕР" },
+            es: { title: "POSES DE ILFAN", buy: "ORDENAR AHORA", head: "COMENTARIOS", send: "ENVIAR", nick: "Nick de Roblox", msg: "Tu comentario...", label: "COMENTARIOS" },
+            it: { title: "POSE DI ILFAN", buy: "ORDINA ORA", head: "RECENSIONI", send: "INVIA", nick: "Nick Roblox", msg: "La tua recensione...", label: "RECENSIONI" },
+            fa: { title: "ژست های الفان", buy: "اکنون سفارش دهید", head: "نظرات", send: "ارسال", nick: "نام کاربری", msg: "نظر شما...", label: "نظرات" },
+            el: { title: "ΠΟΣΕΙΣ ΤΟΥ ILFAN", buy: "ΠΑΡΑΓΓΕΙΛΤΕ ΤΩΡΑ", head: "ΚΡΙΤΙΚΕΣ", send: "ΑΠΟΣΤΟΛΗ", nick: "Όνομα Roblox", msg: "Η κριτική σας...", label: "ΚΡΙΤΙΚΕΣ" },
+            uk: { title: "ПОЗИНГИ ІЛЬФАНА", buy: "ЗАМОВИТИ", head: "ВІДГУКИ", send: "ВІДПРАВИТИ", nick: "Нік у Roblox", msg: "Ваш відгук...", label: "ВІДГУКИ" },
+            hi: { title: "इल्फान की पोज़", buy: "अभी ऑर्डर करें", head: "समीक्षाएं", send: "भेजें", nick: "रोब्लॉक्स निक", msg: "आपकी समीक्षा...", label: "सمیक्षाएं" },
+            uz: { title: "ILFAN POZALARI", buy: "BUYURTMA BERISH", head: "FIKRLAR", send: "YUBORISH", nick: "Roblox niki", msg: "Fikringiz...", label: "FIKRLAR" },
+            ky: { title: "ИЛЬФАНДЫН ПОЗАЛАРЫ", buy: "ТАПШЫРЫК БЕРҮҮ", head: "ПИКИРЛЕР", send: "ЖӨНӨТҮҮ", nick: "Roblox ник", msg: "Пикириңиз...", label: "ПИКИРЛЕР" },
+            he: { title: "הפוזות של אילפן", buy: "הזמן עכשיו", head: "ביקורות", send: "שלח", nick: "כינוי רובלוקס", msg: "הביקורת שלך...", label: "ביקורות" },
+            vi: { title: "TẠO DÁNG CỦA ILFAN", buy: "ĐẶT HÀNG NGAY", head: "ĐÁNH GIÁ", send: "GỬI", nick: "Nick Roblox", msg: "Đánh giá của bạn...", label: "ĐÁNH GIÁ" }
         };
 
         function setLang(l) {
@@ -135,7 +174,7 @@
             document.getElementById('u-msg').placeholder = d.msg;
             document.getElementById('cur-lang').innerText = l.toUpperCase();
             document.getElementById('lang-list').classList.remove('show');
-            document.body.dir = (l === 'fa') ? 'rtl' : 'ltr';
+            document.body.dir = (['fa', 'ar', 'he'].includes(l)) ? 'rtl' : 'ltr';
             localStorage.setItem('userLang', l);
         }
 
@@ -148,7 +187,6 @@
         function loadRev() {
             const list = document.getElementById('rev-list');
             const saved = JSON.parse(localStorage.getItem('ilfan_reviews') || '[]');
-            // Очищаем и заполняем заново
             list.innerHTML = '';
             saved.slice().reverse().forEach(r => {
                 const item = document.createElement('div');
@@ -167,7 +205,7 @@
                 localStorage.setItem('ilfan_reviews', JSON.stringify(saved));
                 document.getElementById('u-name').value = '';
                 document.getElementById('u-msg').value = '';
-                loadRev(); // Мгновенное обновление списка
+                loadRev(); // Мгновенное обновление
             }
         }
 
@@ -184,4 +222,3 @@
     </script>
 </body>
 </html>
-
