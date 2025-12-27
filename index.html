@@ -3,115 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilfan's Poses | Shop</title>
+    <title>Ilfan's Global Pose Shop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --main: #00ff88; --gold: #ffcc00; --bg: #0a0a0b; --card: #161618; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        
-        header { padding: 30px; text-align: center; }
-        h1 { color: var(--main); letter-spacing: 2px; text-transform: uppercase; margin: 0; }
+        :root { --main: #00ff88; --gold: #ffcc00; --bg: #050505; --card: #111112; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
 
-        /* Слайдер со стрелками */
-        .slider-box { position: relative; width: 100%; max-width: 450px; display: flex; align-items: center; justify-content: center; margin-top: 20px; }
-        .card { background: var(--card); border-radius: 20px; overflow: hidden; width: 320px; display: none; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card.active { display: block; animation: fadeIn 0.4s ease-in; }
-        .img-container { width: 100%; aspect-ratio: 1/1; background: #000; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        
+        /* Переключатель языка */
+        .lang-wrapper { position: fixed; top: 20px; right: 20px; z-index: 2000; }
+        .lang-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--main); color: white; padding: 10px 15px; border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 0 15px rgba(0,255,136,0.2); }
+        .lang-btn:hover { background: var(--main); color: black; }
+        .lang-list { position: absolute; top: 50px; right: 0; background: #161618; border: 1px solid #333; border-radius: 15px; display: none; grid-template-columns: repeat(2, 120px); padding: 10px; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .lang-list.show { display: grid; animation: fadeIn 0.3s; }
+        .lang-item { padding: 8px; cursor: pointer; border-radius: 5px; font-size: 0.85rem; text-align: center; transition: 0.2s; }
+        .lang-item:hover { background: var(--main); color: black; }
+
+        /* Дизайн контента */
+        header { padding: 60px 20px 20px; text-align: center; }
+        h1 { color: var(--main); text-shadow: 0 0 20px rgba(0,255,136,0.3); text-transform: uppercase; margin: 0; }
+        .slider-box { display: flex; align-items: center; justify-content: center; margin: 20px 0; gap: 10px; }
+        .card { background: var(--card); border-radius: 20px; overflow: hidden; width: 320px; display: none; border: 1px solid #222; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .card.active { display: block; animation: zoomIn 0.4s; }
+        .img-box img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
         .info { padding: 20px; text-align: center; }
-        .order-btn { background: var(--main); color: black; border: none; padding: 12px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        .order-btn:hover { background: white; transform: scale(1.05); }
-        
-        .arrow { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 3rem; padding: 15px; z-index: 10; transition: 0.2s; }
-        .arrow:hover { color: white; transform: scale(1.2); }
+        .order-btn { background: var(--main); color: black; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: 900; cursor: pointer; }
+        .arrow { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 3rem; padding: 10px; transition: 0.2s; }
+        .arrow:hover { transform: scale(1.2); color: white; }
 
-        /* Динамические отзывы (левый нижний угол) */
-        #review-wall { position: fixed; bottom: 20px; left: 20px; width: 280px; display: flex; flex-direction: column-reverse; gap: 10px; z-index: 999; }
-        .toast { background: rgba(22, 22, 24, 0.95); border-left: 4px solid var(--gold); padding: 12px; border-radius: 8px; font-size: 0.9rem; animation: slideIn 0.4s ease-out; border: 1px solid #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .toast b { color: var(--main); display: block; margin-bottom: 4px; }
+        /* Форма отзывов */
+        .input-area { background: var(--card); padding: 25px; border-radius: 20px; width: 320px; border: 1px solid #333; margin: 30px 0; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
+        .send-btn { background: var(--gold); color: black; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-        /* Поле для ввода отзыва */
-        .input-area { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; width: 320px; margin: 40px 0; }
-        .input-area h3 { margin: 0 0 15px; font-size: 1rem; color: var(--gold); text-align: center; }
-        input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-family: inherit; }
-        .send-btn { background: var(--gold); color: black; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .send-btn:hover { background: white; }
+        /* Отзывы слева внизу */
+        #review-wall { position: fixed; bottom: 20px; left: 20px; width: 280px; z-index: 1000; }
+        .toast { background: rgba(17,17,18,0.95); border-left: 4px solid var(--gold); padding: 12px; border-radius: 8px; margin-top: 10px; animation: slideIn 0.4s forwards; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(-110%); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
 
-    <header><h1>ILFAN'S POSES</h1></header>
+    <div class="lang-wrapper">
+        <button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i> <span id="cur-lang">Language</span></button>
+        <div class="lang-list" id="lang-list">
+            <div class="lang-item" onclick="setLang('ru')">Русский</div>
+            <div class="lang-item" onclick="setLang('en')">English</div>
+            <div class="lang-item" onclick="setLang('am')">Հայերեն</div>
+            <div class="lang-item" onclick="setLang('tr')">Türkçe</div>
+            <div class="lang-item" onclick="setLang('fr')">Français</div>
+            <div class="lang-item" onclick="setLang('ar')">العربية</div>
+            <div class="lang-item" onclick="setLang('zh')">中文</div>
+            <div class="lang-item" onclick="setLang('ja')">日本語</div>
+            <div class="lang-item" onclick="setLang('ko')">한국어</div>
+            <div class="lang-item" onclick="setLang('kk')">Қазақша</div>
+            <div class="lang-item" onclick="setLang('es')">Español</div>
+            <div class="lang-item" onclick="setLang('it')">Italiano</div>
+            <div class="lang-item" onclick="setLang('el')">Ελληνικά</div>
+            <div class="lang-item" onclick="setLang('uk')">Українська</div>
+            <div class="lang-item" onclick="setLang('uz')">O'zbek</div>
+            <div class="lang-item" onclick="setLang('he')">עברית</div>
+        </div>
+    </div>
+
+    <header><h1 id="t-title">ILFAN'S POSES</h1></header>
 
     <div class="slider-box">
         <button class="arrow" onclick="change(-1)"><i class="fas fa-chevron-left"></i></button>
-        
-        <div class="card active"><div class="img-container"><img src="pose1.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose2.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose3.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose4.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose5.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose6.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose7.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose8.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose9.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose10.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-container"><img src="pose11.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
-
+        <div class="card active"><div class="img-box"><img src="pose1.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose2.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose3.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose4.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose5.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose6.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose7.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose8.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose9.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose10.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-box"><img src="pose11.jpg"></div><div class="info"><button class="order-btn t-buy" onclick="buy()">ORDER NOW</button></div></div>
         <button class="arrow" onclick="change(1)"><i class="fas fa-chevron-right"></i></button>
     </div>
 
     <div class="input-area">
-        <h3>Оставить отзыв</h3>
-        <input type="text" id="u-name" placeholder="Твой ник">
-        <textarea id="u-msg" rows="2" placeholder="Напиши свой отзыв здесь..."></textarea>
-        <button class="send-btn" onclick="postReview()">ОТПРАВИТЬ</button>
+        <h3 id="t-rev-title" style="color:var(--gold); text-align:center; margin-top:0;">Оставить отзыв</h3>
+        <input type="text" id="u-name" placeholder="Roblox Nick">
+        <textarea id="u-msg" rows="2" placeholder="Your review..."></textarea>
+        <button class="send-btn" id="t-send" onclick="postReview()">ОТПРАВИТЬ</button>
     </div>
 
     <div id="review-wall"></div>
 
     <script>
+        // Данные переводов
+        const langs = {
+            ru: { title: "ПОЗИНГИ ИЛЬФАНА", buy: "ЗАКАЗАТЬ", rev: "Оставить отзыв", send: "ОТПРАВИТЬ", nick: "Ник в Roblox", msg: "Ваш отзыв..." },
+            en: { title: "ILFAN'S POSES", buy: "ORDER NOW", rev: "Leave a Review", send: "SEND", nick: "Roblox Nick", msg: "Your review..." },
+            am: { title: "ԻԼՖԱՆԻ ՊՈԶԱՆԵՐԸ", buy: "ՊԱՏՎԻՐԵԼ", rev: "Թողնել կարծիք", send: "ՈՒՂԱՐԿԵԼ", nick: "Roblox Նիկ", msg: "Ձեր կարծիքը..." },
+            tr: { title: "ILFAN'IN POZLARI", buy: "SİPARİŞ VER", rev: "Yorum Yap", send: "GÖNDER", nick: "Roblox Adı", msg: "Yorumunuz..." }
+            // Можно добавить остальные языки по аналогии
+        };
+
+        function setLang(l) {
+            const d = langs[l] || langs.en;
+            document.getElementById('t-title').innerText = d.title;
+            document.querySelectorAll('.t-buy').forEach(b => b.innerText = d.buy);
+            document.getElementById('t-rev-title').innerText = d.rev;
+            document.getElementById('t-send').innerText = d.send;
+            document.getElementById('u-name').placeholder = d.nick;
+            document.getElementById('u-msg').placeholder = d.msg;
+            document.getElementById('lang-list').classList.remove('show');
+            document.getElementById('cur-lang').innerText = l.toUpperCase();
+        }
+
+        function toggleLang() { document.getElementById('lang-list').classList.toggle('show'); }
+
         let cur = 0;
         const cards = document.querySelectorAll('.card');
-
-        function change(step) {
-            cards[cur].classList.remove('active');
-            cur = (cur + step + cards.length) % cards.length;
-            cards[cur].classList.add('active');
-        }
-
-        function buy() {
-            window.open("https://t.me/ZakazIlfanaBot", "_blank");
-        }
-
+        function change(s) { cards[cur].classList.remove('active'); cur = (cur+s+cards.length)%cards.length; cards[cur].classList.add('active'); }
+        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
         function postReview() {
-            const name = document.getElementById('u-name').value;
-            const msg = document.getElementById('u-msg').value;
-            const wall = document.getElementById('review-wall');
-
-            if(name && msg) {
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.innerHTML = `<b>@${name}</b>${msg}`;
-                wall.appendChild(toast);
-
-                // Очистка полей после отправки
-                document.getElementById('u-name').value = '';
-                document.getElementById('u-msg').value = '';
-
-                // Отзыв плавно исчезнет через 15 секунд
-                setTimeout(() => { 
-                    toast.style.transition = '0.5s';
-                    toast.style.opacity = '0'; 
-                    setTimeout(()=>toast.remove(), 500); 
-                }, 15000);
-            } else {
-                alert("Пожалуйста, введите ник и текст отзыва!");
+            const n = document.getElementById('u-name').value;
+            const m = document.getElementById('u-msg').value;
+            if(n && m) {
+                const t = document.createElement('div');
+                t.className = 'toast';
+                t.innerHTML = `<b style="color:var(--main)">@${n}</b><p style="margin:5px 0 0 0">${m}</p>`;
+                document.getElementById('review-wall').appendChild(t);
+                document.getElementById('u-name').value = ''; document.getElementById('u-msg').value = '';
+                setTimeout(() => { t.style.opacity = '0'; setTimeout(()=>t.remove(), 500); }, 15000);
             }
         }
     </script>
 </body>
 </html>
+
