@@ -4,107 +4,128 @@ import threading
 from flask import Flask
 import os
 
-# --- 1. МИНИ-СЕРВЕР ДЛЯ ПОДДЕРЖКИ ЖИЗНИ (RENDER + CRON-JOB) ---
+# --- 1. ВЕБ-СЕРВЕР ДЛЯ ПОДДЕРЖКИ ЖИЗНИ ---
 app = Flask(__name__)
-
 @app.route('/')
-def home():
-    return "Бот Ильфана активен 24/7!"
+def home(): return "Бот Ильфана активен!"
 
 def run_web_server():
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
 
-# --- 2. НАСТРОЙКА БОТА С ТВОИМИ ДАННЫМИ ---
+# --- 2. НАСТРОЙКА БОТА ---
 TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
 ADMIN_ID = 2039589760
 bot = telebot.TeleBot(TOKEN)
 
-# Временное хранилище для данных заказа
-user_data = {}
-
-# --- 3. ЛОГИКА БОТА ---
+# Хранилища данных
+user_profiles = {} 
+user_orders_data = {} 
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    msg = bot.send_message(message.chat.id, "Привет! 🔥 Давай настроим твой профиль.\n\n**Напиши свой ник в Roblox:**", parse_mode="Markdown")
+    bot.register_next_step_handler(msg, save_roblox_nick)
+
+def save_roblox_nick(message):
+    user_profiles[message.chat.id] = {'nick': message.text, 'orders_count': 0}
+    
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(types.KeyboardButton("🛒 КАТАЛОГ ПОЗ"), types.KeyboardButton("👤 МОЙ АККАУНТ"))
+    markup.add(types.KeyboardButton("🛒 СДЕЛАТЬ ЗАКАЗ"), types.KeyboardButton("👤 МОЙ АККАУНТ"))
     
-    bot.send_message(message.chat.id, 
-                     f"Привет, {message.from_user.first_name}! 🔥\nЯ помогу тебе заказать крутую позу. Выбери раздел:", 
-                     reply_markup=markup)
+    bot.send_message(message.chat.id, f"✅ Профиль настроен!\n🎮 Ник: {message.text}\n\nТеперь ты можешь заказать позинг через меню.", reply_markup=markup)
 
-@bot.message_handler(func=lambda message: message.text == "🛒 КАТАЛОГ ПОЗ")
-def catalog(message):
-    markup = types.InlineKeyboardMarkup(row_width=3)
-    btns = [types.InlineKeyboardButton(f"Поза #{i}", callback_data=f"pose_{i}") for i in range(1, 12)]
+# --- КНОПКА: МОЙ АККАУНТ ---
+@bot.message_handler(func=lambda message: message.text == "👤 МОЙ АККАУНТ")
+def my_profile(message):
+    profile = user_profiles.get(message.chat.id)
+    if not profile:
+        bot.send_message(message.chat.id, "Сначала нажми /start, чтобы создать анкету!")
+        return
+
+    text = (f"✨ **ТВОЯ КРЕАТИВНАЯ АНКЕТА** ✨\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"👤 **Юзернейм:** @{message.from_user.username}\n"
+            f"🎮 **Ник Roblox:** `{profile['nick']}`\n"
+            f"📦 **Заказов сделано:** {profile['orders_count']}\n"
+            f"━━━━━━━━━━━━━━━━━━")
+    bot.send_message(message.chat.id, text, parse_mode="Markdown")
+
+# --- КНОПКА: ЗАКАЗ ---
+@bot.message_handler(func=lambda message: message.text == "🛒 СДЕЛАТЬ ЗАКАЗ")
+def ask_for_photo(message):
+    msg = bot.send_message(message.chat.id, "📸 Пришли **фото или скриншот** (пример позинга), который ты хочешь:")
+    bot.register_next_step_handler(msg, process_photo)
+
+def process_photo(message):
+    if message.content_type != 'photo':
+        msg = bot.send_message(message.chat.id, "Ошибка! Пожалуйста, отправь именно **фото**.")
+        bot.register_next_step_handler(msg, process_photo)
+        return
+    
+    user_orders_data[message.chat.id] = {'photo': message.photo[-1].file_id}
+    
+    # Выбор количества персонажей (от 1 до 10)
+    markup = types.InlineKeyboardMarkup(row_width=5)
+    btns = [types.InlineKeyboardButton(str(i), callback_data=f"pcount_{i}") for i in range(1, 11)]
     markup.add(*btns)
-    bot.send_message(message.chat.id, "Выбери номер позы для заказа:", reply_markup=markup)
-
-@bot.callback_query_handler(func=lambda call: call.data.startswith('pose_'))
-def choose_skins(call):
-    pose_id = call.data.split('_')[1]
-    user_data[call.message.chat.id] = {'pose': pose_id}
     
-    markup = types.InlineKeyboardMarkup()
-    for i in range(1, 5):
-        markup.add(types.InlineKeyboardButton(f"{i} Персонаж(а)", callback_data=f"sk_{i}"))
-    
-    bot.edit_message_text(f"Выбрана Поза #{pose_id}. Сколько персонажей добавить?", 
-                          chat_id=call.message.chat.id, 
-                          message_id=call.message.message_id, 
-                          reply_markup=markup)
+    bot.send_message(message.chat.id, "👥 Сколько персонажей будет в позинге? (Максимум 10):", reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('sk_'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('pcount_'))
 def choose_bg(call):
-    skins = call.data.split('_')[1]
-    user_data[call.message.chat.id]['skins'] = skins
+    count = call.data.split('_')[1]
+    user_orders_data[call.message.chat.id]['count'] = count
     
     markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("Прозрачный (PNG)", callback_data="bg_png"),
-               types.InlineKeyboardButton("Игровой фон (Карта)", callback_data="bg_game"))
+    markup.add(types.InlineKeyboardButton("Прозрачный (PNG)", callback_data="setbg_PNG"),
+               types.InlineKeyboardButton("Игровой фон", callback_data="setbg_Игровой"))
     
-    bot.edit_message_text(f"Персонажей: {skins}. Выбери тип фона:", 
+    bot.edit_message_text(f"Персонажей: {count}. Теперь выбери фон:", 
                           chat_id=call.message.chat.id, 
                           message_id=call.message.message_id, 
                           reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('bg_'))
-def choose_pay(call):
-    bg = "Прозрачный" if "png" in call.data else "Игровой"
-    user_data[call.message.chat.id]['bg'] = bg
+@bot.callback_query_handler(func=lambda call: call.data.startswith('setbg_'))
+def choose_payment(call):
+    bg = call.data.split('_')[1]
+    user_orders_data[call.message.chat.id]['bg'] = bg
     
     markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("💳 КАРТА", callback_data="p_card"),
-               types.InlineKeyboardButton("💎 КРИПТА / LIKECOIN", callback_data="p_crypto"))
+    markup.add(types.InlineKeyboardButton("💰 Робуксы", callback_data="pay_Робуксы"),
+               types.InlineKeyboardButton("⚔️ Годли", callback_data="pay_Годли"),
+               types.InlineKeyboardButton("⭐ Звезды", callback_data="pay_Звезды"))
     
-    bot.edit_message_text(f"Выбран фон: {bg}.\nВыбери удобный способ оплаты:", 
+    bot.edit_message_text(f"Выбран фон: {bg}. Выбери способ оплаты:", 
                           chat_id=call.message.chat.id, 
                           message_id=call.message.message_id, 
                           reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('p_'))
-def final(call):
-    pay_method = "Карта" if "card" in call.data else "Крипта"
-    data = user_data.get(call.message.chat.id)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('pay_'))
+def finish_order(call):
+    method = call.data.split('_')[1]
+    data = user_orders_data.get(call.message.chat.id)
+    profile = user_profiles.get(call.message.chat.id)
     
-    # 1. Сообщение КЛИЕНТУ (как ты просил)
+    # 1. Ответ клиенту
     bot.send_message(call.message.chat.id, "готово, для подробностей напишите владельцу магазина @HokhikyanHokhikyans, чтобы вы могли забрать заказ")
     
-    # 2. Уведомление ТЕБЕ (Админу) со всеми данными
-    admin_text = (f"🚀 НОВЫЙ ЗАКАЗ!\n\n"
-                  f"👤 Ник клиента: @{call.from_user.username}\n"
-                  f"🆔 ID: {call.from_user.id}\n"
-                  f"🖼 Поза: #{data['pose']}\n"
-                  f"👥 Кол-во персонажей: {data['skins']}\n"
-                  f"🌌 Фон: {data['bg']}\n"
-                  f"💰 Оплата: {pay_method}")
-    bot.send_message(ADMIN_ID, admin_text)
+    # 2. Обновляем счетчик заказов
+    if profile: profile['orders_count'] += 1
+    
+    # 3. Полный отчет ТЕБЕ (Админу)
+    bot.send_photo(ADMIN_ID, data['photo'], caption=(
+        f"🚀 **НОВЫЙ ЗАКАЗ!**\n\n"
+        f"👤 **Ник ТГ:** @{call.from_user.username}\n"
+        f"🎮 **Ник Roblox:** `{profile['nick']}`\n"
+        f"👥 **Персонажей:** {data['count']}\n"
+        f"🌌 **Фон:** {data['bg']}\n"
+        f"💸 **Оплата:** {method}"
+    ), parse_mode="Markdown")
 
 # --- 4. ЗАПУСК ---
 if __name__ == '__main__':
     threading.Thread(target=run_web_server, daemon=True).start()
-    print("Бот успешно запущен!")
     bot.infinity_polling()
-
+    
     
