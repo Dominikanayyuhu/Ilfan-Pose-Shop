@@ -3,244 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilfan's Poses | Premium</title>
+    <title>Ilfan's Poses Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main: #00ff88; --gold: #ffcc00; --bg: #000; }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg); color: white;
+            background-color: #000 !important; color: white;
             font-family: 'Poppins', sans-serif; overflow: hidden;
         }
 
-        /* ФОН С ЗЕЛЕНЫМИ ЛИНИЯМИ (PLEXUS) */
-        #canvas {
+        /* ТЕ САМЫЕ ЗЕЛЕНЫЕ ЛИНИИ */
+        #plexus-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.6;
+            z-index: 1; pointer-events: none;
         }
 
-        /* ВЕРХНЯЯ ПАНЕЛЬ: ЯЗЫК */
-        .top-nav {
-            position: absolute; top: 20px; right: 40px; z-index: 100;
-        }
-        .lang-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid white;
-            color: white; padding: 5px 15px; border-radius: 20px;
-            cursor: pointer; font-size: 14px; font-weight: bold;
-            display: flex; align-items: center; gap: 5px;
+        /* ВЕРХНЯЯ ПАНЕЛЬ */
+        .header-ui {
+            position: fixed; top: 25px; width: 100%; 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; box-sizing: border-box; z-index: 100;
         }
 
-        header { text-align: center; padding-top: 40px; }
-        h1 {
-            font-size: 3rem; color: var(--main); letter-spacing: 5px;
-            text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); margin: 0;
+        .lang-select {
+            background: rgba(255,255,255,0.05); border: 1.5px solid white;
+            color: white; padding: 8px 18px; border-radius: 25px;
+            cursor: pointer; font-weight: bold; font-size: 14px;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .lang-select:hover { background: white; color: black; }
+
+        .site-title {
+            color: var(--main); font-size: 2.5rem; letter-spacing: 6px;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.7); font-weight: 900;
+            margin: 0;
         }
 
-        /* ОСНОВНОЙ КОНТЕЙНЕР */
-        .container {
+        /* ОСНОВНОЙ КОНТЕНТ */
+        .main-wrapper {
+            position: relative; z-index: 10;
             display: flex; align-items: center; justify-content: center;
-            height: 70vh; gap: 50px;
+            height: 100vh; gap: 40px;
         }
 
-        /* ОТЗЫВЫ (СЛЕВА) */
-        .rev-section {
-            display: flex; flex-direction: column; align-items: center; cursor: pointer;
+        /* ОТЗЫВЫ (ЖЕЛТЫЙ БЛОК) */
+        .reviews-sidebar {
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer; transition: 0.3s; margin-right: 20px;
+        }
+        .reviews-sidebar:hover { transform: scale(1.1); }
+        .rev-box {
+            width: 75px; height: 75px; border: 2.5px solid var(--gold);
+            border-radius: 22px; display: flex; align-items: center;
+            justify-content: center; font-size: 32px; color: var(--gold);
+            background: rgba(255, 204, 0, 0.15);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+        }
+        .rev-label { color: var(--gold); font-size: 11px; font-weight: bold; margin-top: 10px; letter-spacing: 1px; }
+
+        /* КАРТОЧКА ПОЗИНГА */
+        .pose-card {
+            position: relative; width: 450px; /* Большой размер */
+            background: #0f0f0f; border-radius: 45px; padding: 25px;
+            border: 1px solid #222; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: none;
+        }
+        .pose-card.active { display: block; animation: zoomIn 0.5s ease; }
+        .pose-card img { width: 100%; border-radius: 35px; margin-bottom: 25px; }
+
+        .btn-order {
+            background: linear-gradient(90deg, #00ff88, #00ffe5);
+            border: none; padding: 20px; width: 95%; border-radius: 20px;
+            font-weight: 900; cursor: pointer; color: #000; font-size: 18px;
             transition: 0.3s;
         }
-        .rev-section:hover { transform: scale(1.1); }
-        .rev-icon {
-            width: 70px; height: 70px; border: 2px solid var(--gold);
-            border-radius: 20px; display: flex; align-items: center;
-            justify-content: center; font-size: 30px; color: var(--gold);
-            background: rgba(255, 204, 0, 0.1);
-        }
-        .rev-text { color: var(--gold); font-size: 12px; font-weight: bold; margin-top: 8px; }
+        .btn-order:hover { box-shadow: 0 0 25px var(--main); transform: scale(1.02); }
 
-        /* КАРТОЧКА (БОЛЬШЕ) */
-        .card-box {
-            position: relative; width: 420px; /* Увеличено */
-            background: #111; border-radius: 40px; padding: 20px;
-            border: 1px solid #333; text-align: center;
-            box-shadow: 0 0 50px rgba(0,0,0,1); display: none;
-        }
-        .card-box.active { display: block; animation: zoomIn 0.5s ease; }
-        .card-box img { width: 100%; border-radius: 30px; margin-bottom: 20px; }
+        .nav-arrow { font-size: 4rem; color: var(--gold); cursor: pointer; transition: 0.3s; user-select: none; }
+        .nav-arrow:hover { color: white; text-shadow: 0 0 20px var(--gold); }
 
-        .order-btn {
-            background: linear-gradient(90deg, #00ff88, #00d4ff);
-            border: none; padding: 18px; width: 90%; border-radius: 20px;
-            font-weight: 800; cursor: pointer; color: black; font-size: 16px;
-        }
-
-        /* СТРЕЛКИ (ЖЕЛТЫЕ) */
-        .arrow {
-            font-size: 3rem; color: var(--gold); cursor: pointer;
-            user-select: none; transition: 0.3s;
-        }
-        .arrow:hover { transform: scale(1.2); }
-
-        /* КНОПКА ВХОДА (В УГЛУ) */
-        .auth-fab {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 60px; height: 60px; background: var(--main);
+        /* ВХОД В УГОЛКУ */
+        .login-trigger {
+            position: fixed; bottom: 35px; right: 35px;
+            width: 65px; height: 65px; background: var(--main);
             border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; font-size: 24px; color: black;
-            cursor: pointer; z-index: 1000; box-shadow: 0 0 20px var(--main);
+            justify-content: center; font-size: 28px; color: black;
+            cursor: pointer; z-index: 1000; box-shadow: 0 0 30px rgba(0,255,136,0.4);
+            transition: 0.4s;
         }
+        .login-trigger:hover { transform: rotate(360deg) scale(1.1); }
 
         /* МОДАЛКИ */
-        .modal {
+        .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none;
+            background: rgba(0,0,0,0.92); display: none;
             justify-content: center; align-items: center; z-index: 2000;
+            backdrop-filter: blur(8px);
         }
-        .modal-content {
-            background: #111; padding: 30px; border-radius: 30px;
-            width: 350px; border: 1px solid #444; text-align: center;
+        .modal-box {
+            background: #111; padding: 40px; border-radius: 40px;
+            width: 360px; border: 1px solid #333; text-align: center;
         }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 10px; box-sizing: border-box; }
+        input { width: 100%; padding: 15px; margin: 12px 0; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 12px; }
 
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <canvas id="canvas"></canvas>
+    <canvas id="plexus-canvas"></canvas>
 
-    <div class="top-nav">
-        <button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i> <span id="lang-name">EN</span></button>
+    <div class="header-ui">
+        <div style="width: 100px;"></div> <h1 class="site-title">ILFAN'S POSES</h1>
+        <button class="lang-select" onclick="changeLang()">
+            <i class="fas fa-globe"></i> <span id="cur-lang">EN</span>
+        </button>
     </div>
 
-    <header><h1>ILFAN'S POSES</h1></header>
-
-    <div class="container">
-        <div class="rev-section" onclick="openRev()">
-            <div class="rev-icon"><i class="fas fa-comments"></i></div>
-            <div class="rev-text">REVIEWS</div>
+    <div class="main-wrapper">
+        <div class="reviews-sidebar" onclick="showRevs()">
+            <div class="rev-box"><i class="fas fa-comment-dots"></i></div>
+            <div class="rev-label">REVIEWS</div>
         </div>
 
-        <div class="arrow" onclick="move(-1)">❮</div>
+        <div class="nav-arrow" onclick="next(-1)">❮</div>
 
-        <div class="card-box active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()">ORDER NOW</button></div>
-        <div class="card-box"><img src="pose2.jpg"><button class="order-btn" onclick="buy()">ORDER NOW</button></div>
-        <div class="card-box"><img src="pose3.jpg"><button class="order-btn" onclick="buy()">ORDER NOW</button></div>
+        <div class="pose-card active">
+            <img src="pose1.jpg" alt="Pose">
+            <button class="btn-order" onclick="buy()">ORDER NOW</button>
+        </div>
+        <div class="pose-card">
+            <img src="pose2.jpg" alt="Pose">
+            <button class="btn-order" onclick="buy()">ORDER NOW</button>
+        </div>
+        <div class="pose-card">
+            <img src="pose3.jpg" alt="Pose">
+            <button class="btn-order" onclick="buy()">ORDER NOW</button>
+        </div>
 
-        <div class="arrow" onclick="move(1)">❯</div>
+        <div class="nav-arrow" onclick="next(1)">❯</div>
     </div>
 
-    <div class="auth-fab" onclick="openAuth()"><i class="fas fa-user"></i></div>
+    <div class="login-trigger" onclick="showAuth()"><i class="fas fa-user-circle"></i></div>
 
-    <div class="modal" id="auth-modal">
-        <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--main)">ACCOUNT</h2>
-            <div id="auth-inputs">
-                <input type="text" id="u-name" placeholder="Username">
-                <input type="password" id="u-pass" placeholder="Password">
-                <button class="order-btn" onclick="handleLogin()">CONTINUE</button>
+    <div class="overlay" id="modal-auth">
+        <div class="modal-box">
+            <h2 style="color:var(--main)">ACCOUNT</h2>
+            <div id="auth-fields">
+                <input type="text" id="nick" placeholder="Username">
+                <input type="password" id="pass" placeholder="Password">
+                <button class="btn-order" onclick="doLogin()">CONTINUE</button>
             </div>
-            <div id="profile-area" style="display:none;">
-                <h3 id="hi-user"></h3>
-                <button class="order-btn" style="background:#333; color:white" onclick="logout()">LOGOUT</button>
+            <div id="user-info" style="display:none;">
+                <h3 id="welcome"></h3>
+                <button class="btn-order" style="background:#222; color:white" onclick="exit()">LOGOUT</button>
             </div>
-            <p onclick="closeModals()" style="cursor:pointer; color:#666; margin-top:15px;">CLOSE</p>
+            <p onclick="hideModals()" style="cursor:pointer; color:#555; margin-top:20px;">BACK</p>
         </div>
     </div>
 
-    <div class="modal" id="rev-modal">
-        <div class="modal-content" style="width: 400px;">
+    <div class="overlay" id="modal-rev">
+        <div class="modal-box" style="width: 420px;">
             <h2 style="color:var(--gold)">REVIEWS</h2>
-            <div id="rev-list" style="max-height: 200px; overflow-y: auto; text-align: left; margin-bottom: 15px;"></div>
-            <input type="text" id="rev-msg" placeholder="Your review...">
-            <button class="order-btn" style="background:var(--gold)" onclick="addRev()">SEND</button>
-            <p onclick="closeModals()" style="cursor:pointer; color:#666; margin-top:15px;">CLOSE</p>
+            <div id="list-rev" style="max-height: 250px; overflow-y: auto; text-align: left; padding: 10px;"></div>
+            <input type="text" id="msg-rev" placeholder="Write your review...">
+            <button class="btn-order" style="background:var(--gold)" onclick="sendRev()">SEND REVIEW</button>
+            <p onclick="hideModals()" style="cursor:pointer; color:#555; margin-top:20px;">BACK</p>
         </div>
     </div>
 
     <script>
-        // --- ДИЗАЙН: ЛИНИИ (PLEXUS) ---
-        const canvas = document.getElementById('canvas');
+        // --- СЕТЕВОЙ ФОН (ЗЕЛЕНЫЕ ЛИНИИ) ---
+        const canvas = document.getElementById('plexus-canvas');
         const ctx = canvas.getContext('2d');
-        let points = [];
-        function initCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            points = [];
-            for(let i=0; i<80; i++) points.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5});
+        let dots = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
+
+        for(let i=0; i<100; i++) {
+            dots.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, sx: Math.random()*0.6-0.3, sy: Math.random()*0.6-0.3 });
         }
-        function draw() {
+
+        function animate() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.strokeStyle = '#00ff88'; ctx.fillStyle = '#00ff88'; ctx.lineWidth = 0.5;
-            points.forEach(p => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx *= -1;
-                if(p.y<0 || p.y>canvas.height) p.vy *= -1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
-                points.forEach(p2 => {
-                    let d = Math.hypot(p.x-p2.x, p.y-p2.y);
-                    if(d<150) { ctx.globalAlpha = 1 - d/150; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+            ctx.fillStyle = "#00ff88"; ctx.strokeStyle = "#00ff88";
+            dots.forEach(d => {
+                d.x += d.sx; d.y += d.sy;
+                if(d.x<0 || d.x>canvas.width) d.sx *= -1;
+                if(d.y<0 || d.y>canvas.height) d.sy *= -1;
+                ctx.beginPath(); ctx.arc(d.x, d.y, 2, 0, Math.PI*2); ctx.fill();
+                dots.forEach(d2 => {
+                    let dist = Math.hypot(d.x-d2.x, d.y-d2.y);
+                    if(dist < 130) {
+                        ctx.globalAlpha = 1 - dist/130; ctx.lineWidth = 0.5;
+                        ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d2.x, d2.y); ctx.stroke();
+                    }
                 });
             });
-            requestAnimationFrame(draw);
+            ctx.globalAlpha = 1; requestAnimationFrame(animate);
         }
-        initCanvas(); draw();
+        animate();
 
         // --- ЛОГИКА СЛАЙДЕРА ---
-        let cur = 0;
-        const cards = document.querySelectorAll('.card-box');
-        function move(d) {
-            cards[cur].classList.remove('active');
-            cur = (cur + d + cards.length) % cards.length;
-            cards[cur].classList.add('active');
+        let idx = 0;
+        const cards = document.querySelectorAll('.pose-card');
+        function next(n) {
+            cards[idx].classList.remove('active');
+            idx = (idx + n + cards.length) % cards.length;
+            cards[idx].classList.add('active');
         }
 
-        // --- ЛОГИКА АККАУНТОВ ---
-        let user = JSON.parse(localStorage.getItem('ilfan_user')) || null;
-        function openAuth() {
-            document.getElementById('auth-modal').style.display = 'flex';
-            if(user) {
-                document.getElementById('auth-inputs').style.display = 'none';
-                document.getElementById('profile-area').style.display = 'block';
-                document.getElementById('hi-user').innerText = "Hi, " + user.name;
+        // --- АККАУНТЫ ---
+        let session = JSON.parse(localStorage.getItem('user_session')) || null;
+        function showAuth() {
+            document.getElementById('modal-auth').style.display = 'flex';
+            if(session) {
+                document.getElementById('auth-fields').style.display = 'none';
+                document.getElementById('user-info').style.display = 'block';
+                document.getElementById('welcome').innerText = "Hello, " + session.name;
             }
         }
-        function handleLogin() {
-            const u = document.getElementById('u-name').value.trim();
-            const p = document.getElementById('u-pass').value.trim();
-            if(!u || !p) return;
-            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
-            if(!db[u]) { db[u] = p; localStorage.setItem('ilfan_db', JSON.stringify(db)); }
-            if(db[u] === p) {
-                user = {name: u};
-                localStorage.setItem('ilfan_user', JSON.stringify(user));
+        function doLogin() {
+            const u = document.getElementById('nick').value;
+            const p = document.getElementById('pass').value;
+            if(!u || !p) return alert("Fill all fields");
+            let users = JSON.parse(localStorage.getItem('users_data') || '{}');
+            if(!users[u]) { users[u] = p; localStorage.setItem('users_data', JSON.stringify(users)); }
+            if(users[u] === p) {
+                session = {name: u}; localStorage.setItem('user_session', JSON.stringify(session));
                 location.reload();
-            } else alert("Wrong password!");
+            } else alert("Wrong password");
         }
-        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
+        function exit() { localStorage.removeItem('user_session'); location.reload(); }
 
         // --- ОТЗЫВЫ ---
-        function openRev() {
-            if(!user) { alert("Please login first!"); openAuth(); return; }
-            document.getElementById('rev-modal').style.display = 'flex';
-            loadRevs();
+        function showRevs() {
+            if(!session) { alert("Login to see reviews"); showAuth(); return; }
+            document.getElementById('modal-rev').style.display = 'flex';
+            renderRevs();
         }
-        function addRev() {
-            const msg = document.getElementById('rev-msg').value;
-            if(!msg) return;
-            let revs = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
-            revs.push({u: user.name, m: msg});
-            localStorage.setItem('ilfan_revs', JSON.stringify(revs));
-            document.getElementById('rev-msg').value = '';
-            loadRevs();
+        function sendRev() {
+            const m = document.getElementById('msg-rev').value;
+            if(!m) return;
+            let list = JSON.parse(localStorage.getItem('site_revs') || '[]');
+            list.push({u: session.name, t: m});
+            localStorage.setItem('site_revs', JSON.stringify(list));
+            document.getElementById('msg-rev').value = '';
+            renderRevs();
         }
-        function loadRevs() {
-            const list = document.getElementById('rev-list');
-            let revs = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
-            list.innerHTML = revs.map(r => `<div style="margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;"><b style="color:var(--main)">@${r.u}</b>: ${r.m}</div>`).join('');
+        function renderRevs() {
+            const box = document.getElementById('list-rev');
+            let list = JSON.parse(localStorage.getItem('site_revs') || '[]');
+            box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b style="color:var(--main)">@${i.u}</b>: ${i.t}</div>`).join('');
         }
 
-        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-        function toggleLang() { let n = document.getElementById('lang-name'); n.innerText = n.innerText === 'EN' ? 'RU' : 'EN'; }
+        function hideModals() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); }
+        function changeLang() { let l = document.getElementById('cur-lang'); l.innerText = l.innerText === 'EN' ? 'RU' : 'EN'; }
         function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
     </script>
 </body>
