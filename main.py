@@ -4,72 +4,112 @@ import threading
 from flask import Flask
 import os
 
-# --- 1. МИНИ-СЕРВЕР ДЛЯ ПОДДЕРЖКИ ЖИЗНИ (ЧТОБЫ RENDER НЕ СПАЛ) ---
+# --- 1. МИНИ-СЕРВЕР ДЛЯ ПОДДЕРЖКИ ЖИЗНИ (RENDER + CRON-JOB) ---
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    # Этот текст увидит Cron-job, когда будет заходить по ссылке
-    return "Бот Ильфана работает 24/7!"
+    return "Бот Ильфана активен 24/7!"
 
 def run_web_server():
-    # Порт 10000 или тот, который даст Render
+    # Render сам назначит порт через переменную PORT
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
 
-# --- 2. ЛОГИКА ТВОЕГО БОТА ---
-TOKEN = 'ТВОЙ_ТОКЕН_ОТ_BOTFATHER'
+# --- 2. НАСТРОЙКА БОТА С ТВОИМИ НОВЫМИ ДАННЫМИ ---
+TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
+ADMIN_ID = 2039589760
 bot = telebot.TeleBot(TOKEN)
+
+# Временное хранилище для данных заказа
+user_data = {}
+
+# --- 3. ЛОГИКА БОТА ---
 
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(types.KeyboardButton("🛒 КАТАЛОГ ПОЗ"), types.KeyboardButton("👤 МОЙ АККАУНТ"))
     
-    bot.send_message(
-        message.chat.id, 
-        f"Добро пожаловать в Ilfan's Poses Premium, {message.from_user.first_name}! 🔥\nВыбери нужный раздел ниже:", 
-        reply_markup=markup
-    )
+    bot.send_message(message.chat.id, 
+                     f"Привет, {message.from_user.first_name}! 🔥\nЯ помогу тебе заказать крутую позу. Выбери раздел:", 
+                     reply_markup=markup)
 
 @bot.message_handler(func=lambda message: message.text == "🛒 КАТАЛОГ ПОЗ")
 def catalog(message):
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    # Создаем кнопки для всех 11 поз
-    buttons = [types.InlineKeyboardButton(f"Поза #{i}", callback_data=f"buy_{i}") for i in range(1, 12)]
-    markup.add(*buttons)
-    
-    bot.send_message(message.chat.id, "Выберите позу для покупки:", reply_markup=markup)
+    markup = types.InlineKeyboardMarkup(row_width=3)
+    # Создаем кнопки для 11 поз
+    btns = [types.InlineKeyboardButton(f"Поза #{i}", callback_data=f"pose_{i}") for i in range(1, 12)]
+    markup.add(*btns)
+    bot.send_message(message.chat.id, "Выбери номер позы для заказа:", reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('buy_'))
-def choose_payment(call):
+@bot.callback_query_handler(func=lambda call: call.data.startswith('pose_'))
+def choose_skins(call):
     pose_id = call.data.split('_')[1]
+    user_data[call.message.chat.id] = {'pose': pose_id}
+    
     markup = types.InlineKeyboardMarkup()
-    btn1 = types.InlineKeyboardButton("💳 КАРТА (РФ/СНГ)", callback_data=f"pay_card_{pose_id}")
-    btn2 = types.InlineKeyboardButton("💎 КРИПТА / LIKECOIN", callback_data=f"pay_crypto_{pose_id}")
-    markup.add(btn1, btn2)
+    for i in range(1, 5):
+        markup.add(types.InlineKeyboardButton(f"{i} Скин(а)", callback_data=f"sk_{i}"))
     
-    bot.edit_message_text(
-        f"Вы выбрали Позу #{pose_id}. Выберите способ оплаты:",
-        chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
-        reply_markup=markup
-    )
+    bot.edit_message_text(f"Выбрана Поза #{pose_id}. Сколько скинов добавить?", 
+                          chat_id=call.message.chat.id, 
+                          message_id=call.message.message_id, 
+                          reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('pay_'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('sk_'))
+def choose_bg(call):
+    skins = call.data.split('_')[1]
+    user_data[call.message.chat.id]['skins'] = skins
+    
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("Прозрачный (PNG)", callback_data="bg_png"),
+               types.InlineKeyboardButton("Игровой фон (Карта)", callback_data="bg_game"))
+    
+    bot.edit_message_text(f"Количество скинов: {skins}. Выбери тип фона:", 
+                          chat_id=call.message.chat.id, 
+                          message_id=call.message.message_id, 
+                          reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('bg_'))
+def choose_pay(call):
+    bg = "Прозрачный" if "png" in call.data else "Игровой"
+    user_data[call.message.chat.id]['bg'] = bg
+    
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("💳 КАРТА", callback_data="p_card"),
+               types.InlineKeyboardButton("💎 КРИПТА / LIKECOIN", callback_data="p_crypto"))
+    
+    bot.edit_message_text(f"Выбран фон: {bg}.\nВыбери удобный способ оплаты:", 
+                          chat_id=call.message.chat.id, 
+                          message_id=call.message.message_id, 
+                          reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('p_'))
 def final(call):
-    method = "Карта" if "card" in call.data else "Крипта"
-    bot.send_message(call.message.chat.id, f"✅ Заявка создана!\nСпособ: {method}\n\nНапишите администратору @ТВОЙ_НИК для оплаты и получения файла.")
+    pay_method = "Карта" if "card" in call.data else "Крипта"
+    data = user_data.get(call.message.chat.id)
+    
+    # Сообщение клиенту
+    bot.send_message(call.message.chat.id, "✅ Твой заказ отправлен Ильфану! Он свяжется с тобой в ближайшее время.")
+    
+    # Уведомление тебе (админу)
+    admin_text = (f"🚀 НОВЫЙ ЗАКАЗ!\n\n"
+                  f"👤 Клиент: @{call.from_user.username}\n"
+                  f"🆔 ID клиента: {call.from_user.id}\n"
+                  f"🖼 Поза: #{data['pose']}\n"
+                  f"👥 Скинов: {data['skins']}\n"
+                  f"🌌 Фон: {data['bg']}\n"
+                  f"💰 Оплата: {pay_method}")
+    bot.send_message(ADMIN_ID, admin_text)
 
-# --- 3. ЗАПУСК ДВУХ ПРОЦЕССОВ ОДНОВРЕМЕННО ---
+# --- 4. ЗАПУСК ДВУХ ПРОЦЕССОВ ---
 if __name__ == '__main__':
-    # Сначала запускаем сервер-будильник в фоновом потоке
-    server_thread = threading.Thread(target=run_web_server)
-    server_thread.daemon = True
-    server_thread.start()
+    # Запускаем Flask в отдельном потоке
+    threading.Thread(target=run_web_server, daemon=True).start()
     
-    print("Веб-сервер запущен. Бот начинает работу...")
-    
-    # Теперь запускаем самого бота
+    print("Бот успешно запущен и готов к заказам!")
+    # Запуск бота
     bot.infinity_polling()
+    
     
