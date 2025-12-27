@@ -14,10 +14,9 @@
             font-family: 'Poppins', sans-serif; overflow: hidden;
         }
 
-        /* ТОТ САМЫЙ ФОН (СОЗВЕЗДИЯ) */
+        /* ТЕ САМЫЕ ЛИНИИ */
         #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* ВЕРХНЯЯ ПАНЕЛЬ */
         .top-bar {
             position: fixed; top: 20px; width: 100%; 
             display: flex; justify-content: space-between; padding: 0 40px;
@@ -43,13 +42,11 @@
             text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); margin: 0; font-weight: 900;
         }
 
-        /* КОНТЕНТ */
         .content {
             position: relative; z-index: 10; display: flex;
             align-items: center; justify-content: center; height: 100vh; gap: 30px;
         }
 
-        /* ОТЗЫВЫ (ЖЕЛТЫЙ) */
         .rev-trigger {
             display: flex; flex-direction: column; align-items: center; cursor: pointer;
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -63,7 +60,6 @@
         }
         .rev-label { color: var(--gold); font-size: 12px; font-weight: bold; margin-top: 10px; }
 
-        /* КАРТОЧКА */
         .card-wrapper {
             width: 450px; background: #0a0a0a; border-radius: 40px;
             padding: 20px; border: 1px solid #222; text-align: center;
@@ -84,7 +80,6 @@
         .arrow { font-size: 3.5rem; color: var(--gold); cursor: pointer; transition: 0.3s; }
         .arrow:hover { color: white; transform: scale(1.2); }
 
-        /* АККАУНТ В УГЛУ */
         .auth-circle {
             position: fixed; bottom: 30px; right: 30px;
             width: 65px; height: 65px; background: var(--main);
@@ -93,37 +88,37 @@
             cursor: pointer; z-index: 1000; box-shadow: 0 0 30px var(--main);
         }
 
-        /* МОДАЛКИ (ЦЕНТРИРОВАННЫЕ ПОЛЯ) */
+        /* МОДАЛКИ С ПЛАВНЫМ ПОЯВЛЕНИЕМ КОНТЕНТА */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); display: none;
             justify-content: center; align-items: center; z-index: 2000;
-            backdrop-filter: blur(10px); opacity: 0; transition: 0.4s;
+            backdrop-filter: blur(10px); opacity: 0; transition: opacity 0.4s ease;
         }
         .modal-overlay.show { display: flex; opacity: 1; }
+        
         .modal-box {
             background: #111; padding: 40px; border-radius: 35px;
             width: 380px; border: 1px solid #333; text-align: center;
-            transform: translateY(50px); transition: 0.4s;
-            display: flex; flex-direction: column; align-items: center; /* ЦЕНТРИРУЕМ ПО ГОРИЗОНТАЛИ */
+            transform: translateY(30px); transition: transform 0.4s ease;
+            display: flex; flex-direction: column; align-items: center;
         }
         .modal-overlay.show .modal-box { transform: translateY(0); }
-        
-        /* ИСПРАВЛЕННЫЕ ПОЛЯ ВВОДА */
-        input { 
-            width: 100%; 
-            max-width: 300px; /* Ограничиваем ширину для красоты */
-            padding: 15px; 
-            margin: 10px auto; /* Авто-отступы по бокам для центровки */
-            background: #1a1a1a; 
-            border: 1px solid #333; 
-            color: white; 
-            border-radius: 12px; 
-            box-sizing: border-box;
-            display: block;
-            text-align: center; /* Текст внутри тоже в центре */
+
+        /* ПЛАВНОСТЬ ДЛЯ ФОРМ ВВОДА */
+        #auth-inputs, #user-info {
+            width: 100%;
+            animation: fadeIn 0.6s ease; /* Тот самый плавный эффект */
         }
 
+        input { 
+            width: 100%; max-width: 300px; padding: 15px; 
+            margin: 10px auto; background: #1a1a1a; 
+            border: 1px solid #333; color: white; border-radius: 12px; 
+            box-sizing: border-box; display: block; text-align: center;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
@@ -175,12 +170,12 @@
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-box">
             <h2 style="color:var(--main)" id="t-acc">ACCOUNT</h2>
-            <div id="auth-inputs" style="width: 100%;">
+            <div id="auth-inputs">
                 <input type="text" id="u-nick" placeholder="Username">
                 <input type="password" id="u-pass" placeholder="Password">
                 <button class="order-btn" onclick="authHandle()" id="t-cont">CONTINUE</button>
             </div>
-            <div id="user-info" style="display:none; width: 100%;">
+            <div id="user-info" style="display:none;">
                 <h3 id="hi-msg"></h3>
                 <button class="order-btn" style="background:#222; color:white" onclick="logout()" id="t-out">LOGOUT</button>
             </div>
@@ -199,7 +194,7 @@
     </div>
 
     <script>
-        // --- 1. ПЛЕКСУС (ЗЕЛЕНЫЕ ЛИНИИ) ---
+        // --- ПЛЕКСУС ---
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
@@ -224,10 +219,10 @@
         }
         window.onresize = init; init(); draw();
 
-        // --- 2. ЯЗЫКИ (ПЕРЕВОД) ---
+        // --- ПЕРЕВОД ---
         const i18n = {
-            en: { main: "ILFAN'S POSES", rev: "REVIEWS", order: "ORDER NOW", acc: "ACCOUNT", cont: "CONTINUE", out: "LOGOUT", close: "CLOSE", send: "SEND", placeholder: "Write review...", hi: "Hello, " },
-            ru: { main: "ПОЗИНГИ ИЛЬФАНА", rev: "ОТЗЫВЫ", order: "ЗАКАЗАТЬ", acc: "АККАУНТ", cont: "ПРОДОЛЖИТЬ", out: "ВЫЙТИ", close: "ЗАКРЫТЬ", send: "ОТПРАВИТЬ", placeholder: "Напишите отзыв...", hi: "Привет, " }
+            en: { main: "ILFAN'S POSES", rev: "REVIEWS", order: "ORDER NOW", acc: "ACCOUNT", cont: "CONTINUE", out: "LOGOUT", close: "CLOSE", send: "SEND", placeholder: "Write review...", hi: "Hello, ", loginErr: "Wrong password!", welcomeNew: "Welcome! Account created." },
+            ru: { main: "ПОЗИНГИ ИЛЬФАНА", rev: "ОТЗЫВЫ", order: "ЗАКАЗАТЬ", acc: "АККАУНТ", cont: "ПРОДОЛЖИТЬ", out: "ВЫЙТИ", close: "ЗАКРЫТЬ", send: "ОТПРАВИТЬ", placeholder: "Напишите отзыв...", hi: "Привет, ", loginErr: "Неверный пароль!", welcomeNew: "Добро пожаловать! Аккаунт создан." }
         };
 
         function setLang(l) {
@@ -253,7 +248,7 @@
             m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        // --- 3. СЛАЙДЕР ---
+        // --- СЛАЙДЕР ---
         let curCard = 0;
         const cards = document.querySelectorAll('.card');
         function nav(d) {
@@ -262,11 +257,11 @@
             cards[curCard].classList.add('active');
         }
 
-        // --- 4. МОДАЛКИ И АККАУНТ ---
+        // --- ЛОГИКА ВХОДА И РЕГИСТРАЦИИ ---
         let user = JSON.parse(localStorage.getItem('ilfan_user')) || null;
 
         function openModal(id) {
-            if(id === 'rev-modal' && !user) { alert("Please login!"); return openModal('auth-modal'); }
+            if(id === 'rev-modal' && !user) { alert(i18n[localStorage.getItem('lang')||'en'].hi === "Привет, " ? "Войдите в аккаунт!" : "Please login!"); return openModal('auth-modal'); }
             document.getElementById(id).classList.add('show');
             if(id === 'auth-modal' && user) {
                 document.getElementById('auth-inputs').style.display = 'none';
@@ -279,15 +274,34 @@
         function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
 
         function authHandle() {
-            const u = document.getElementById('u-nick').value;
-            const p = document.getElementById('u-pass').value;
+            const u = document.getElementById('u-nick').value.trim();
+            const p = document.getElementById('u-pass').value.trim();
+            const lang = localStorage.getItem('lang') || 'en';
             if(!u || !p) return;
+
             let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
-            if(!db[u]) { db[u] = p; localStorage.setItem('ilfan_db', JSON.stringify(db)); }
-            if(db[u] === p) {
-                user = {name: u}; localStorage.setItem('ilfan_user', JSON.stringify(user));
-                location.reload();
-            } else alert("Error!");
+            
+            // Если пользователя нет - РЕГИСТРАЦИЯ
+            if(!db[u]) {
+                db[u] = p;
+                localStorage.setItem('ilfan_db', JSON.stringify(db));
+                alert(i18n[lang].welcomeNew);
+                saveAndLogin(u);
+            } 
+            // Если пользователь есть - ВХОД
+            else {
+                if(db[u] === p) {
+                    saveAndLogin(u);
+                } else {
+                    alert(i18n[lang].loginErr);
+                }
+            }
+        }
+
+        function saveAndLogin(name) {
+            user = {name: name};
+            localStorage.setItem('ilfan_user', JSON.stringify(user));
+            location.reload();
         }
 
         function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
