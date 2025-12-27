@@ -48,18 +48,6 @@
             align-items: center; justify-content: center; height: 100vh; gap: 30px;
         }
 
-        .rev-trigger {
-            display: flex; flex-direction: column; align-items: center; cursor: pointer;
-            transition: 0.4s;
-        }
-        .rev-trigger:hover { transform: scale(1.1); }
-        .rev-icon {
-            width: 75px; height: 75px; border: 2.5px solid var(--gold);
-            border-radius: 20px; display: flex; align-items: center;
-            justify-content: center; font-size: 32px; color: var(--gold);
-        }
-        .rev-label { color: var(--gold); font-size: 12px; font-weight: bold; margin-top: 10px; }
-
         .card-wrapper {
             width: 450px; background: #0a0a0a; border-radius: 40px;
             padding: 20px; border: 1px solid #222; text-align: center;
@@ -84,58 +72,48 @@
             cursor: pointer; z-index: 1000;
         }
 
-        /* МОДАЛКИ */
+        /* МОДАЛЬНЫЕ ОКНА */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none;
+            background: rgba(0,0,0,0.8); display: none;
             justify-content: center; align-items: center; z-index: 2000;
-            backdrop-filter: blur(10px); opacity: 0; transition: 0.4s;
+            backdrop-filter: blur(10px);
         }
-        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-overlay.show { display: flex; animation: fadeIn 0.3s forwards; }
         
         .modal-box {
             background: #111; padding: 40px; border-radius: 35px;
-            width: 400px; border: 1px solid #333; text-align: center;
-            display: flex; flex-direction: column; align-items: center;
+            width: 380px; border: 1px solid #333; text-align: center;
         }
 
-        /* КНОПКИ В ОДИН РЯД */
-        .auth-buttons {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 300px;
-            margin-top: 10px;
-            justify-content: center;
-        }
-        .auth-buttons button {
-            flex: 1; /* Кнопки будут одинакового размера */
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: 0.3s;
-        }
-        .btn-login { background: var(--main); color: black; }
-        .btn-reg { background: #222; color: white; border: 1px solid #444; }
-        .btn-reg:hover { background: #333; }
-
-        /* ПЛАВНОСТЬ ПОЛЕЙ */
-        #auth-inputs {
-            width: 100%;
-            animation: slideUp 0.5s ease forwards;
+        /* ПЛАВНОЕ ОТКРЫТИЕ ПОЛЕЙ (ANIMATION) */
+        .smooth-open {
+            animation: slideDown 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
         }
 
+        /* СТИЛЬ ИНПУТОВ И КНОПОК КАК НА СКРИНШОТЕ */
         input { 
-            width: 100%; max-width: 300px; padding: 15px; 
-            margin: 10px auto; background: #1a1a1a; 
-            border: 1px solid #333; color: white; border-radius: 12px; 
-            text-align: center; display: block;
+            width: 100%; padding: 15px; margin-bottom: 15px;
+            background: #1a1a1a; border: 1px solid #333; 
+            color: white; border-radius: 12px; box-sizing: border-box;
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .auth-row {
+            display: flex; gap: 10px; margin-top: 5px;
+        }
+        .auth-row button {
+            flex: 1; padding: 12px; border-radius: 12px; 
+            font-weight: bold; cursor: pointer; border: none; transition: 0.3s;
+        }
+        .btn-reg { background: #222; color: white; border: 1px solid #444; }
+        .btn-login { background: var(--main); color: black; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { 
+            from { opacity: 0; transform: translateY(-20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -154,25 +132,11 @@
     </div>
 
     <div class="content">
-        <div class="rev-trigger" onclick="openModal('rev-modal')">
-            <div class="rev-icon"><i class="fas fa-comment-dots"></i></div>
-            <div class="rev-label" id="t-rev-label">ОТЗЫВЫ</div>
-        </div>
-
         <div class="arrow" onclick="nav(-1)">❮</div>
         <div class="card-wrapper">
             <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()" id="b1">ЗАКАЗАТЬ</button></div>
             <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()" id="b2">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose3.jpg"><button class="order-btn" onclick="buy()" id="b3">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose4.jpg"><button class="order-btn" onclick="buy()" id="b4">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose5.jpg"><button class="order-btn" onclick="buy()" id="b5">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose6.jpg"><button class="order-btn" onclick="buy()" id="b6">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose7.jpg"><button class="order-btn" onclick="buy()" id="b7">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose8.jpg"><button class="order-btn" onclick="buy()" id="b8">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose9.jpg"><button class="order-btn" onclick="buy()" id="b9">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose10.jpg"><button class="order-btn" onclick="buy()" id="b10">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose11.jpg"><button class="order-btn" onclick="buy()" id="b11">ЗАКАЗАТЬ</button></div>
-        </div>
+            </div>
         <div class="arrow" onclick="nav(1)">❯</div>
     </div>
 
@@ -180,49 +144,43 @@
 
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-box">
-            <h2 style="color:var(--main); margin-bottom: 20px;">ACCOUNT</h2>
-            <div id="auth-inputs">
+            <h2 style="color:var(--main); margin-top:0;">ACCOUNT</h2>
+            
+            <div id="auth-inputs" class="smooth-open">
                 <input type="text" id="u-nick" placeholder="Username">
                 <input type="password" id="u-pass" placeholder="Password">
-                <div class="auth-buttons">
+                
+                <div class="auth-row">
                     <button class="btn-reg" onclick="handleAuth('reg')">Регистрация</button>
                     <button class="btn-login" onclick="handleAuth('login')">Войти</button>
                 </div>
             </div>
-            <div id="user-info" style="display:none;">
-                <h3 id="hi-msg"></h3>
-                <button class="order-btn" style="background:#222; color:white; margin-top:10px;" onclick="logout()">LOGOUT</button>
-            </div>
-            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:25px;">CLOSE</p>
-        </div>
-    </div>
 
-    <div class="modal-overlay" id="rev-modal">
-        <div class="modal-box" style="width: 450px;">
-            <h2 style="color:var(--gold)" id="t-rev-head">ОТЗЫВЫ</h2>
-            <div id="rev-list" style="max-height: 250px; overflow-y: auto; text-align: left; padding: 10px; width: 100%;"></div>
-            <input type="text" id="rev-in" placeholder="...">
-            <button class="order-btn" style="background:var(--gold)" onclick="sendRev()" id="t-send-btn">ОТПРАВИТЬ</button>
-            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;">CLOSE</p>
+            <div id="user-info" style="display:none;" class="smooth-open">
+                <h3 id="hi-msg"></h3>
+                <button class="order-btn" style="background:#222; color:white;" onclick="logout()">ВЫЙТИ</button>
+            </div>
+
+            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:25px;">ЗАКРЫТЬ</p>
         </div>
     </div>
 
     <script>
         // ЛОГИКА АВТОРИЗАЦИИ
-        function handleAuth(type) {
+        function handleAuth(mode) {
             const u = document.getElementById('u-nick').value.trim();
             const p = document.getElementById('u-pass').value.trim();
             if(!u || !p) return;
-            
+
             let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
 
-            if(type === 'reg') {
-                if(db[u]) { alert("Этот ник уже занят!"); return; }
+            if(mode === 'reg') {
+                if(db[u]) return alert("Ник занят!");
                 db[u] = p;
                 localStorage.setItem('ilfan_db', JSON.stringify(db));
-                alert("Успешная регистрация!");
+                alert("Успешно зарегистрировано!");
             }
-            
+
             if(db[u] === p) {
                 localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
                 location.reload();
@@ -231,12 +189,12 @@
             }
         }
 
-        // ЯЗЫКИ И ОСТАЛЬНОЕ
-        const flagMap = { ru: "🇷🇺 RU", en: "🇺🇸 EN", am: "🇦🇲 AM", ar: "🇸🇦 AR", fr: "🇫🇷 FR", tr: "🇹🇷 TR", ko: "🇰🇷 KO", ja: "🇯🇵 JA", zh: "🇨🇳 ZH", kk: "🇰🇿 KK", es: "🇪🇸 ES", it: "🇮🇹 IT", fa: "🇮🇷 FA", el: "🇬🇷 EL", uk: "🇺🇦 UK", hi: "🇮🇳 HI", uz: "🇺🇿 UZ", ky: "🇰🇬 KY", he: "🇮🇱 HE", vi: "🇻🇳 VI" };
+        // ЯЗЫКИ (20 ШТУК)
+        const flags = {ru:"🇷🇺 RU", en:"🇺🇸 EN", am:"🇦🇲 AM", ar:"🇸🇦 AR", fr:"🇫🇷 FR", tr:"🇹🇷 TR", ko:"🇰🇷 KO", ja:"🇯🇵 JA", zh:"🇨🇳 ZH", kk:"🇰🇿 KK", es:"🇪🇸 ES", it:"🇮🇹 IT", fa:"🇮🇷 FA", el:"🇬🇷 EL", uk:"🇺🇦 UK", hi:"🇮🇳 HI", uz:"🇺🇿 UZ", ky:"🇰🇬 KY", he:"🇮🇱 HE", vi:"🇻🇳 VI"};
 
         function renderLangMenu() {
             const menu = document.getElementById('l-menu');
-            menu.innerHTML = Object.keys(langs).map(k => `<div onclick="setLang('${k}')">${flagMap[k] || k.toUpperCase()}</div>`).join('');
+            menu.innerHTML = Object.keys(langs).map(k => `<div onclick="setLang('${k}')">${flags[k]}</div>`).join('');
         }
 
         function setLang(l) {
@@ -245,12 +203,7 @@
             document.getElementById('l-menu').style.display = 'none';
             const t = langs[l] || langs['ru'];
             document.getElementById('t-main').innerText = t.title;
-            document.getElementById('t-rev-label').innerText = t.label;
-            document.getElementById('t-rev-head').innerText = t.head;
-            document.getElementById('t-send-btn').innerText = t.send;
-            document.getElementById('rev-in').placeholder = t.msg;
-            document.getElementById('u-nick').placeholder = t.nick;
-            document.querySelectorAll('.order-btn').forEach(b => { if(b.id.startsWith('b')) b.innerText = t.buy; });
+            document.querySelectorAll('.order-btn').forEach(b => b.innerText = t.buy);
         }
 
         function toggleLangMenu() {
@@ -258,18 +211,18 @@
             m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
         }
 
+        // ОБЩИЕ ФУНКЦИИ
         let curCard = 0;
-        const cards = document.querySelectorAll('.card');
         function nav(d) {
+            const cards = document.querySelectorAll('.card');
             cards[curCard].classList.remove('active');
             curCard = (curCard + d + cards.length) % cards.length;
             cards[curCard].classList.add('active');
         }
 
-        let user = JSON.parse(localStorage.getItem('ilfan_user')) || null;
         function openModal(id) {
-            if(id === 'rev-modal' && !user) { alert("Войдите в аккаунт!"); return openModal('auth-modal'); }
             document.getElementById(id).classList.add('show');
+            let user = JSON.parse(localStorage.getItem('ilfan_user'));
             if(id === 'auth-modal' && user) {
                 document.getElementById('auth-inputs').style.display = 'none';
                 document.getElementById('user-info').style.display = 'block';
@@ -279,46 +232,36 @@
 
         function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
         function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
-        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
-        function sendRev() {
-            const m = document.getElementById('rev-in').value; if(!m) return;
-            let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
-            list.push({u: user.name, t: m});
-            localStorage.setItem('ilfan_revs', JSON.stringify(list));
-            document.getElementById('rev-in').value = '';
-            renderRevs();
-        }
-        function renderRevs() {
-            const box = document.getElementById('rev-list');
-            let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
-            box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b>@${i.u}</b>: ${i.t}</div>`).join('');
+        function toggleLangMenu() {
+            let m = document.getElementById('l-menu');
+            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        // ПЛЕКСУС
+        // ПЛЕКСУС (ЛИНИИ)
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             dots = [];
-            for(let i=0; i<100; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:Math.random()-0.5, vy:Math.random()-0.5});
+            for(let i=0; i<80; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:Math.random()-0.5, vy:Math.random()-0.5});
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#00ff88"; ctx.strokeStyle = "#00ff88";
+            ctx.fillStyle="#00ff88"; ctx.strokeStyle="#00ff88";
             dots.forEach(d => {
-                d.x += d.vx; d.y += d.vy;
-                if(d.x<0 || d.x>canvas.width) d.vx*=-1; if(d.y<0 || d.y>canvas.height) d.vy*=-1;
-                ctx.beginPath(); ctx.arc(d.x, d.y, 2, 0, Math.PI*2); ctx.fill();
+                d.x+=d.vx; d.y+=d.vy;
+                if(d.x<0||d.x>canvas.width) d.vx*=-1; if(d.y<0||d.y>canvas.height) d.vy*=-1;
+                ctx.beginPath(); ctx.arc(d.x,d.y,2,0,Math.PI*2); ctx.fill();
                 dots.forEach(d2 => {
                     let dist = Math.hypot(d.x-d2.x, d.y-d2.y);
-                    if(dist < 130) { ctx.globalAlpha = 1 - dist/130; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d2.x, d2.y); ctx.stroke(); }
+                    if(dist<120) { ctx.globalAlpha=1-dist/120; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(d2.x,d2.y); ctx.stroke(); }
                 });
             });
-            requestAnimationFrame(draw);
+            ctx.globalAlpha=1; requestAnimationFrame(draw);
         }
 
-        window.onload = () => { init(); draw(); renderLangMenu(); setLang(localStorage.getItem('lang') || 'ru'); };
+        window.onload = () => { init(); draw(); renderLangMenu(); setLang(localStorage.getItem('lang')||'ru'); };
         window.onresize = init;
     </script>
 </body>
