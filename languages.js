@@ -14,7 +14,7 @@ const langs = {
     fa: { title: "ژست های الفان", buy: "اکنون سفارش دهید", head: "نظرات", send: "ارسال", nick: "نام کاربری", msg: "نظر شما...", label: "نظرات" },
     el: { title: "ΠΟΣΕΙΣ ΤΟΥ ILFAN", buy: "ΠΑΡΑΓΓΕΙΛΤΕ ΤΩΡΑ", head: "ΚΡΙΤΙΚΕΣ", send: "ΑΠΟΣΤΟΛΗ", nick: "Όνομα Roblox", msg: "Η κριτική σας...", label: "ΚΡΙΤΙΚΕΣ" },
     uk: { title: "ПОЗИНГИ ІЛЬФАНА", buy: "ЗАМОВИТИ", head: "ВІДГУКИ", send: "ВІДПРАВИТИ", nick: "Нік у Roblox", msg: "Ваш відгук...", label: "ВІДГУКИ" },
-    hi: { title: "इल्फान की पोज़", buy: "अभी ऑर्डर करें", head: "समीक्षाएं", send: "भेজें", nick: "रोब्लॉक्स निक", msg: "आपकी समीक्षा...", label: "समीक्षाएं" },
+    hi: { title: "इल्फан की पोज़", buy: "अभी ऑर्डर करें", head: "समीक्षाएं", send: "भेजें", nick: "रोब्लॉक्स निक", msg: "आपकी समीक्षा...", label: "समीक्षाएं" },
     uz: { title: "ILFAN POZALARI", buy: "BUYURTMA BERISH", head: "FIKRLAR", send: "YUBORISH", nick: "Roblox niki", msg: "Fikringiz...", label: "FIKRLAR" },
     ky: { title: "ИЛЬФАНДЫН ПОЗАЛАРЫ", buy: "ТАПШЫРЫК БЕРҮҮ", head: "ПИКИРЛЕР", send: "ЖӨНӨТҮҮ", nick: "Roblox ник", msg: "Пикириңиз...", label: "ПИКИРЛЕР" },
     he: { title: "הפוזות של אילפן", buy: "הזמן עכשיו", head: "ביקורות", send: "שלח", nick: "כינוי רובלוקס", msg: "הביקורת שלך...", label: "ביקורות" },
