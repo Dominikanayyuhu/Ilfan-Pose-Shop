@@ -30,14 +30,13 @@
         header { padding: 40px 20px; text-align: center; }
         h1 { color: var(--primary-color); text-transform: uppercase; letter-spacing: 3px; font-size: 2.5rem; margin: 0; }
 
-        /* Слайдер */
         .slider-container {
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             margin: 30px 0;
         }
 
@@ -48,9 +47,8 @@
             border: 1px solid #222;
             width: 350px;
             text-align: center;
-            display: none; /* Скрыты по умолчанию */
+            display: none;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease;
         }
 
         .pose-card.active { 
@@ -83,7 +81,6 @@
             transform: scale(1.05);
         }
 
-        /* Качественные золотые стрелки */
         .arrow {
             background: none;
             border: none;
@@ -95,7 +92,6 @@
         .arrow i { color: var(--gold); font-size: 3.5rem; filter: drop-shadow(0 0 10px rgba(255,204,0,0.3)); }
         .arrow:hover i { color: #fff; transform: scale(1.2); }
 
-        /* Отзывы */
         .reviews-section {
             width: 90%;
             max-width: 450px;
@@ -106,7 +102,6 @@
             padding-bottom: 10px; 
             text-transform: uppercase; 
             color: var(--text-dim);
-            letter-spacing: 1px;
         }
         .review-card {
             background: #111;
@@ -115,16 +110,14 @@
             margin-bottom: 15px;
             border-left: 4px solid var(--gold);
         }
-        .stars { color: var(--gold); margin-bottom: 8px; font-size: 0.9rem; }
-        .review-text { font-style: italic; margin-bottom: 10px; line-height: 1.4; }
+        .stars { color: var(--gold); margin-bottom: 8px; }
         .reviewer-name { color: var(--primary-color); font-weight: bold; font-size: 0.8rem; }
 
         @keyframes slideFade {
-            from { opacity: 0; transform: scale(0.9) translateX(30px); }
-            to { opacity: 1; transform: scale(1) translateX(0); }
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* Экран ожидания после клика */
         #status-screen { display: none; text-align: center; padding: 100px 20px; }
         .loader {
             border: 4px solid #222;
@@ -150,29 +143,17 @@
                 <i class="fas fa-chevron-left"></i>
             </button>
 
-            <div class="pose-card active">
-                <div class="image-container"><img src="pose1.jpg" alt="Blue Pose"></div>
-                <div class="info">
-                    <span class="order-label">ORDER</span>
-                    <button class="order-btn" onclick="goToBot()">Order Now!</button>
-                </div>
-            </div>
-
-            <div class="pose-card">
-                <div class="image-container"><img src="pose2.jpg" alt="Red Pose"></div>
-                <div class="info">
-                    <span class="order-label">ORDER</span>
-                    <button class="order-btn" onclick="goToBot()">Order Now!</button>
-                </div>
-            </div>
-
-            <div class="pose-card">
-                <div class="image-container"><img src="pose3.jpg" alt="Last Pose"></div>
-                <div class="info">
-                    <span class="order-label">ORDER</span>
-                    <button class="order-btn" onclick="goToBot()">Order Now!</button>
-                </div>
-            </div>
+            <div class="pose-card active"><div class="image-container"><img src="pose1.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose2.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose3.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose4.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose5.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose6.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose7.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose8.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose9.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose10.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
+            <div class="pose-card"><div class="image-container"><img src="pose11.jpg"></div><div class="info"><span class="order-label">ORDER</span><button class="order-btn" onclick="goToBot()">Order Now!</button></div></div>
 
             <button class="arrow" onclick="changeSlide(1)">
                 <i class="fas fa-chevron-right"></i>
@@ -183,12 +164,12 @@
             <h3>Customer Reviews</h3>
             <div class="review-card">
                 <div class="stars">★★★★★</div>
-                <p class="review-text">"Amazing quality! The pose looks exactly like I wanted. Fast delivery!"</p>
+                <p>"Best quality poses for Roblox. Fast and professional!"</p>
                 <span class="reviewer-name">@RobloxFanatic123</span>
             </div>
             <div class="review-card">
                 <div class="stars">★★★★★</div>
-                <p class="review-text">"Super cool poses, Ilfan is really talented. Highly recommend this shop!"</p>
+                <p>"The lightning effects are amazing. Thanks Ilfan!"</p>
                 <span class="reviewer-name">@EpicGamer2024</span>
             </div>
         </div>
@@ -197,7 +178,7 @@
     <div id="status-screen">
         <div class="loader"></div>
         <h2>Redirecting to Telegram...</h2>
-        <p style="color: var(--text-dim)">Please complete your order in the bot. Ilfan is waiting for your details!</p>
+        <p style="color: var(--text-dim)">Please complete your order in the bot.</p>
     </div>
 
     <script>
@@ -211,10 +192,8 @@
         }
 
         function goToBot() {
-            // ЗАМЕНИ НА ЮЗЕРНЕЙМ СВОЕГО БОТА
             const botUser = 'ZakazIlfanaBot'; 
             window.open(`https://t.me/${botUser}?start=website_order`, "_blank");
-            
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('site-header').style.display = 'none';
             document.getElementById('status-screen').style.display = 'block';
