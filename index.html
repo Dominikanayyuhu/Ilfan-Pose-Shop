@@ -14,7 +14,7 @@
             font-family: 'Poppins', sans-serif; overflow: hidden;
         }
 
-        /* ТЕ САМЫЕ ЛИНИИ */
+        /* ПЛЕКСУС (СОЗВЕЗДИЯ) */
         #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
         .top-bar {
@@ -23,6 +23,7 @@
             box-sizing: border-box; z-index: 100;
         }
 
+        /* МЕНЮ ЯЗЫКОВ (20 ЯЗЫКОВ) */
         .lang-container { position: relative; }
         .lang-btn {
             background: rgba(0,0,0,0.6); border: 1.5px solid white; color: white;
@@ -32,9 +33,14 @@
         .lang-menu {
             position: absolute; top: 45px; right: 0; background: #111;
             border: 1px solid #333; border-radius: 15px; display: none;
-            flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            flex-direction: column; max-height: 300px; overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 1000;
         }
-        .lang-menu div { padding: 10px 20px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
+        /* Кастомизация скролла меню */
+        .lang-menu::-webkit-scrollbar { width: 5px; }
+        .lang-menu::-webkit-scrollbar-thumb { background: var(--main); border-radius: 10px; }
+
+        .lang-menu div { padding: 10px 20px; cursor: pointer; transition: 0.3s; white-space: nowrap; font-size: 14px; }
         .lang-menu div:hover { background: var(--main); color: black; }
 
         .title {
@@ -88,27 +94,26 @@
             cursor: pointer; z-index: 1000; box-shadow: 0 0 30px var(--main);
         }
 
-        /* МОДАЛКИ С ПЛАВНЫМ ПОЯВЛЕНИЕМ КОНТЕНТА */
+        /* ПЛАВНЫЕ МОДАЛКИ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); display: none;
             justify-content: center; align-items: center; z-index: 2000;
-            backdrop-filter: blur(10px); opacity: 0; transition: opacity 0.4s ease;
+            backdrop-filter: blur(10px); opacity: 0; transition: 0.4s;
         }
         .modal-overlay.show { display: flex; opacity: 1; }
-        
         .modal-box {
             background: #111; padding: 40px; border-radius: 35px;
             width: 380px; border: 1px solid #333; text-align: center;
-            transform: translateY(30px); transition: transform 0.4s ease;
+            transform: translateY(30px); transition: 0.4s;
             display: flex; flex-direction: column; align-items: center;
         }
         .modal-overlay.show .modal-box { transform: translateY(0); }
-
-        /* ПЛАВНОСТЬ ДЛЯ ФОРМ ВВОДА */
+        
+        /* ПЛАВНОЕ ПОЯВЛЕНИЕ ПОЛЕЙ ВНУТРИ */
         #auth-inputs, #user-info {
             width: 100%;
-            animation: fadeIn 0.6s ease; /* Тот самый плавный эффект */
+            animation: slideUp 0.5s ease forwards;
         }
 
         input { 
@@ -118,7 +123,7 @@
             box-sizing: border-box; display: block; text-align: center;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
@@ -136,6 +141,24 @@
             <div class="lang-menu" id="l-menu">
                 <div onclick="setLang('en')">🇺🇸 English</div>
                 <div onclick="setLang('ru')">🇷🇺 Русский</div>
+                <div onclick="setLang('zh')">🇨🇳 中文 (Chinese)</div>
+                <div onclick="setLang('es')">🇪🇸 Español</div>
+                <div onclick="setLang('fr')">🇫🇷 Français</div>
+                <div onclick="setLang('de')">🇩🇪 Deutsch</div>
+                <div onclick="setLang('ja')">🇯🇵 日本語</div>
+                <div onclick="setLang('ko')">🇰🇷 한국어</div>
+                <div onclick="setLang('ar')">SA العربية</div>
+                <div onclick="setLang('pt')">🇵🇹 Português</div>
+                <div onclick="setLang('it')">🇮🇹 Italiano</div>
+                <div onclick="setLang('tr')">🇹🇷 Türkçe</div>
+                <div onclick="setLang('hi')">🇮🇳 हिन्दी</div>
+                <div onclick="setLang('vi')">🇻🇳 Tiếng Việt</div>
+                <div onclick="setLang('th')">🇹🇭 ไทย</div>
+                <div onclick="setLang('nl')">🇳🇱 Nederlands</div>
+                <div onclick="setLang('pl')">🇵🇱 Polski</div>
+                <div onclick="setLang('id')">🇮🇩 B. Indonesia</div>
+                <div onclick="setLang('sv')">🇸🇪 Svenska</div>
+                <div onclick="setLang('uk')">🇺🇦 Українська</div>
             </div>
         </div>
     </div>
@@ -194,7 +217,7 @@
     </div>
 
     <script>
-        // --- ПЛЕКСУС ---
+        // --- ЛИНИИ (ПЛЕКСУС) ---
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
@@ -219,17 +242,19 @@
         }
         window.onresize = init; init(); draw();
 
-        // --- ПЕРЕВОД ---
+        // --- ПЕРЕВОД (Расширенный) ---
         const i18n = {
-            en: { main: "ILFAN'S POSES", rev: "REVIEWS", order: "ORDER NOW", acc: "ACCOUNT", cont: "CONTINUE", out: "LOGOUT", close: "CLOSE", send: "SEND", placeholder: "Write review...", hi: "Hello, ", loginErr: "Wrong password!", welcomeNew: "Welcome! Account created." },
-            ru: { main: "ПОЗИНГИ ИЛЬФАНА", rev: "ОТЗЫВЫ", order: "ЗАКАЗАТЬ", acc: "АККАУНТ", cont: "ПРОДОЛЖИТЬ", out: "ВЫЙТИ", close: "ЗАКРЫТЬ", send: "ОТПРАВИТЬ", placeholder: "Напишите отзыв...", hi: "Привет, ", loginErr: "Неверный пароль!", welcomeNew: "Добро пожаловать! Аккаунт создан." }
+            en: { main: "ILFAN'S POSES", rev: "REVIEWS", order: "ORDER NOW", acc: "ACCOUNT", cont: "CONTINUE", out: "LOGOUT", close: "CLOSE", send: "SEND", ph: "Write...", hi: "Hello, ", err: "Wrong Password!" },
+            ru: { main: "ПОЗИНГИ ИЛЬФАНА", rev: "ОТЗЫВЫ", order: "ЗАКАЗАТЬ", acc: "АККАУНТ", cont: "ПРОДОЛЖИТЬ", out: "ВЫЙТИ", close: "ЗАКРЫТЬ", send: "ОТПРАВИТЬ", ph: "Пишите...", hi: "Привет, ", err: "Неверный пароль!" },
+            zh: { main: "ILFAN 的姿势", rev: "评论", order: "现在下单", acc: "账户", cont: "继续", out: "登出", close: "关闭", send: "发送", ph: "写评论...", hi: "你好, ", err: "密码错误!" }
+            // Можно добавить переводы для остальных языков по аналогии
         };
 
         function setLang(l) {
             localStorage.setItem('lang', l);
             document.getElementById('cur-lang-label').innerText = l.toUpperCase();
             document.getElementById('l-menu').style.display = 'none';
-            const t = i18n[l];
+            const t = i18n[l] || i18n['en'];
             document.getElementById('t-main').innerText = t.main;
             document.getElementById('t-rev-link').innerText = t.rev;
             document.getElementById('t-rev-head').innerText = t.rev;
@@ -240,7 +265,7 @@
             document.getElementById('t-close1').innerText = t.close;
             document.getElementById('t-close2').innerText = t.close;
             document.getElementById('t-send').innerText = t.send;
-            document.getElementById('rev-in').placeholder = t.placeholder;
+            document.getElementById('rev-in').placeholder = t.ph;
         }
 
         function toggleLangMenu() {
@@ -257,55 +282,38 @@
             cards[curCard].classList.add('active');
         }
 
-        // --- ЛОГИКА ВХОДА И РЕГИСТРАЦИИ ---
+        // --- ВХОД / РЕГИСТРАЦИЯ ---
         let user = JSON.parse(localStorage.getItem('ilfan_user')) || null;
 
         function openModal(id) {
-            if(id === 'rev-modal' && !user) { alert(i18n[localStorage.getItem('lang')||'en'].hi === "Привет, " ? "Войдите в аккаунт!" : "Please login!"); return openModal('auth-modal'); }
+            if(id === 'rev-modal' && !user) { alert("Login first!"); return openModal('auth-modal'); }
             document.getElementById(id).classList.add('show');
             if(id === 'auth-modal' && user) {
                 document.getElementById('auth-inputs').style.display = 'none';
                 document.getElementById('user-info').style.display = 'block';
                 document.getElementById('hi-msg').innerText = (i18n[localStorage.getItem('lang')||'en'].hi) + user.name;
             }
-            if(id === 'rev-modal') renderRevs();
         }
-
-        function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
 
         function authHandle() {
             const u = document.getElementById('u-nick').value.trim();
             const p = document.getElementById('u-pass').value.trim();
-            const lang = localStorage.getItem('lang') || 'en';
             if(!u || !p) return;
-
             let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
-            
-            // Если пользователя нет - РЕГИСТРАЦИЯ
-            if(!db[u]) {
+            if(!db[u]) { // Регистрация
                 db[u] = p;
                 localStorage.setItem('ilfan_db', JSON.stringify(db));
-                alert(i18n[lang].welcomeNew);
-                saveAndLogin(u);
-            } 
-            // Если пользователь есть - ВХОД
-            else {
-                if(db[u] === p) {
-                    saveAndLogin(u);
-                } else {
-                    alert(i18n[lang].loginErr);
-                }
             }
-        }
-
-        function saveAndLogin(name) {
-            user = {name: name};
-            localStorage.setItem('ilfan_user', JSON.stringify(user));
-            location.reload();
+            if(db[u] === p) { // Вход
+                user = {name: u};
+                localStorage.setItem('ilfan_user', JSON.stringify(user));
+                location.reload();
+            } else { alert(i18n[localStorage.getItem('lang')||'en'].err); }
         }
 
         function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
-
+        function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
+        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
         function sendRev() {
             const m = document.getElementById('rev-in').value; if(!m) return;
             let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
@@ -314,14 +322,11 @@
             document.getElementById('rev-in').value = '';
             renderRevs();
         }
-
         function renderRevs() {
             const box = document.getElementById('rev-list');
             let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
             box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b style="color:var(--main)">@${i.u}</b>: ${i.t}</div>`).join('');
         }
-
-        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
 
         window.onload = () => { setLang(localStorage.getItem('lang') || 'en'); };
     </script>
