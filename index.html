@@ -3,284 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilfan's Poses</title>
+    <title>Ilfan's Premium Poses</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
-        /* Глобальные стили - ФОН ВСЕГДА ЧЕРНЫЙ */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #050505 !important; /* Ультра-черный */
-            color: white;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+        /* ТВОЙ ПРЕЖНИЙ ДИЗАЙН */
+        :root { --main: #00ff88; --gold: #ffcc00; --bg: #0a0a0a; }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Анимированный фон (эффект свечения) */
-        .bg-glow {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
+        /* Эффект частиц на фоне (упрощенный, чтобы не грузил) */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0a0a0a 100%);
             z-index: -1;
         }
 
-        header {
-            text-align: center;
-            padding: 50px 0 20px;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            letter-spacing: 8px;
-            color: #00ff88;
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
-            margin: 0;
+        header { margin-top: 60px; text-align: center; }
+        h1 { 
+            font-size: 2.8rem; letter-spacing: 5px; color: var(--main); 
+            text-shadow: 0 0 20px rgba(0,255,136,0.4); 
             text-transform: uppercase;
         }
 
-        /* Контейнер слайдера */
-        .slider-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 50px;
+        /* СЛАЙДЕР С ТВОИМИ ЭФФЕКТАМИ */
+        .main-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-top: 50px; }
+        
+        .card { 
+            background: #111; border-radius: 40px; padding: 25px; width: 300px; 
+            border: 1px solid #222; display: none; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .card.active { display: block; animation: zoomIn 0.5s ease-out; }
+        .card img { width: 100%; border-radius: 25px; filter: grayscale(20%); transition: 0.4s; }
+        .card img:hover { filter: grayscale(0%); transform: scale(1.03); }
 
-        .card {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 30px;
-            padding: 15px;
-            width: 300px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            display: none; /* Скрыто по умолчанию для JS */
-            text-align: center;
+        .order-btn { 
+            background: linear-gradient(45deg, var(--main), #00d4ff); 
+            border: none; padding: 18px; width: 100%; border-radius: 18px; 
+            font-weight: bold; cursor: pointer; margin-top: 20px; color: black;
             transition: 0.3s;
         }
+        .order-btn:hover { box-shadow: 0 10px 30px rgba(0,255,136,0.4); transform: translateY(-3px); }
 
-        .card.active {
-            display: block;
-            animation: cardShow 0.6s ease-out;
+        /* КНОПКА ВХОДА (ПРАВЫЙ НИЖНИЙ УГОЛ) */
+        .auth-fab {
+            position: fixed; bottom: 35px; right: 35px;
+            width: 65px; height: 65px; background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(15px); border: 1px solid rgba(0,255,136,0.3);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 26px; color: var(--main); cursor: pointer; z-index: 9999;
+            transition: 0.4s; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .auth-fab:hover { background: var(--main); color: black; box-shadow: 0 0 30px var(--main); }
+        
+        .user-label {
+            position: fixed; bottom: 50px; right: 110px;
+            background: rgba(0,0,0,0.7); padding: 6px 18px;
+            border-radius: 30px; border: 1px solid var(--main);
+            color: var(--main); font-weight: bold; display: none; font-size: 14px;
         }
 
-        .card img {
-            width: 100%;
-            border-radius: 20px;
-            margin-bottom: 15px;
+        /* МОДАЛКИ В СТИЛЕ "GLASSMORPHISM" */
+        .modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            display: none; justify-content: center; align-items: center; z-index: 10000;
+        }
+        .modal-content { 
+            background: #111; padding: 35px; border-radius: 35px; 
+            width: 90%; max-width: 360px; border: 1px solid #333; text-align: center;
+            animation: zoomIn 0.3s ease;
+        }
+        
+        .tab-box { display: flex; gap: 20px; margin-bottom: 25px; }
+        .tab { flex: 1; padding-bottom: 10px; cursor: pointer; color: #444; font-weight: bold; border-bottom: 2px solid #222; }
+        .tab.active { color: var(--main); border-bottom-color: var(--main); }
+
+        input { 
+            width: 100%; background: #1a1a1a; border: 1px solid #333; 
+            padding: 15px; border-radius: 15px; color: white; margin-bottom: 15px; 
+            box-sizing: border-box; outline: none;
         }
 
-        .order-btn {
-            background: #00ff88;
-            color: black;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+        .arrow { font-size: 2.5rem; color: #222; cursor: pointer; transition: 0.3s; }
+        .arrow:hover { color: var(--main); }
 
-        .order-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px #00ff88;
-        }
-
-        /* КНОПКА ВХОДА В УГЛУ */
-        .auth-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #00ff88;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 9999;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-        }
-
-        .auth-btn:hover {
-            background: #00ff88;
-            color: black;
-        }
-
-        .user-name-tag {
-            position: fixed;
-            bottom: 45px;
-            right: 100px;
-            color: #00ff88;
-            font-weight: bold;
-            font-size: 14px;
-            display: none;
-        }
-
-        /* МОДАЛКИ */
-        .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        .modal-content {
-            background: #111;
-            padding: 30px;
-            border-radius: 30px;
-            width: 320px;
-            border: 1px solid #333;
-            text-align: center;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: white;
-            border-radius: 10px;
-            box-sizing: border-box;
-        }
-
-        .arrow {
-            font-size: 30px;
-            color: #333;
-            cursor: pointer;
-            transition: 0.3s;
-            user-select: none;
-        }
-
-        .arrow:hover { color: #00ff88; }
-
-        @keyframes cardShow {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
+    <div id="user-label" class="user-label"></div>
+    <div class="auth-fab" onclick="toggleAuth()"><i class="fas fa-user-astronaut"></i></div>
 
-    <header>
-        <h1>ILFAN'S POSES</h1>
-    </header>
+    <header><h1>ILFAN POSES</h1></header>
 
-    <div class="slider-wrapper">
+    <div class="main-container">
         <div class="arrow" onclick="move(-1)">❮</div>
         
-        <div class="card active">
-            <img src="pose1.jpg" alt="Pose 1">
-            <button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button>
-        </div>
-        <div class="card">
-            <img src="pose2.jpg" alt="Pose 2">
-            <button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button>
-        </div>
-        <div class="card">
-            <img src="pose3.jpg" alt="Pose 3">
-            <button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button>
-        </div>
+        <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+        <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+        <div class="card"><img src="pose3.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
 
         <div class="arrow" onclick="move(1)">❯</div>
-    </div>
-
-    <div id="user-tag" class="user-name-tag"></div>
-    <div class="auth-btn" onclick="openAuth()">
-        <i class="fas fa-user-shield"></i>
     </div>
 
     <div class="modal" id="auth-modal">
         <div class="modal-content">
             <div id="auth-form">
-                <h3 id="form-title">Вход</h3>
-                <input type="text" id="login-u" placeholder="Никнейм">
-                <input type="password" id="login-p" placeholder="Пароль">
-                <button class="order-btn" onclick="doAuth()">Войти / Регистрация</button>
-                <p style="font-size: 11px; color: #555; margin-top: 15px;">Если аккаунта нет, он создастся автоматически</p>
+                <div class="tab-box">
+                    <div id="t-login" class="tab active" onclick="setMode('login')">ВХОД</div>
+                    <div id="t-reg" class="tab" onclick="setMode('reg')">РЕГИСТРАЦИЯ</div>
+                </div>
+                <input type="text" id="auth-u" placeholder="Никнейм">
+                <input type="password" id="auth-p" placeholder="Пароль">
+                <button class="order-btn" onclick="authAction()">ПОДТВЕРДИТЬ</button>
             </div>
-            <div id="user-view" style="display:none;">
-                <h2 id="hi-name" style="color:#00ff88"></h2>
-                <button class="order-btn" style="background:#222; color:white;" onclick="logout()">Выйти</button>
+            <div id="profile-view" style="display:none;">
+                <h2 id="user-hi" style="color:var(--main);"></h2>
+                <button class="order-btn" style="background:#222; color:white;" onclick="logout()">ВЫЙТИ</button>
             </div>
-            <p onclick="closeAuth()" style="cursor:pointer; color:#444; margin-top:20px;">Закрыть</p>
+            <p onclick="toggleAuth()" style="margin-top:25px; cursor:pointer; color:#444; font-size:12px;">ЗАКРЫТЬ</p>
         </div>
     </div>
 
     <script>
-        // ЛОГИКА СЛАЙДЕРА
-        let currentCard = 0;
+        // СЛАЙДЕР
+        let cur = 0;
         const cards = document.querySelectorAll('.card');
-        
-        function move(dir) {
-            cards[currentCard].classList.remove('active');
-            currentCard = (currentCard + dir + cards.length) % cards.length;
-            cards[currentCard].classList.add('active');
+        function move(d) {
+            cards[cur].classList.remove('active');
+            cur = (cur + d + cards.length) % cards.length;
+            cards[cur].classList.add('active');
         }
 
-        // ЛОГИКА АККАУНТОВ (Всё в одном)
+        // ЛОГИКА АККАУНТОВ + 4 ДНЯ
         let currentUser = JSON.parse(localStorage.getItem('ilfan_user')) || null;
+        let authMode = 'login';
 
         function checkSession() {
-            const lastVisit = localStorage.getItem('ilfan_last_visit');
+            const last = localStorage.getItem('ilfan_last_visit');
             const now = Date.now();
-            // 4 дня = 345600000 мс
-            if (currentUser && lastVisit && (now - lastVisit > 345600000)) {
+            if(currentUser && last && (now - last > 345600000)) { // 4 дня
                 logout();
                 alert("Сессия истекла");
             }
             localStorage.setItem('ilfan_last_visit', now);
         }
 
-        function openAuth() {
-            document.getElementById('auth-modal').style.display = 'flex';
+        function toggleAuth() {
+            const m = document.getElementById('auth-modal');
+            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
             if(currentUser) {
                 document.getElementById('auth-form').style.display = 'none';
-                document.getElementById('user-view').style.display = 'block';
-                document.getElementById('hi-name').innerText = "Привет, " + currentUser.name;
+                document.getElementById('profile-view').style.display = 'block';
+                document.getElementById('user-hi').innerText = "Привет, " + currentUser.name;
+            } else {
+                document.getElementById('auth-form').style.display = 'block';
+                document.getElementById('profile-view').style.display = 'none';
             }
         }
 
-        function closeAuth() {
-            document.getElementById('auth-modal').style.display = 'none';
+        function setMode(m) {
+            authMode = m;
+            document.getElementById('t-login').classList.toggle('active', m === 'login');
+            document.getElementById('t-reg').classList.toggle('active', m === 'reg');
         }
 
-        function doAuth() {
-            const u = document.getElementById('login-u').value.trim();
-            const p = document.getElementById('login-p').value.trim();
-            if(!u || !p) return alert("Заполни всё!");
+        function authAction() {
+            const u = document.getElementById('auth-u').value.trim();
+            const p = document.getElementById('auth-p').value.trim();
+            if(!u || !p) return alert("Заполни поля");
 
             let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
 
-            // Простая логика: если ника нет - регистрируем, если есть - проверяем пароль
-            if(!db[u]) {
+            if(authMode === 'reg') {
+                if(db[u]) return alert("Ник занят");
                 db[u] = p;
                 localStorage.setItem('ilfan_db', JSON.stringify(db));
-                alert("Аккаунт создан!");
-            }
-
-            if(db[u] === p) {
-                currentUser = { name: u };
-                localStorage.setItem('ilfan_user', JSON.stringify(currentUser));
-                localStorage.setItem('ilfan_last_visit', Date.now());
-                location.reload();
+                alert("Аккаунт создан! Теперь войди.");
+                setMode('login');
             } else {
-                alert("Неверный пароль!");
+                if(db[u] === p) {
+                    currentUser = { name: u };
+                    localStorage.setItem('ilfan_user', JSON.stringify(currentUser));
+                    localStorage.setItem('ilfan_last_visit', Date.now());
+                    location.reload();
+                } else { alert("Неверные данные"); }
             }
         }
 
@@ -291,12 +211,11 @@
 
         function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
 
-        // Инициализация
         window.onload = () => {
             checkSession();
             if(currentUser) {
-                document.getElementById('user-tag').innerText = currentUser.name;
-                document.getElementById('user-tag').style.display = 'block';
+                document.getElementById('user-label').innerText = currentUser.name;
+                document.getElementById('user-label').style.display = 'block';
             }
         };
     </script>
