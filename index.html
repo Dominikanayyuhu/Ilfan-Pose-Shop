@@ -7,12 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="languages.js"></script>
     <style>
-        :root { 
-            --main: #00ff88; 
-            --gold: #ffcc00; 
-            --bg: #000; 
-            --dark-card: #111;
-        }
+        :root { --main: #00ff88; --gold: #ffcc00; --bg: #000; }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -20,7 +15,6 @@
             font-family: 'Poppins', sans-serif; overflow: hidden;
         }
 
-        /* Фоновая сетка (Plexus) */
         #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
         .top-bar {
@@ -29,21 +23,56 @@
             box-sizing: border-box; z-index: 100;
         }
 
-        /* Выбор языка */
+        /* КРАСИВОЕ МЕНЮ ВЫБОРА ЯЗЫКА */
         .lang-container { position: relative; }
+        
         .lang-btn {
-            background: rgba(0,0,0,0.6); border: 1.5px solid white; color: white;
-            padding: 8px 15px; border-radius: 20px; cursor: pointer;
-            display: flex; align-items: center; gap: 8px; font-weight: bold;
+            background: rgba(20, 20, 20, 0.8); 
+            border: 1.5px solid #333; 
+            color: white;
+            padding: 10px 20px; 
+            border-radius: 30px; 
+            cursor: pointer;
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-weight: bold;
+            transition: 0.3s;
         }
+        .lang-btn:hover { border-color: var(--main); }
+
         .lang-menu {
-            position: absolute; top: 45px; right: 0; background: #111;
-            border: 1px solid #333; border-radius: 15px; display: none;
-            flex-direction: column; max-height: 300px; overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 1000;
+            position: absolute; 
+            top: 55px; 
+            right: 0; 
+            background: #0f0f0f; 
+            border: 1px solid #222; 
+            border-radius: 20px; 
+            display: none;
+            flex-direction: column; 
+            min-width: 160px;
+            max-height: 350px; 
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9); 
+            z-index: 1000;
+            padding: 10px;
         }
-        .lang-menu div { padding: 10px 20px; cursor: pointer; transition: 0.3s; }
-        .lang-menu div:hover { background: var(--main); color: black; }
+        
+        /* Стилизация полосы прокрутки внутри меню */
+        .lang-menu::-webkit-scrollbar { width: 4px; }
+        .lang-menu::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .lang-menu div { 
+            padding: 12px 15px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            border-radius: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lang-menu div:hover { background: #1a1a1a; color: var(--main); }
 
         .title {
             color: var(--main); font-size: 2.8rem; letter-spacing: 6px;
@@ -55,7 +84,6 @@
             align-items: center; justify-content: center; height: 100vh; gap: 30px;
         }
 
-        /* Кнопка отзывов */
         .rev-trigger {
             display: flex; flex-direction: column; align-items: center; cursor: pointer;
             transition: 0.4s;
@@ -68,7 +96,6 @@
         }
         .rev-label { color: var(--gold); font-size: 12px; font-weight: bold; margin-top: 10px; }
 
-        /* Слайдер карточек */
         .card-wrapper {
             width: 450px; background: #0a0a0a; border-radius: 40px;
             padding: 20px; border: 1px solid #222; text-align: center;
@@ -93,7 +120,7 @@
             cursor: pointer; z-index: 1000;
         }
 
-        /* Модальные окна */
+        /* МОДАЛКИ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); display: none;
@@ -107,11 +134,6 @@
             width: 380px; border: 1px solid #333; text-align: center;
         }
 
-        /* Плавное открытие (как просил) */
-        .smooth-open {
-            animation: slideDown 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
-        }
-
         input { 
             width: 100%; padding: 15px; margin-bottom: 15px;
             background: #1a1a1a; border: 1px solid #333; 
@@ -119,23 +141,15 @@
             text-align: center;
         }
 
-        /* Контейнер для симметричных кнопок */
-        .auth-row {
-            display: flex; gap: 10px; width: 100%; margin-top: 5px;
-        }
+        .auth-row { display: flex; gap: 10px; width: 100%; margin-top: 5px; }
         .auth-row button {
-            flex: 1; /* Одинаковая ширина для обоих кнопок */
-            padding: 12px; border-radius: 12px; 
+            flex: 1; padding: 12px; border-radius: 12px; 
             font-weight: bold; cursor: pointer; border: none; transition: 0.3s;
         }
         .btn-reg { background: #222; color: white; border: 1px solid #444; }
         .btn-login { background: var(--main); color: black; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideDown { 
-            from { opacity: 0; transform: translateY(-20px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
@@ -146,6 +160,7 @@
     <div class="top-bar">
         <div style="width: 100px;"></div>
         <h1 class="title" id="t-main">ILFAN'S POSES</h1>
+        
         <div class="lang-container">
             <button class="lang-btn" onclick="toggleLangMenu()">
                 <i class="fas fa-globe"></i> <span id="cur-lang-label">RU</span>
@@ -165,16 +180,7 @@
         <div class="card-wrapper">
             <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()" id="b1">ЗАКАЗАТЬ</button></div>
             <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()" id="b2">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose3.jpg"><button class="order-btn" onclick="buy()" id="b3">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose4.jpg"><button class="order-btn" onclick="buy()" id="b4">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose5.jpg"><button class="order-btn" onclick="buy()" id="b5">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose6.jpg"><button class="order-btn" onclick="buy()" id="b6">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose7.jpg"><button class="order-btn" onclick="buy()" id="b7">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose8.jpg"><button class="order-btn" onclick="buy()" id="b8">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose9.jpg"><button class="order-btn" onclick="buy()" id="b9">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose10.jpg"><button class="order-btn" onclick="buy()" id="b10">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose11.jpg"><button class="order-btn" onclick="buy()" id="b11">ЗАКАЗАТЬ</button></div>
-        </div>
+            </div>
 
         <div class="arrow" onclick="nav(1)">❯</div>
     </div>
@@ -183,31 +189,27 @@
 
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-box">
-            <h2 style="color:var(--main); margin-top:0; margin-bottom: 25px;">ACCOUNT</h2>
-            
-            <div id="auth-inputs" class="smooth-open">
-                <input type="text" id="u-nick" placeholder="Ник Roblox">
+            <h2 style="color:var(--main); margin-bottom: 25px;">ACCOUNT</h2>
+            <div id="auth-inputs">
+                <input type="text" id="u-nick" placeholder="Username">
                 <input type="password" id="u-pass" placeholder="Password">
-                
                 <div class="auth-row">
                     <button class="btn-reg" onclick="handleAuth('reg')">Регистрация</button>
                     <button class="btn-login" onclick="handleAuth('login')">Войти</button>
                 </div>
             </div>
-
-            <div id="user-info" style="display:none;" class="smooth-open">
+            <div id="user-info" style="display:none;">
                 <h3 id="hi-msg"></h3>
-                <button class="order-btn" style="background:#222; color:white; margin-top:10px;" onclick="logout()">ВЫЙТИ</button>
+                <button class="order-btn" style="background:#222; color:white;" onclick="logout()">ВЫЙТИ</button>
             </div>
-
-            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:30px; font-size: 14px;">CLOSE</p>
+            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:30px;">CLOSE</p>
         </div>
     </div>
 
     <div class="modal-overlay" id="rev-modal">
         <div class="modal-box" style="width: 450px;">
             <h2 style="color:var(--gold)" id="t-rev-head">ОТЗЫВЫ</h2>
-            <div id="rev-list" style="max-height: 250px; overflow-y: auto; text-align: left; padding: 10px; width: 100%; margin-bottom: 15px; border: 1px solid #222; border-radius: 15px;"></div>
+            <div id="rev-list" style="max-height: 250px; overflow-y: auto; text-align: left; padding: 10px; border: 1px solid #222; border-radius: 15px; margin-bottom: 10px;"></div>
             <input type="text" id="rev-in" placeholder="...">
             <button class="order-btn" style="background:var(--gold)" onclick="sendRev()" id="t-send-btn">ОТПРАВИТЬ</button>
             <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;">CLOSE</p>
@@ -215,35 +217,38 @@
     </div>
 
     <script>
-        // АВТОРИЗАЦИЯ
-        function handleAuth(mode) {
-            const u = document.getElementById('u-nick').value.trim();
-            const p = document.getElementById('u-pass').value.trim();
-            if(!u || !p) return;
-
-            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
-
-            if(mode === 'reg') {
-                if(db[u]) return alert("Ник занят!");
-                db[u] = p;
-                localStorage.setItem('ilfan_db', JSON.stringify(db));
-                alert("Успешно зарегистрировано!");
-            }
-
-            if(db[u] === p) {
-                localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
-                location.reload();
-            } else {
-                alert("Неверный пароль!");
-            }
-        }
-
-        // ЯЗЫКИ (20 СТРАН)
-        const flags = {ru:"🇷🇺 RU", en:"🇺🇸 EN", am:"🇦🇲 AM", ar:"🇸🇦 AR", fr:"🇫🇷 FR", tr:"🇹🇷 TR", ko:"🇰🇷 KO", ja:"🇯🇵 JA", zh:"🇨🇳 ZH", kk:"🇰🇿 KK", es:"🇪🇸 ES", it:"🇮🇹 IT", fa:"🇮🇷 FA", el:"🇬🇷 EL", uk:"🇺🇦 UK", hi:"🇮🇳 HI", uz:"🇺🇿 UZ", ky:"🇰🇬 KY", he:"🇮🇱 HE", vi:"🇻🇳 VI"};
+        // Флаги и названия для меню
+        const langData = {
+            ru: { flag: "🇷🇺", name: "Русский" },
+            en: { flag: "🇺🇸", name: "English" },
+            am: { flag: "🇦🇲", name: "Հայերեն" },
+            ar: { flag: "🇸🇦", name: "العربية" },
+            fr: { flag: "🇫🇷", name: "Français" },
+            tr: { flag: "🇹🇷", name: "Türkçe" },
+            ko: { flag: "🇰🇷", name: "한국어" },
+            ja: { flag: "🇯🇵", name: "日本語" },
+            zh: { flag: "🇨🇳", name: "中文" },
+            kk: { flag: "🇰🇿", name: "Қазақ" },
+            es: { flag: "🇪🇸", name: "Español" },
+            it: { flag: "🇮🇹", name: "Italiano" },
+            fa: { flag: "🇮🇷", name: "فارسی" },
+            el: { flag: "🇬🇷", name: "Ελληνικά" },
+            uk: { flag: "🇺🇦", name: "Українська" },
+            hi: { flag: "🇮🇳", name: "हिन्दी" },
+            uz: { flag: "🇺🇿", name: "O'zbek" },
+            ky: { flag: "🇰🇬", name: "Кыргызча" },
+            he: { flag: "🇮🇱", name: "עברית" },
+            vi: { flag: "🇻🇳", name: "Tiếng Việt" }
+        };
 
         function renderLangMenu() {
             const menu = document.getElementById('l-menu');
-            menu.innerHTML = Object.keys(langs).map(k => `<div onclick="setLang('${k}')">${flags[k]}</div>`).join('');
+            menu.innerHTML = Object.keys(langs).map(k => `
+                <div onclick="setLang('${k}')">
+                    <span>${langData[k].flag}</span>
+                    <span>${langData[k].name}</span>
+                </div>
+            `).join('');
         }
 
         function setLang(l) {
@@ -251,7 +256,6 @@
             document.getElementById('cur-lang-label').innerText = l.toUpperCase();
             document.getElementById('l-menu').style.display = 'none';
             const t = langs[l] || langs['ru'];
-            
             document.getElementById('t-main').innerText = t.title;
             document.getElementById('t-rev-label').innerText = t.label;
             document.getElementById('t-rev-head').innerText = t.head;
@@ -266,7 +270,24 @@
             m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        // СЛАЙДЕР
+        // Авторизация
+        function handleAuth(mode) {
+            const u = document.getElementById('u-nick').value.trim();
+            const p = document.getElementById('u-pass').value.trim();
+            if(!u || !p) return;
+            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
+            if(mode === 'reg') {
+                if(db[u]) return alert("Ник занят!");
+                db[u] = p;
+                localStorage.setItem('ilfan_db', JSON.stringify(db));
+                alert("Успешно!");
+            }
+            if(db[u] === p) {
+                localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
+                location.reload();
+            } else { alert("Ошибка!"); }
+        }
+
         let curCard = 0;
         function nav(d) {
             const cards = document.querySelectorAll('.card');
@@ -275,7 +296,21 @@
             cards[curCard].classList.add('active');
         }
 
-        // ОТЗЫВЫ
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+            let user = JSON.parse(localStorage.getItem('ilfan_user'));
+            if(id === 'auth-modal' && user) {
+                document.getElementById('auth-inputs').style.display = 'none';
+                document.getElementById('user-info').style.display = 'block';
+                document.getElementById('hi-msg').innerText = "Привет, " + user.name;
+            }
+            if(id === 'rev-modal') renderRevs();
+        }
+
+        function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
+        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
+        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
+
         function sendRev() {
             const m = document.getElementById('rev-in').value; if(!m) return;
             let user = JSON.parse(localStorage.getItem('ilfan_user'));
@@ -289,35 +324,17 @@
         function renderRevs() {
             const box = document.getElementById('rev-list');
             let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
-            box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b style="color:var(--main)">@${i.u}</b>: ${i.t}</div>`).join('');
+            box.innerHTML = list.map(i => `<div style="margin-bottom:10px; border-bottom:1px solid #222; padding-bottom:5px;"><b>@${i.u}</b>: ${i.t}</div>`).join('');
         }
 
-        // МОДАЛКИ
-        function openModal(id) {
-            let user = JSON.parse(localStorage.getItem('ilfan_user'));
-            if(id === 'rev-modal' && !user) { alert("Войдите в аккаунт!"); return openModal('auth-modal'); }
-            
-            document.getElementById(id).classList.add('show');
-            if(id === 'auth-modal' && user) {
-                document.getElementById('auth-inputs').style.display = 'none';
-                document.getElementById('user-info').style.display = 'block';
-                document.getElementById('hi-msg').innerText = "Привет, " + user.name;
-            }
-            if(id === 'rev-modal') renderRevs();
-        }
-
-        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
-        function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
-        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
-
-        // ЭФФЕКТ ПЛЕКСУСА
+        // Плексус
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             dots = [];
-            for(let i=0; i<90; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:Math.random()-0.5, vy:Math.random()-0.5});
+            for(let i=0; i<80; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:Math.random()-0.5, vy:Math.random()-0.5});
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -328,10 +345,10 @@
                 ctx.beginPath(); ctx.arc(d.x,d.y,2,0,Math.PI*2); ctx.fill();
                 dots.forEach(d2 => {
                     let dist = Math.hypot(d.x-d2.x, d.y-d2.y);
-                    if(dist<125) { ctx.globalAlpha=1-dist/125; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(d2.x,d2.y); ctx.stroke(); }
+                    if(dist<120) { ctx.globalAlpha=1-dist/120; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(d2.x,d2.y); ctx.stroke(); }
                 });
             });
-            ctx.globalAlpha=1; requestAnimationFrame(draw);
+            requestAnimationFrame(draw);
         }
 
         window.onload = () => { init(); draw(); renderLangMenu(); setLang(localStorage.getItem('lang')||'ru'); };
@@ -339,3 +356,4 @@
     </script>
 </body>
 </html>
+
