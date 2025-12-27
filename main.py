@@ -20,61 +20,89 @@ ADMIN_ID = 2039589760
 bot = telebot.TeleBot(API_TOKEN)
 
 user_orders = {}
+# Список тех, кто уже сделал заказ
+completed_orders = set()
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    cid = message.chat.id
+    if cid in completed_orders:
+        bot.send_message(cid, "Вы уже сделали заказ, пожалуйста подождите какое-то время")
+        return
     shop_link = "https://dominikanayyuhu.github.io/Ilfan-Pose-Shop/" 
-    bot.send_message(message.chat.id, f"👋 Привет! Магазин тут: {shop_link}\n🎬 Пришли видео оплаты для заказа.")
+    bot.send_message(cid, f"👋 Привет! Магазин тут: {shop_link}\n🎬 Пришли видео оплаты для заказа.")
 
 @bot.message_handler(content_types=['video', 'video_note'])
 def handle_payment_video(message):
-    user_orders[message.chat.id] = {'video_id': message.video.file_id if message.video else message.video_note.file_id}
-    bot.send_message(message.chat.id, "🖼 Теперь пришли ФОН (скриншот или картинку):")
+    cid = message.chat.id
+    if cid in completed_orders:
+        bot.send_message(cid, "Вы уже сделали заказ, пожалуйста подождите какое-то время")
+        return
+    user_orders[cid] = {
+        'video_id': message.video.file_id if message.video else message.video_note.file_id,
+        'state': 'WAITING_PHOTO'
+    }
+    bot.send_message(cid, "🖼 Теперь пришли ФОН (скриншот или картинку):")
 
 @bot.message_handler(content_types=['photo'])
 def handle_background(message):
-    if message.chat.id in user_orders:
-        user_orders[message.chat.id]['photo_id'] = message.photo[-1].file_id
-        bot.send_message(message.chat.id, "👤 Напиши свой ник в Roblox:")
-    else:
-        bot.send_message(message.chat.id, "Сначала пришли видео оплаты!")
-
-@bot.message_handler(func=lambda m: m.chat.id in user_orders and 'nickname' not in user_orders[m.chat.id])
-def handle_nickname(message):
-    user_orders[message.chat.id]['nickname'] = message.text
-    bot.send_message(message.chat.id, "🔢 Сколько персонажей будет в позинге? (От 1 до 10):")
-
-@bot.message_handler(func=lambda m: m.chat.id in user_orders and 'chars_count' not in user_orders[m.chat.id])
-def handle_chars(message):
-    text = message.text
-    if text.isdigit():
-        num = int(text)
-        if 1 <= num <= 10:
-            user_orders[message.chat.id]['chars_count'] = num
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            markup.add("Робуксы", "мм2 годли", "Телеграм-звёзды")
-            bot.send_message(message.chat.id, "💳 Выбери вид оплаты (ты можешь нажать другую кнопку, если передумаешь):", reply_markup=markup)
-        else:
-            bot.send_message(message.chat.id, f"⚠️ Больше 10 персонажей нельзя, напишите число меньше {num}")
-    else:
-        bot.send_message(message.chat.id, "Пожалуйста, введи число.")
-
-@bot.message_handler(func=lambda m: m.chat.id in user_orders and m.text in ["Робуксы", "мм2 годли", "Телеграм-звёзды"])
-def handle_payment_selection(message):
     cid = message.chat.id
-    choice = message.text
-    user_orders[cid]['payment_method'] = choice
-    
-    if choice == "Робуксы":
-        msg = "💵 Вы выбрали робуксы, пожалуйста оплатите заказ по ссылке: https://www.roblox.com/games/18925562723/Позинги"
-    elif choice == "мм2 годли":
-        msg = "🔪 Вы выбрали годли, пожалуйста свяжитесь с владельцем (@HokhikyanHokhikyans) для оплаты."
+    if cid in completed_orders:
+        bot.send_message(cid, "Вы уже сделали заказ, пожалуйста подождите какое-то время")
+        return
+    if cid in user_orders and user_orders[cid].get('state') == 'WAITING_PHOTO':
+        user_orders[cid]['photo_id'] = message.photo[-1].file_id
+        user_orders[cid]['state'] = 'WAITING_NICKNAME'
+        bot.send_message(cid, "👤 Напиши свой ник в Roblox:")
     else:
-        msg = "🌟 Вы выбрали звезды, оплатите по юзернейму @HokhikyanHokhikyans"
+        bot.send_message(cid, "Сначала пришли видео оплаты!")
 
-    markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("✅ Я ОПЛАТИЛ(А)", callback_data="confirm_pay"))
-    bot.send_message(cid, msg, reply_markup=markup)
+@bot.message_handler(func=lambda m: True, content_types=['text'])
+def handle_all_text(message):
+    cid = message.chat.id
+    if cid in completed_orders:
+        bot.send_message(cid, "Вы уже сделали заказ, пожалуйста подождите какое-то время")
+        return
+    
+    if cid not in user_orders:
+        bot.send_message(cid, "Напиши /start, чтобы начать заказ.")
+        return
+
+    state = user_orders[cid].get('state')
+
+    if state == 'WAITING_NICKNAME':
+        user_orders[cid]['nickname'] = message.text
+        user_orders[cid]['state'] = 'WAITING_CHARS'
+        bot.send_message(cid, "🔢 Сколько персонажей будет в позинге? (От 1 до 10):")
+
+    elif state == 'WAITING_CHARS':
+        if message.text.isdigit():
+            num = int(message.text)
+            if 1 <= num <= 10:
+                user_orders[cid]['chars_count'] = num
+                user_orders[cid]['state'] = 'WAITING_PAYMENT'
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                markup.add("Робуксы", "мм2 годли", "Телеграм-звёзды")
+                bot.send_message(cid, "💳 Выбери вид оплаты:", reply_markup=markup)
+            else:
+                bot.send_message(cid, f"⚠️ Больше 10 персонажей нельзя, напишите число меньше {num}")
+        else:
+            bot.send_message(cid, "Пожалуйста, введи число.")
+
+    elif state == 'WAITING_PAYMENT' or message.text in ["Робуксы", "мм2 годли", "Телеграм-звёзды"]:
+        choice = message.text
+        if choice in ["Робуксы", "мм2 годли", "Телеграм-звёзды"]:
+            user_orders[cid]['payment_method'] = choice
+            if choice == "Робуксы":
+                msg = "💵 Вы выбрали робуксы, оплатите по ссылке: https://www.roblox.com/games/18925562723/Позинги"
+            elif choice == "мм2 годли":
+                msg = "🔪 Вы выбрали годли, свяжитесь с владельцем (@HokhikyanHokhikyans) для оплаты."
+            else:
+                msg = "🌟 Вы выбрали звезды, оплатите по юзернейму @HokhikyanHokhikyans"
+
+            markup = types.InlineKeyboardMarkup()
+            markup.add(types.InlineKeyboardButton("✅ Я ОПЛАТИЛ(А)", callback_data="confirm_pay"))
+            bot.send_message(cid, msg, reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data == "confirm_pay")
 def final_step(call):
@@ -86,16 +114,15 @@ def final_step(call):
                    f"👥 Кол-во персонажей: {order['chars_count']}\n"
                    f"💰 Оплата: {order['payment_method']}")
         
-        # Отправка тебе
         bot.send_message(ADMIN_ID, summary)
         bot.send_video(ADMIN_ID, order['video_id'], caption="Видео оплаты")
         bot.send_photo(ADMIN_ID, order['photo_id'], caption="Фон")
         
-        # Ответ клиенту
+        # Добавляем пользователя в список выполнивших заказ
+        completed_orders.add(cid)
+        
         bot.send_message(cid, "🚀 Все данные переданы! Ожидайте заказ. Владелец скоро свяжется с вами.", reply_markup=types.ReplyKeyboardRemove())
         del user_orders[cid]
-    else:
-        bot.send_message(cid, "Ошибка. Попробуйте начать заново через /start")
 
 if __name__ == "__main__":
     keep_alive()
