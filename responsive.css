@@ -1,0 +1,123 @@
+/* --- ПЛАНШЕТЫ (ширина до 1024px) --- */
+@media screen and (max-width: 1024px) {
+    .title {
+        font-size: 2rem;
+        letter-spacing: 4px;
+    }
+    .card-wrapper {
+        width: 380px;
+    }
+    .rev-icon {
+        width: 65px;
+        height: 65px;
+        font-size: 28px;
+    }
+}
+
+/* --- ТЕЛЕФОНЫ (ширина до 600px) --- */
+@media screen and (max-width: 600px) {
+    /* Общие настройки экрана */
+    body, html {
+        overflow-y: auto; /* Позволяем прокрутку, если контент не влез */
+    }
+
+    /* ВЕРХНЯЯ ПАНЕЛЬ (исправленная) */
+    .top-bar {
+        padding: 0 15px;
+        top: 15px;
+        display: grid; 
+        grid-template-columns: 1fr auto; 
+        align-items: center;
+        width: 100%;
+        gap: 5px;
+    }
+
+    /* Убираем пустой отступ слева, который мешал на мобилках */
+    .top-bar div[style*="width: 100px"], 
+    .top-bar div[style*="width:100px"] {
+        display: none !important;
+    }
+
+    .title {
+        font-size: 1.1rem; /* Маленький размер, чтобы не вытеснял язык */
+        letter-spacing: 1px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* Кнопка языка */
+    .lang-container {
+        justify-self: end;
+    }
+
+    .lang-btn {
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 15px;
+    }
+
+    .lang-menu {
+        min-width: 250px;
+        right: 0;
+        top: 40px;
+        grid-template-columns: 1fr; /* В один столбик на телефоне удобнее */
+        padding: 10px;
+        border-radius: 15px;
+    }
+
+    /* ЦЕНТРАЛЬНЫЙ КОНТЕНТ */
+    .content {
+        flex-direction: column; /* Элементы встают друг под друга */
+        height: auto;
+        padding-top: 100px; /* Отступ сверху, чтобы не залезть под заголовок */
+        padding-bottom: 80px;
+        gap: 20px;
+    }
+
+    .card-wrapper {
+        width: 85%; /* Карточка почти на всю ширину */
+        max-width: 300px;
+        padding: 15px;
+        border-radius: 25px;
+    }
+
+    .card img {
+        margin-bottom: 10px;
+    }
+
+    .arrow {
+        font-size: 2.5rem;
+        margin: 0 20px;
+    }
+
+    /* КНОПКИ И МОДАЛКИ */
+    .auth-circle {
+        width: 50px;
+        height: 50px;
+        bottom: 15px;
+        right: 15px;
+        font-size: 22px;
+    }
+
+    .rev-trigger {
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    .rev-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 24px;
+    }
+
+    .modal-box {
+        width: 90%; /* Окно аккаунта почти на весь экран */
+        padding: 20px;
+        border-radius: 25px;
+    }
+
+    input {
+        padding: 12px;
+        font-size: 14px;
+    }
+  }
