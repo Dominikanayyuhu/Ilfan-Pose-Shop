@@ -39,60 +39,63 @@ def handle_background(message):
     else:
         bot.send_message(message.chat.id, "Сначала пришли видео оплаты!")
 
-@bot.message_handler(func=lambda message: message.chat.id in user_orders and 'nickname' not in user_orders[message.chat.id])
+@bot.message_handler(func=lambda m: m.chat.id in user_orders and 'nickname' not in user_orders[m.chat.id])
 def handle_nickname(message):
     user_orders[message.chat.id]['nickname'] = message.text
     bot.send_message(message.chat.id, "🔢 Сколько персонажей будет в позинге? (От 1 до 10):")
 
-@bot.message_handler(func=lambda message: message.chat.id in user_orders and 'chars_count' not in user_orders[message.chat.id])
+@bot.message_handler(func=lambda m: m.chat.id in user_orders and 'chars_count' not in user_orders[m.chat.id])
 def handle_chars(message):
     text = message.text
     if text.isdigit():
         num = int(text)
         if 1 <= num <= 10:
             user_orders[message.chat.id]['chars_count'] = num
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add("Робуксы", "мм2 годли", "Телеграм-звёзды")
-            bot.send_message(message.chat.id, "💳 Выбери вид оплаты:", reply_markup=markup)
+            bot.send_message(message.chat.id, "💳 Выбери вид оплаты (ты можешь нажать другую кнопку, если передумаешь):", reply_markup=markup)
         else:
-            bot.send_message(message.chat.id, f"⚠️ Больше 10 персонажей нельзя, напишите число меньше {num + 1}")
+            bot.send_message(message.chat.id, f"⚠️ Больше 10 персонажей нельзя, напишите число меньше {num}")
     else:
         bot.send_message(message.chat.id, "Пожалуйста, введи число.")
 
-@bot.message_handler(func=lambda message: message.chat.id in user_orders and 'payment_method' not in user_orders[message.chat.id])
-def handle_payment_method(message):
+@bot.message_handler(func=lambda m: m.chat.id in user_orders and m.text in ["Робуксы", "мм2 годли", "Телеграм-звёзды"])
+def handle_payment_selection(message):
+    cid = message.chat.id
     choice = message.text
-    chat_id = message.chat.id
-    order = user_orders[chat_id]
+    user_orders[cid]['payment_method'] = choice
     
     if choice == "Робуксы":
-        order['payment_method'] = choice
-        bot.send_message(chat_id, "💵 Вы выбрали робуксы, поэтому пожалуйста оплатите заказ по ссылке: https://www.roblox.com/games/12345 (Пример ссылки)\n✅ После этого заказ будет передан админу.")
-        send_order_to_admin(chat_id)
+        msg = "💵 Вы выбрали робуксы, пожалуйста оплатите заказ по ссылке: https://www.roblox.com/games/18925562723/Позинги"
     elif choice == "мм2 годли":
-        order['payment_method'] = choice
-        bot.send_message(chat_id, "🔪 Вы выбрали годли, пожалуйста свяжитесь с владельцем (@HokhikyanHokhikyans), чтобы оплатить заказ.")
-        send_order_to_admin(chat_id)
-    elif choice == "Телеграм-звёзды":
-        order['payment_method'] = choice
-        bot.send_message(chat_id, "🌟 Вы выбрали телеграм звёзды, пожалуйста оплатите заказ по этому юзернейму (@HokhikyanHokhikyans). Жду подтверждения.")
-        send_order_to_admin(chat_id)
+        msg = "🔪 Вы выбрали годли, пожалуйста свяжитесь с владельцем (@HokhikyanHokhikyans) для оплаты."
     else:
-        bot.send_message(chat_id, "❌ Недопустимый ответ, пожалуйста выберите из 3 вариантов в меню.")
+        msg = "🌟 Вы выбрали звезды, оплатите по юзернейму @HokhikyanHokhikyans"
 
-def send_order_to_admin(chat_id):
-    order = user_orders[chat_id]
-    summary = (f"📝 АНКЕТА ЗАКАЗА\n"
-               f"👤 Заказчик: {order['nickname']}\n"
-               f"👥 Кол-во персонажей: {order['chars_count']}\n"
-               f"💰 Оплата: {order['payment_method']}")
-    
-    bot.send_message(ADMIN_ID, summary)
-    bot.send_video(ADMIN_ID, order['video_id'], caption="Видео-доказательство")
-    bot.send_photo(ADMIN_ID, order['photo_id'], caption="Выбранный фон")
-    
-    bot.send_message(chat_id, "🚀 Все данные переданы! Ожидайте готовности.")
-    del user_orders[chat_id]
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("✅ Я ОПЛАТИЛ(А)", callback_data="confirm_pay"))
+    bot.send_message(cid, msg, reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: call.data == "confirm_pay")
+def final_step(call):
+    cid = call.message.chat.id
+    if cid in user_orders and 'payment_method' in user_orders[cid]:
+        order = user_orders[cid]
+        summary = (f"🔔 НОВЫЙ ЗАКАЗ!\n"
+                   f"👤 Заказчик: {order['nickname']}\n"
+                   f"👥 Кол-во персонажей: {order['chars_count']}\n"
+                   f"💰 Оплата: {order['payment_method']}")
+        
+        # Отправка тебе
+        bot.send_message(ADMIN_ID, summary)
+        bot.send_video(ADMIN_ID, order['video_id'], caption="Видео оплаты")
+        bot.send_photo(ADMIN_ID, order['photo_id'], caption="Фон")
+        
+        # Ответ клиенту
+        bot.send_message(cid, "🚀 Все данные переданы! Ожидайте заказ. Владелец скоро свяжется с вами.", reply_markup=types.ReplyKeyboardRemove())
+        del user_orders[cid]
+    else:
+        bot.send_message(cid, "Ошибка. Попробуйте начать заново через /start")
 
 if __name__ == "__main__":
     keep_alive()
