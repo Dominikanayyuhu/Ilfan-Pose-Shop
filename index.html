@@ -35,9 +35,7 @@
             flex-direction: column; max-height: 300px; overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 1000;
         }
-        .lang-menu::-webkit-scrollbar { width: 5px; }
-        .lang-menu::-webkit-scrollbar-thumb { background: var(--main); border-radius: 10px; }
-        .lang-menu div { padding: 10px 20px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
+        .lang-menu div { padding: 10px 20px; cursor: pointer; transition: 0.3s; }
         .lang-menu div:hover { background: var(--main); color: black; }
 
         .title {
@@ -52,46 +50,41 @@
 
         .rev-trigger {
             display: flex; flex-direction: column; align-items: center; cursor: pointer;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: 0.4s;
         }
-        .rev-trigger:hover { transform: scale(1.15); }
+        .rev-trigger:hover { transform: scale(1.1); }
         .rev-icon {
             width: 75px; height: 75px; border: 2.5px solid var(--gold);
             border-radius: 20px; display: flex; align-items: center;
             justify-content: center; font-size: 32px; color: var(--gold);
-            background: rgba(255, 204, 0, 0.1);
         }
         .rev-label { color: var(--gold); font-size: 12px; font-weight: bold; margin-top: 10px; }
 
         .card-wrapper {
             width: 450px; background: #0a0a0a; border-radius: 40px;
             padding: 20px; border: 1px solid #222; text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
         }
         .card { display: none; }
         .card.active { display: block; animation: zoomIn 0.4s ease-out; }
-        .card img { width: 100%; border-radius: 30px; margin-bottom: 20px; border: 1px solid #1a1a1a; }
+        .card img { width: 100%; border-radius: 30px; margin-bottom: 20px; }
 
         .order-btn {
             background: linear-gradient(90deg, #00ff88, #00ffe5);
-            border: none; padding: 18px; width: 95%; border-radius: 20px;
-            font-weight: 900; cursor: pointer; color: #000; font-size: 1.1rem;
-            transition: 0.3s; margin: 0 auto; display: block;
+            border: none; padding: 15px; width: 95%; border-radius: 15px;
+            font-weight: 900; cursor: pointer; color: #000; transition: 0.3s;
         }
-        .order-btn:hover { transform: scale(1.03); box-shadow: 0 0 25px var(--main); }
 
-        .arrow { font-size: 3.5rem; color: var(--gold); cursor: pointer; transition: 0.3s; }
-        .arrow:hover { color: white; transform: scale(1.2); }
+        .arrow { font-size: 3.5rem; color: var(--gold); cursor: pointer; }
 
         .auth-circle {
             position: fixed; bottom: 30px; right: 30px;
             width: 65px; height: 65px; background: var(--main);
             border-radius: 50%; display: flex; align-items: center;
             justify-content: center; font-size: 28px; color: black;
-            cursor: pointer; z-index: 1000; box-shadow: 0 0 30px var(--main);
+            cursor: pointer; z-index: 1000;
         }
 
-        /* ПЛАВНЫЕ МОДАЛКИ */
+        /* МОДАЛКИ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); display: none;
@@ -102,14 +95,34 @@
         
         .modal-box {
             background: #111; padding: 40px; border-radius: 35px;
-            width: 380px; border: 1px solid #333; text-align: center;
-            transform: translateY(30px); transition: 0.4s;
+            width: 400px; border: 1px solid #333; text-align: center;
             display: flex; flex-direction: column; align-items: center;
         }
-        .modal-overlay.show .modal-box { transform: translateY(0); }
-        
-        /* ПЛАВНЫЙ ВХОД В АККАУНТ */
-        #auth-inputs, #user-info {
+
+        /* КНОПКИ В ОДИН РЯД */
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .auth-buttons button {
+            flex: 1; /* Кнопки будут одинакового размера */
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-login { background: var(--main); color: black; }
+        .btn-reg { background: #222; color: white; border: 1px solid #444; }
+        .btn-reg:hover { background: #333; }
+
+        /* ПЛАВНОСТЬ ПОЛЕЙ */
+        #auth-inputs {
             width: 100%;
             animation: slideUp 0.5s ease forwards;
         }
@@ -118,7 +131,7 @@
             width: 100%; max-width: 300px; padding: 15px; 
             margin: 10px auto; background: #1a1a1a; 
             border: 1px solid #333; color: white; border-radius: 12px; 
-            box-sizing: border-box; display: block; text-align: center;
+            text-align: center; display: block;
         }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -147,7 +160,6 @@
         </div>
 
         <div class="arrow" onclick="nav(-1)">❮</div>
-
         <div class="card-wrapper">
             <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()" id="b1">ЗАКАЗАТЬ</button></div>
             <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()" id="b2">ЗАКАЗАТЬ</button></div>
@@ -161,7 +173,6 @@
             <div class="card"><img src="pose10.jpg"><button class="order-btn" onclick="buy()" id="b10">ЗАКАЗАТЬ</button></div>
             <div class="card"><img src="pose11.jpg"><button class="order-btn" onclick="buy()" id="b11">ЗАКАЗАТЬ</button></div>
         </div>
-
         <div class="arrow" onclick="nav(1)">❯</div>
     </div>
 
@@ -169,17 +180,20 @@
 
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-box">
-            <h2 style="color:var(--main)" id="t-acc-head">ACCOUNT</h2>
+            <h2 style="color:var(--main); margin-bottom: 20px;">ACCOUNT</h2>
             <div id="auth-inputs">
                 <input type="text" id="u-nick" placeholder="Username">
                 <input type="password" id="u-pass" placeholder="Password">
-                <button class="order-btn" onclick="authHandle()" id="t-btn-login">CONTINUE</button>
+                <div class="auth-buttons">
+                    <button class="btn-reg" onclick="handleAuth('reg')">Регистрация</button>
+                    <button class="btn-login" onclick="handleAuth('login')">Войти</button>
+                </div>
             </div>
             <div id="user-info" style="display:none;">
                 <h3 id="hi-msg"></h3>
-                <button class="order-btn" style="background:#222; color:white" onclick="logout()">LOGOUT</button>
+                <button class="order-btn" style="background:#222; color:white; margin-top:10px;" onclick="logout()">LOGOUT</button>
             </div>
-            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;">CLOSE</p>
+            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:25px;">CLOSE</p>
         </div>
     </div>
 
@@ -194,13 +208,31 @@
     </div>
 
     <script>
-        // ГЕНЕРАЦИЯ МЕНЮ (20 ЯЗЫКОВ)
-        const flagMap = {
-            ru: "🇷🇺 RU", en: "🇺🇸 EN", am: "🇦🇲 AM", ar: "🇸🇦 AR", fr: "🇫🇷 FR", 
-            tr: "🇹🇷 TR", ko: "🇰🇷 KO", ja: "🇯🇵 JA", zh: "🇨🇳 ZH", kk: "🇰🇿 KK",
-            es: "🇪🇸 ES", it: "🇮🇹 IT", fa: "🇮🇷 FA", el: "🇬🇷 EL", uk: "🇺🇦 UK",
-            hi: "🇮🇳 HI", uz: "🇺🇿 UZ", ky: "🇰🇬 KY", he: "🇮🇱 HE", vi: "🇻🇳 VI"
-        };
+        // ЛОГИКА АВТОРИЗАЦИИ
+        function handleAuth(type) {
+            const u = document.getElementById('u-nick').value.trim();
+            const p = document.getElementById('u-pass').value.trim();
+            if(!u || !p) return;
+            
+            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
+
+            if(type === 'reg') {
+                if(db[u]) { alert("Этот ник уже занят!"); return; }
+                db[u] = p;
+                localStorage.setItem('ilfan_db', JSON.stringify(db));
+                alert("Успешная регистрация!");
+            }
+            
+            if(db[u] === p) {
+                localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
+                location.reload();
+            } else {
+                alert("Неверный пароль!");
+            }
+        }
+
+        // ЯЗЫКИ И ОСТАЛЬНОЕ
+        const flagMap = { ru: "🇷🇺 RU", en: "🇺🇸 EN", am: "🇦🇲 AM", ar: "🇸🇦 AR", fr: "🇫🇷 FR", tr: "🇹🇷 TR", ko: "🇰🇷 KO", ja: "🇯🇵 JA", zh: "🇨🇳 ZH", kk: "🇰🇿 KK", es: "🇪🇸 ES", it: "🇮🇹 IT", fa: "🇮🇷 FA", el: "🇬🇷 EL", uk: "🇺🇦 UK", hi: "🇮🇳 HI", uz: "🇺🇿 UZ", ky: "🇰🇬 KY", he: "🇮🇱 HE", vi: "🇻🇳 VI" };
 
         function renderLangMenu() {
             const menu = document.getElementById('l-menu');
@@ -211,9 +243,7 @@
             localStorage.setItem('lang', l);
             document.getElementById('cur-lang-label').innerText = l.toUpperCase();
             document.getElementById('l-menu').style.display = 'none';
-            
             const t = langs[l] || langs['ru'];
-            
             document.getElementById('t-main').innerText = t.title;
             document.getElementById('t-rev-label').innerText = t.label;
             document.getElementById('t-rev-head').innerText = t.head;
@@ -228,7 +258,6 @@
             m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        // СЛАЙДЕР
         let curCard = 0;
         const cards = document.querySelectorAll('.card');
         function nav(d) {
@@ -237,41 +266,20 @@
             cards[curCard].classList.add('active');
         }
 
-        // АККАУНТ (ВХОД + РЕГИСТРАЦИЯ)
         let user = JSON.parse(localStorage.getItem('ilfan_user')) || null;
-
         function openModal(id) {
-            if(id === 'rev-modal' && !user) { alert("Please login!"); return openModal('auth-modal'); }
+            if(id === 'rev-modal' && !user) { alert("Войдите в аккаунт!"); return openModal('auth-modal'); }
             document.getElementById(id).classList.add('show');
             if(id === 'auth-modal' && user) {
                 document.getElementById('auth-inputs').style.display = 'none';
                 document.getElementById('user-info').style.display = 'block';
-                document.getElementById('hi-msg').innerText = "Hello, " + user.name;
+                document.getElementById('hi-msg').innerText = "Привет, " + user.name;
             }
-            if(id === 'rev-modal') renderRevs();
-        }
-
-        function authHandle() {
-            const u = document.getElementById('u-nick').value.trim();
-            const p = document.getElementById('u-pass').value.trim();
-            if(!u || !p) return;
-            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
-            
-            if(!db[u]) { // Если ника нет - регистрируем
-                db[u] = p;
-                localStorage.setItem('ilfan_db', JSON.stringify(db));
-            }
-            
-            if(db[u] === p) { // Если пароль верный - входим
-                localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
-                location.reload();
-            } else { alert("Error: Wrong password!"); }
         }
 
         function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
         function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
         function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
-
         function sendRev() {
             const m = document.getElementById('rev-in').value; if(!m) return;
             let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
@@ -280,11 +288,10 @@
             document.getElementById('rev-in').value = '';
             renderRevs();
         }
-
         function renderRevs() {
             const box = document.getElementById('rev-list');
             let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
-            box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b style="color:var(--main)">@${i.u}</b>: ${i.t}</div>`).join('');
+            box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b>@${i.u}</b>: ${i.t}</div>`).join('');
         }
 
         // ПЛЕКСУС
@@ -308,14 +315,10 @@
                     if(dist < 130) { ctx.globalAlpha = 1 - dist/130; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d2.x, d2.y); ctx.stroke(); }
                 });
             });
-            ctx.globalAlpha = 1; requestAnimationFrame(draw);
+            requestAnimationFrame(draw);
         }
 
-        window.onload = () => { 
-            init(); draw();
-            renderLangMenu();
-            setLang(localStorage.getItem('lang') || 'ru');
-        };
+        window.onload = () => { init(); draw(); renderLangMenu(); setLang(localStorage.getItem('lang') || 'ru'); };
         window.onresize = init;
     </script>
 </body>
