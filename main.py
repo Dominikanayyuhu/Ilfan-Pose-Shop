@@ -3,6 +3,7 @@ from telebot import types
 from flask import Flask
 from threading import Thread
 import os
+import time
 
 # --- Веб-сервер для Render ---
 app = Flask('')
@@ -14,7 +15,7 @@ def run():
     app.run(host='0.0.0.0', port=port)
 
 def keep_alive():
-    Thread(target=run).start()
+    Thread(target=run, daemon=True).start()
 
 # --- Настройки бота ---
 API_TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
@@ -26,13 +27,14 @@ user_orders = {}
 @bot.message_handler(commands=['start'])
 def start(message):
     cid = message.chat.id
+    # Сбрасываем старый заказ при новом старте
     user_orders[cid] = {'state': 'SELECT_PAYMENT'}
     
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     markup.add("Робуксы", "мм2 годли", "Телеграм-звёзды")
     
     shop_link = "https://dominikanayyuhu.github.io/Ilfan-Pose-Shop/"
-    bot.send_message(cid, f"👋 Привет! Магазин тут: {shop_link}\n💳 Выбери вид оплаты:", reply_markup=markup)
+    bot.send_message(cid, f"👋 Привет! Магазин тут: {shop_link}\n\n💳 Выбери вид оплаты:", reply_markup=markup)
 
 @bot.message_handler(func=lambda m: m.chat.id in user_orders and user_orders[m.chat.id].get('state') == 'SELECT_PAYMENT')
 def handle_payment_choice(message):
@@ -70,7 +72,7 @@ def handle_chars(message):
             pay_method = user_orders[cid]['payment_method']
             
             if pay_method == "мм2 годли":
-                # Для годли видео не нужно - сразу кнопка подтверждения
+                # У мм2 годли нет видео, переходим к финалу
                 markup = types.InlineKeyboardMarkup()
                 markup.add(types.InlineKeyboardButton("✅ Я ОПЛАТИЛ(А)", callback_data="confirm_pay"))
                 bot.send_message(cid, "🔪 Пожалуйста, свяжитесь с владельцем (@HokhikyanHokhikyans) для передачи предметов. После этого нажмите кнопку ниже:", reply_markup=markup)
@@ -82,18 +84,27 @@ def handle_chars(message):
                 else:
                     bot.send_message(cid, "🌟 Оплатите по юзернейму @HokhikyanHokhikyans\n🎬 После оплаты пришли видео-доказательство отправки звёзд:")
         else:
-            bot.send_message(cid, f"⚠️ Напишите число меньше {num}")
+            bot.send_message(cid, "⚠️ Пожалуйста, введи число от 1 до 10.")
     else:
-        bot.send_message(cid, "Пожалуйста, введи число.")
+        bot.send_message(cid, "⚠️ Введи именно число (например: 1).")
 
-@bot.message_handler(content_types=['video', 'video_note'], func=lambda m: m.chat.id in user_orders and user_orders[m.chat.id].get('state') == 'WAITING_VIDEO')
+@bot.message_handler(content_types=['video', 'video_note', 'document'], func=lambda m: m.chat.id in user_orders and user_orders[m.chat.id].get('state') == 'WAITING_VIDEO')
 def handle_video(message):
     cid = message.chat.id
-    user_orders[cid]['video_id'] = message.video.file_id if message.video else message.video_note.file_id
-    
+    # Проверка на видео или файл (если прислали как документ)
+    if message.video:
+        user_orders[cid]['video_id'] = message.video.file_id
+    elif message.video_note:
+        user_orders[cid]['video_id'] = message.video_note.file_id
+    elif message.document and message.document.mime_type.startswith('video'):
+        user_orders[cid]['video_id'] = message.document.file_id
+    else:
+        bot.send_message(cid, "⚠️ Пожалуйста, пришли именно видео-файл или кружочек.")
+        return
+
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton("✅ Я ОПЛАТИЛ(А)", callback_data="confirm_pay"))
-    bot.send_message(cid, "Видео получено! Нажмите кнопку для завершения заказа:", reply_markup=markup)
+    bot.send_message(cid, "🎬 Видео получено! Нажмите кнопку для завершения заказа:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data == "confirm_pay")
 def final_step(call):
@@ -103,21 +114,34 @@ def final_step(call):
         summary = (f"🔔 НОВЫЙ ЗАКАЗ!\n"
                    f"👤 Заказчик: {order.get('nickname')}\n"
                    f"👥 Кол-во персонажей: {order.get('chars_count')}\n"
-                   f"💰 Оплата: {order.get('payment_method')}")
+                   f"💰 Оплата: {order.get('payment_method')}\n"
+                   f"🆔 ID: {cid}")
         
-        # Отправка тебе (админу)
-        bot.send_message(ADMIN_ID, summary)
-        bot.send_photo(ADMIN_ID, order['photo_id'], caption="Выбранный фон")
-        if 'video_id' in order:
-            bot.send_video(ADMIN_ID, order['video_id'], caption="Видео оплаты")
-        
-        # Ответ клиенту
-        bot.send_message(cid, "🚀 Все данные переданы! Ожидайте заказ. Владелец скоро свяжется с вами.")
-        del user_orders[cid]
-        bot.answer_callback_query(call.id, "Заказ отправлен!")
+        try:
+            # Отправка тебе (админу)
+            bot.send_message(ADMIN_ID, summary)
+            bot.send_photo(ADMIN_ID, order['photo_id'], caption=f"Фон от @{call.from_user.username or cid}")
+            if 'video_id' in order:
+                bot.send_video(ADMIN_ID, order['video_id'], caption="Видео оплаты")
+            
+            # Ответ клиенту
+            bot.send_message(cid, "🚀 Все данные переданы Ильфану! Ожидайте, я скоро свяжусь с вами.")
+            bot.answer_callback_query(call.id, "Заказ отправлен!")
+            del user_orders[cid]
+        except Exception as e:
+            bot.send_message(cid, "❌ Ошибка при отправке админу. Попробуй позже.")
+            print(f"Error: {e}")
     else:
-        bot.send_message(cid, "Ошибка. Нажмите /start")
+        bot.send_message(cid, "⚠️ Ошибка сессии. Нажми /start ещё раз.")
 
+# Запуск
 if __name__ == "__main__":
     keep_alive()
-    bot.infinity_polling()
+    print("Бот запущен...")
+    # Бесконечный цикл с защитой от вылета
+    while True:
+        try:
+            bot.polling(none_stop=True, interval=0, timeout=20)
+        except Exception as e:
+            print(f"Ошибка падения: {e}")
+            time.sleep(5)
