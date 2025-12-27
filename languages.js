@@ -1,0 +1,22 @@
+const langs = {
+    ru: { title: "ПОЗИНГИ ИЛЬФАНА", buy: "ЗАКАЗАТЬ", head: "ОТЗЫВЫ", send: "ОТПРАВИТЬ", nick: "Ник Roblox", msg: "Ваш отзыв...", label: "ОТЗЫВЫ" },
+    en: { title: "ILFAN'S POSES", buy: "ORDER NOW", head: "REVIEWS", send: "SEND", nick: "Roblox Nick", msg: "Your review...", label: "REVIEWS" },
+    am: { title: "ԻԼՖԱՆԻ ԴԻՐՔԵՐԸ", buy: "ՊԱՏՎԻՐԵԼ", head: "ԿԱՐԾԻՔՆԵՐ", send: "ՈՒՂԱՐԿԵԼ", nick: "Roblox Նիկ", msg: "Ձեր կարծիքը...", label: "ԿԱՐԾԻՔՆԵՐ" },
+    ar: { title: "تصاميم إلفان", buy: "اطلب الآن", head: "التعليقات", send: "إرسال", nick: "لقب روبلوكس", msg: "تعليقك...", label: "التعليقات" },
+    fr: { title: "POSES D'ILFAN", buy: "COMMANDER", head: "AVIS", send: "ENVOYER", nick: "Pseudo Roblox", msg: "Votre avis...", label: "AVIS" },
+    tr: { title: "ILFAN'IN POZLARI", buy: "SİPARİŞ VER", head: "YORUMLAR", send: "GÖNDER", nick: "Roblox Adı", msg: "Yorumunuz...", label: "YORUMLAR" },
+    ko: { title: "일판의 포즈", buy: "지금 주문하세요", head: "리뷰", send: "보내기", nick: "로블록스 닉네임", msg: "당신의 리뷰...", label: "리뷰" },
+    ja: { title: "イルファンのポーズ", buy: "今すぐ注文", head: "レビュー", send: "送信", nick: "ロブロックス名", msg: "あなたのレビュー...", label: "レビュー" },
+    zh: { title: "ILFAN 的姿势", buy: "立即订购", head: "评论", send: "发送", nick: "Roblox 昵称", msg: "您的评论...", label: "评论" },
+    kk: { title: "ИЛЬФАННЫҢ ПОЗАЛАРЫ", buy: "ТАПСЫРЫС БЕРУ", head: "ПІКІРЛЕР", send: "ЖІБЕРУ", nick: "Roblox ник", msg: "Пікіріңіз...", label: "ПІКІРЛЕР" },
+    es: { title: "POSES DE ILFAN", buy: "ORDENAR AHORA", head: "COMENTARIOS", send: "ENVIAR", nick: "Nick de Roblox", msg: "Tu comentario...", label: "COMENTARIOS" },
+    it: { title: "POSE DI ILFAN", buy: "ORDINA ORA", head: "RECENSIONI", send: "INVIA", nick: "Nick Roblox", msg: "La tua recensione...", label: "RECENSIONI" },
+    fa: { title: "ژست های الفان", buy: "اکنون سفارش دهید", head: "نظرات", send: "ارسال", nick: "نام کاربری", msg: "نظر شما...", label: "نظرات" },
+    el: { title: "ΠΟΣΕΙΣ ΤΟΥ ILFAN", buy: "ΠΑΡΑΓΓΕΙΛΤΕ ΤΩΡΑ", head: "ΚΡΙΤΙΚΕΣ", send: "ΑΠΟΣΤΟΛΗ", nick: "Όνομα Roblox", msg: "Η κριτική σας...", label: "ΚΡΙΤΙΚΕΣ" },
+    uk: { title: "ПОЗИНГИ ІЛЬФАНА", buy: "ЗАМОВИТИ", head: "ВІДГУКИ", send: "ВІДПРАВИТИ", nick: "Нік у Roblox", msg: "Ваш відгук...", label: "ВІДГУКИ" },
+    hi: { title: "इल्फान की पोज़", buy: "अभी ऑर्डर करें", head: "समीक्षाएं", send: "भेজें", nick: "रोब्लॉक्स निक", msg: "आपकी समीक्षा...", label: "समीक्षाएं" },
+    uz: { title: "ILFAN POZALARI", buy: "BUYURTMA BERISH", head: "FIKRLAR", send: "YUBORISH", nick: "Roblox niki", msg: "Fikringiz...", label: "FIKRLAR" },
+    ky: { title: "ИЛЬФАНДЫН ПОЗАЛАРЫ", buy: "ТАПШЫРЫК БЕРҮҮ", head: "ПИКИРЛЕР", send: "ЖӨНӨТҮҮ", nick: "Roblox ник", msg: "Пикириңиз...", label: "ПИКИРЛЕР" },
+    he: { title: "הפוזות של אילפן", buy: "הזמן עכשיו", head: "ביקורות", send: "שלח", nick: "כינוי רובלוקס", msg: "הביקורת שלך...", label: "ביקורות" },
+    vi: { title: "TẠO DÁNG CỦA ILFAN", buy: "ĐẶT HÀNG NGAY", head: "ĐÁNH GIÁ", send: "GỬI", nick: "Nick Roblox", msg: "Đánh giá của bạn...", label: "ĐÁNH GIÁ" }
+};
