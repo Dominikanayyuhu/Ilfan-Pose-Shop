@@ -3,66 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilfan's Pose Shop</title>
+    <title>Ilfan's Poses | Shop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main: #00ff88; --gold: #ffcc00; --bg: #0a0a0b; --card: #161618; }
-        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
         header { padding: 30px; text-align: center; }
         h1 { color: var(--main); letter-spacing: 2px; text-transform: uppercase; margin: 0; }
-        
-        .slider { position: relative; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; margin-top: 20px; }
-        .card { background: var(--card); border-radius: 20px; overflow: hidden; width: 320px; display: none; border: 1px solid #222; }
-        .card.active { display: block; animation: fadeIn 0.4s; }
-        .img-box { width: 100%; aspect-ratio: 1/1; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Слайдер со стрелками */
+        .slider-box { position: relative; width: 100%; max-width: 450px; display: flex; align-items: center; justify-content: center; margin-top: 20px; }
+        .card { background: var(--card); border-radius: 20px; overflow: hidden; width: 320px; display: none; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card.active { display: block; animation: fadeIn 0.4s ease-in; }
+        .img-container { width: 100%; aspect-ratio: 1/1; background: #000; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; }
         
         .info { padding: 20px; text-align: center; }
-        .btn { background: var(--main); color: black; border: none; padding: 12px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .order-btn { background: var(--main); color: black; border: none; padding: 12px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .order-btn:hover { background: white; transform: scale(1.05); }
         
-        .arrow { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 3rem; padding: 15px; transition: 0.2s; }
-        .arrow:hover { transform: scale(1.2); color: white; }
-        
-        .reviews { width: 90%; max-width: 400px; margin-top: 30px; }
-        .rev-card { background: #111; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--gold); }
+        .arrow { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 3rem; padding: 15px; z-index: 10; transition: 0.2s; }
+        .arrow:hover { color: white; transform: scale(1.2); }
+
+        /* Динамические отзывы (левый нижний угол) */
+        #review-wall { position: fixed; bottom: 20px; left: 20px; width: 280px; display: flex; flex-direction: column-reverse; gap: 10px; z-index: 999; }
+        .toast { background: rgba(22, 22, 24, 0.95); border-left: 4px solid var(--gold); padding: 12px; border-radius: 8px; font-size: 0.9rem; animation: slideIn 0.4s ease-out; border: 1px solid #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .toast b { color: var(--main); display: block; margin-bottom: 4px; }
+
+        /* Поле для ввода отзыва */
+        .input-area { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; width: 320px; margin: 40px 0; }
+        .input-area h3 { margin: 0 0 15px; font-size: 1rem; color: var(--gold); text-align: center; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-family: inherit; }
+        .send-btn { background: var(--gold); color: black; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .send-btn:hover { background: white; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
+
     <header><h1>ILFAN'S POSES</h1></header>
-    
-    <div class="slider">
-        <button class="arrow" onclick="move(-1)"><i class="fas fa-chevron-left"></i></button>
+
+    <div class="slider-box">
+        <button class="arrow" onclick="change(-1)"><i class="fas fa-chevron-left"></i></button>
         
-        <div class="card active"><div class="img-box"><img src="pose1.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose2.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose3.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose4.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose5.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose6.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose7.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose8.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose9.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose10.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
-        <div class="card"><div class="img-box"><img src="pose11.jpg"></div><div class="info"><button class="btn" onclick="go()">ORDER NOW</button></div></div>
+        <div class="card active"><div class="img-container"><img src="pose1.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose2.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose3.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose4.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose5.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose6.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose7.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose8.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose9.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose10.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
+        <div class="card"><div class="img-container"><img src="pose11.jpg"></div><div class="info"><button class="order-btn" onclick="buy()">ORDER NOW</button></div></div>
 
-        <button class="arrow" onclick="move(1)"><i class="fas fa-chevron-right"></i></button>
+        <button class="arrow" onclick="change(1)"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <div class="reviews">
-        <div class="rev-card"><p style="margin:0">"Очень качественные позинги, советую!"</p><small style="color:var(--main)">@RobloxUser</small></div>
+    <div class="input-area">
+        <h3>Оставить отзыв</h3>
+        <input type="text" id="u-name" placeholder="Твой ник">
+        <textarea id="u-msg" rows="2" placeholder="Напиши свой отзыв здесь..."></textarea>
+        <button class="send-btn" onclick="postReview()">ОТПРАВИТЬ</button>
     </div>
+
+    <div id="review-wall"></div>
 
     <script>
         let cur = 0;
         const cards = document.querySelectorAll('.card');
-        function move(d) {
+
+        function change(step) {
             cards[cur].classList.remove('active');
-            cur = (cur + d + cards.length) % cards.length;
+            cur = (cur + step + cards.length) % cards.length;
             cards[cur].classList.add('active');
         }
-        function go() {
+
+        function buy() {
             window.open("https://t.me/ZakazIlfanaBot", "_blank");
+        }
+
+        function postReview() {
+            const name = document.getElementById('u-name').value;
+            const msg = document.getElementById('u-msg').value;
+            const wall = document.getElementById('review-wall');
+
+            if(name && msg) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = `<b>@${name}</b>${msg}`;
+                wall.appendChild(toast);
+
+                // Очистка полей после отправки
+                document.getElementById('u-name').value = '';
+                document.getElementById('u-msg').value = '';
+
+                // Отзыв плавно исчезнет через 15 секунд
+                setTimeout(() => { 
+                    toast.style.transition = '0.5s';
+                    toast.style.opacity = '0'; 
+                    setTimeout(()=>toast.remove(), 500); 
+                }, 15000);
+            } else {
+                alert("Пожалуйста, введите ник и текст отзыва!");
+            }
         }
     </script>
 </body>
