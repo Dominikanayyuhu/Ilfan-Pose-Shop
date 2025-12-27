@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ilfan's Poses Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="languages.js"></script>
@@ -12,19 +12,18 @@
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background: var(--bg); color: white;
-            font-family: 'Poppins', sans-serif; overflow: hidden;
+            font-family: 'Poppins', sans-serif; overflow-x: hidden;
         }
 
-        /* Фоновый эффект линий */
         #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
+        /* ВЕРХНЯЯ ПАНЕЛЬ - АДАПТИВНАЯ */
         .top-bar {
             position: fixed; top: 20px; width: 100%; 
-            display: flex; justify-content: space-between; padding: 0 40px;
-            box-sizing: border-box; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; box-sizing: border-box; z-index: 100;
         }
 
-        /* ГОРИЗОНТАЛЬНОЕ МЕНЮ ЯЗЫКОВ В 2 КОЛОНКИ */
         .lang-container { position: relative; }
         .lang-btn {
             background: rgba(0, 0, 0, 0.5); border: 1.5px solid white; color: white;
@@ -49,15 +48,16 @@
         .title {
             color: var(--main); font-size: 2.8rem; letter-spacing: 6px;
             text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); margin: 0; font-weight: 900;
+            text-align: center; flex-grow: 1;
         }
 
-        /* ОСНОВНОЙ КОНТЕНТ */
+        /* КОНТЕНТ */
         .content {
             position: relative; z-index: 10; display: flex;
             align-items: center; justify-content: center; height: 100vh; gap: 30px;
+            padding: 0 20px;
         }
 
-        /* Кнопка отзывов слева */
         .rev-trigger { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.4s; }
         .rev-trigger:hover { transform: scale(1.1); }
         .rev-icon {
@@ -67,10 +67,10 @@
         }
         .rev-label { color: var(--gold); font-size: 12px; font-weight: bold; margin-top: 10px; }
 
-        /* Карточка слайдера */
         .card-wrapper {
             width: 450px; background: #0a0a0a; border-radius: 40px;
             padding: 20px; border: 1px solid #222; text-align: center;
+            transition: 0.3s;
         }
         .card { display: none; }
         .card.active { display: block; animation: zoomIn 0.4s ease-out; }
@@ -82,9 +82,9 @@
             font-weight: 900; cursor: pointer; color: #000; transition: 0.3s;
         }
 
-        .arrow { font-size: 3.5rem; color: var(--gold); cursor: pointer; }
+        .arrow { font-size: 3.5rem; color: var(--gold); cursor: pointer; transition: 0.2s; }
+        .arrow:active { transform: scale(0.8); }
 
-        /* Иконка аккаунта справа внизу */
         .auth-circle {
             position: fixed; bottom: 30px; right: 30px;
             width: 65px; height: 65px; background: var(--main);
@@ -93,7 +93,6 @@
             cursor: pointer; z-index: 1000;
         }
 
-        /* МОДАЛЬНЫЕ ОКНА И ПЛАВНОСТЬ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); display: none;
@@ -101,25 +100,74 @@
             backdrop-filter: blur(10px);
         }
         .modal-overlay.show { display: flex; animation: fadeIn 0.3s forwards; }
-        
-        .modal-box { 
-            background: #111; padding: 40px; border-radius: 35px; 
-            width: 380px; border: 1px solid #333; text-align: center; 
-        }
+        .modal-box { background: #111; padding: 40px; border-radius: 35px; width: 380px; border: 1px solid #333; text-align: center; max-width: 90%; }
 
-        /* Плавное выкатывание формы */
         .smooth-open { animation: slideDown 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards; }
+        input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 12px; box-sizing: border-box; text-align: center; }
+        .auth-row { display: flex; gap: 10px; width: 100%; margin-top: 5px; }
+        .auth-row button { flex: 1; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.3s; }
 
-        input { 
-            width: 100%; padding: 15px; margin-bottom: 15px; background: #1a1a1a; 
-            border: 1px solid #333; color: white; border-radius: 12px; box-sizing: border-box; text-align: center;
+        /* ============================================================
+           БЛОК АДАПТИВНОСТИ (ТО, ЧТО ТЫ ПРОСИЛ)
+           ============================================================ */
+
+        /* ПЛАНШЕТЫ (до 1024px) */
+        @media screen and (max-width: 1024px) {
+            .title { font-size: 2rem; letter-spacing: 3px; }
+            .card-wrapper { width: 380px; }
+            .top-bar { padding: 0 20px; }
         }
 
-        /* СИММЕТРИЧНЫЕ КНОПКИ */
-        .auth-row { display: flex; gap: 10px; width: 100%; margin-top: 5px; }
-        .auth-row button { 
-            flex: 1; padding: 12px; border-radius: 12px; 
-            font-weight: bold; cursor: pointer; border: none; transition: 0.3s;
+        /* ТЕЛЕФОНЫ (до 600px) */
+        @media screen and (max-width: 600px) {
+            body, html { overflow-y: auto; } /* Разрешаем скролл, если экран очень маленький */
+            
+            .top-bar { 
+                top: 10px; padding: 0 15px; 
+                flex-wrap: wrap; justify-content: center; gap: 10px;
+            }
+            
+            .top-bar div[style*="width: 100px"] { display: none; } /* Убираем лишний блок */
+            
+            .title { 
+                font-size: 1.3rem !important; 
+                letter-spacing: 1px !important; 
+                order: -1; width: 100%; 
+            }
+
+            .lang-btn { padding: 6px 12px; font-size: 12px; }
+            .lang-menu { min-width: 280px; grid-template-columns: 1fr; top: 40px; }
+
+            .content { 
+                flex-direction: row; /* Стрелки остаются по бокам */
+                height: auto; padding-top: 120px; padding-bottom: 60px;
+                gap: 10px;
+            }
+
+            .card-wrapper { 
+                width: 250px; /* Уменьшаем карточку для мобилок */
+                padding: 15px; border-radius: 30px; 
+            }
+
+            .arrow { font-size: 2.2rem; }
+
+            .rev-trigger {
+                position: absolute; bottom: 20px; left: 20px;
+                transform: scale(0.8); z-index: 100;
+            }
+
+            .auth-circle {
+                width: 55px; height: 55px; bottom: 20px; right: 20px;
+                font-size: 24px;
+            }
+
+            .modal-box { padding: 25px; border-radius: 25px; }
+        }
+
+        /* МАЛЕНЬКИЕ ТЕЛЕФОНЫ (до 380px) */
+        @media screen and (max-width: 380px) {
+            .card-wrapper { width: 200px; }
+            .title { font-size: 1.1rem !important; }
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -199,7 +247,6 @@
     </div>
 
     <script>
-        // Справочник для меню языков
         const displayLangs = {
             ru: { c: "ru", n: "Русский" }, en: { c: "us", n: "English" }, am: { c: "am", n: "Հայերեն" },
             ar: { c: "sa", n: "العربية" }, fr: { c: "fr", n: "Français" }, tr: { c: "tr", n: "Türkçe" },
@@ -223,8 +270,6 @@
             document.getElementById('cur-lang-label').innerText = l.toUpperCase();
             document.getElementById('l-menu').style.display = 'none';
             const t = langs[l] || langs['ru'];
-            
-            // ПЕРЕВОД ВСЕХ ЭЛЕМЕНТОВ
             document.getElementById('t-main').innerText = t.title;
             document.getElementById('t-rev-label').innerText = t.label;
             document.getElementById('t-rev-head').innerText = t.head;
@@ -296,7 +341,6 @@
             box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b style="color:var(--main)">@${i.u}</b>: ${i.t}</div>`).join('');
         }
 
-        // АНИМАЦИЯ ФОНА (PLEXUS)
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
@@ -324,4 +368,5 @@
         window.onresize = init;
     </script>
 </body>
-</html>
+    </html>
+    
