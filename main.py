@@ -12,11 +12,10 @@ def home():
     return "Бот Ильфана активен 24/7!"
 
 def run_web_server():
-    # Render сам назначит порт через переменную PORT
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
 
-# --- 2. НАСТРОЙКА БОТА С ТВОИМИ НОВЫМИ ДАННЫМИ ---
+# --- 2. НАСТРОЙКА БОТА С ТВОИМИ ДАННЫМИ ---
 TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
 ADMIN_ID = 2039589760
 bot = telebot.TeleBot(TOKEN)
@@ -38,7 +37,6 @@ def start(message):
 @bot.message_handler(func=lambda message: message.text == "🛒 КАТАЛОГ ПОЗ")
 def catalog(message):
     markup = types.InlineKeyboardMarkup(row_width=3)
-    # Создаем кнопки для 11 поз
     btns = [types.InlineKeyboardButton(f"Поза #{i}", callback_data=f"pose_{i}") for i in range(1, 12)]
     markup.add(*btns)
     bot.send_message(message.chat.id, "Выбери номер позы для заказа:", reply_markup=markup)
@@ -50,9 +48,9 @@ def choose_skins(call):
     
     markup = types.InlineKeyboardMarkup()
     for i in range(1, 5):
-        markup.add(types.InlineKeyboardButton(f"{i} Скин(а)", callback_data=f"sk_{i}"))
+        markup.add(types.InlineKeyboardButton(f"{i} Персонаж(а)", callback_data=f"sk_{i}"))
     
-    bot.edit_message_text(f"Выбрана Поза #{pose_id}. Сколько скинов добавить?", 
+    bot.edit_message_text(f"Выбрана Поза #{pose_id}. Сколько персонажей добавить?", 
                           chat_id=call.message.chat.id, 
                           message_id=call.message.message_id, 
                           reply_markup=markup)
@@ -66,7 +64,7 @@ def choose_bg(call):
     markup.add(types.InlineKeyboardButton("Прозрачный (PNG)", callback_data="bg_png"),
                types.InlineKeyboardButton("Игровой фон (Карта)", callback_data="bg_game"))
     
-    bot.edit_message_text(f"Количество скинов: {skins}. Выбери тип фона:", 
+    bot.edit_message_text(f"Персонажей: {skins}. Выбери тип фона:", 
                           chat_id=call.message.chat.id, 
                           message_id=call.message.message_id, 
                           reply_markup=markup)
@@ -90,26 +88,23 @@ def final(call):
     pay_method = "Карта" if "card" in call.data else "Крипта"
     data = user_data.get(call.message.chat.id)
     
-    # Сообщение клиенту
-    bot.send_message(call.message.chat.id, "✅ Твой заказ отправлен Ильфану! Он свяжется с тобой в ближайшее время.")
+    # 1. Сообщение КЛИЕНТУ (как ты просил)
+    bot.send_message(call.message.chat.id, "готово, для подробностей напишите владельцу магазина @HokhikyanHokhikyans, чтобы вы могли забрать заказ")
     
-    # Уведомление тебе (админу)
+    # 2. Уведомление ТЕБЕ (Админу) со всеми данными
     admin_text = (f"🚀 НОВЫЙ ЗАКАЗ!\n\n"
-                  f"👤 Клиент: @{call.from_user.username}\n"
-                  f"🆔 ID клиента: {call.from_user.id}\n"
+                  f"👤 Ник клиента: @{call.from_user.username}\n"
+                  f"🆔 ID: {call.from_user.id}\n"
                   f"🖼 Поза: #{data['pose']}\n"
-                  f"👥 Скинов: {data['skins']}\n"
+                  f"👥 Кол-во персонажей: {data['skins']}\n"
                   f"🌌 Фон: {data['bg']}\n"
                   f"💰 Оплата: {pay_method}")
     bot.send_message(ADMIN_ID, admin_text)
 
-# --- 4. ЗАПУСК ДВУХ ПРОЦЕССОВ ---
+# --- 4. ЗАПУСК ---
 if __name__ == '__main__':
-    # Запускаем Flask в отдельном потоке
     threading.Thread(target=run_web_server, daemon=True).start()
-    
-    print("Бот успешно запущен и готов к заказам!")
-    # Запуск бота
+    print("Бот успешно запущен!")
     bot.infinity_polling()
-    
+
     
