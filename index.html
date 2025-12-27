@@ -23,57 +23,28 @@
             box-sizing: border-box; z-index: 100;
         }
 
-        /* ГОРИЗОНТАЛЬНОЕ МЕНЮ ЯЗЫКОВ КАК НА СКРИНШОТЕ */
+        /* ГОРИЗОНТАЛЬНОЕ МЕНЮ ЯЗЫКОВ */
         .lang-container { position: relative; }
-        
         .lang-btn {
-            background: rgba(0, 0, 0, 0.5); 
-            border: 1.5px solid white; 
-            color: white;
-            padding: 8px 20px; 
-            border-radius: 25px; 
-            cursor: pointer;
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5); border: 1.5px solid white; color: white;
+            padding: 8px 20px; border-radius: 25px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: bold;
         }
-
         .lang-menu {
-            position: absolute; 
-            top: 50px; 
-            right: 0; 
-            background: #121212; 
-            border: 1px solid #333; 
-            border-radius: 25px; /* Сильное закругление как на фото */
-            display: none;
-            
-            /* Сетка: 2 колонки, чтобы языки шли в ряд */
-            display: none; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 10px;
-            padding: 20px;
-            min-width: 350px; /* Широкое окно */
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            z-index: 1000;
+            position: absolute; top: 50px; right: 0; background: #121212; 
+            border: 1px solid #333; border-radius: 25px; 
+            display: none; grid-template-columns: repeat(2, 1fr); 
+            gap: 10px; padding: 20px; min-width: 350px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 1000;
         }
-
         .lang-menu div { 
-            padding: 10px; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px;
-            border-radius: 10px;
-            transition: 0.2s;
-            white-space: nowrap;
+            padding: 10px; cursor: pointer; display: flex; 
+            align-items: center; gap: 12px; border-radius: 10px; transition: 0.2s;
         }
         .lang-menu div:hover { background: rgba(255,255,255,0.05); }
-
-        .lang-code { color: #888; font-size: 12px; font-weight: bold; text-transform: lowercase; }
+        .lang-code { color: #888; font-size: 12px; font-weight: bold; }
         .lang-name { font-size: 15px; color: #fff; }
 
-        /* Остальные стили */
         .title {
             color: var(--main); font-size: 2.8rem; letter-spacing: 6px;
             text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); margin: 0; font-weight: 900;
@@ -84,6 +55,7 @@
             align-items: center; justify-content: center; height: 100vh; gap: 30px;
         }
 
+        /* КАРТОЧКА И СЛАЙДЕР */
         .card-wrapper {
             width: 450px; background: #0a0a0a; border-radius: 40px;
             padding: 20px; border: 1px solid #222; text-align: center;
@@ -108,6 +80,7 @@
             cursor: pointer; z-index: 1000;
         }
 
+        /* МОДАЛКА АККАУНТА */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); display: none;
@@ -115,11 +88,7 @@
             backdrop-filter: blur(10px);
         }
         .modal-overlay.show { display: flex; }
-        
-        .modal-box {
-            background: #111; padding: 40px; border-radius: 35px;
-            width: 380px; border: 1px solid #333; text-align: center;
-        }
+        .modal-box { background: #111; padding: 40px; border-radius: 35px; width: 380px; border: 1px solid #333; text-align: center; }
 
         .auth-row { display: flex; gap: 10px; width: 100%; margin-top: 5px; }
         .auth-row button { flex: 1; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; }
@@ -134,7 +103,6 @@
     <div class="top-bar">
         <div style="width: 100px;"></div>
         <h1 class="title">ILFAN'S POSES</h1>
-        
         <div class="lang-container">
             <button class="lang-btn" onclick="toggleLangMenu()">
                 <i class="fas fa-globe"></i> <span id="cur-lang-label">RU</span>
@@ -145,10 +113,21 @@
 
     <div class="content">
         <div class="arrow" onclick="nav(-1)">❮</div>
+        
         <div class="card-wrapper">
             <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
             <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose3.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose4.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose5.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose6.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose7.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose8.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose9.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose10.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose11.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
         </div>
+
         <div class="arrow" onclick="nav(1)">❯</div>
     </div>
 
@@ -157,56 +136,42 @@
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-box">
             <h2 style="color:var(--main); margin-bottom: 25px;">ACCOUNT</h2>
-            <div id="auth-inputs">
-                <input type="text" id="u-nick" placeholder="Username" style="width:100%; padding:15px; margin-bottom:15px; background:#1a1a1a; border:1px solid #333; color:white; border-radius:12px; box-sizing:border-box;">
-                <input type="password" id="u-pass" placeholder="Password" style="width:100%; padding:15px; margin-bottom:15px; background:#1a1a1a; border:1px solid #333; color:white; border-radius:12px; box-sizing:border-box;">
-                <div class="auth-row">
-                    <button style="background:#222; color:white;" onclick="handleAuth('reg')">Регистрация</button>
-                    <button style="background:var(--main); color:black;" onclick="handleAuth('login')">Войти</button>
-                </div>
+            <input type="text" id="u-nick" placeholder="Username" style="width:100%; padding:15px; margin-bottom:15px; background:#1a1a1a; border:1px solid #333; color:white; border-radius:12px;">
+            <input type="password" id="u-pass" placeholder="Password" style="width:100%; padding:15px; margin-bottom:15px; background:#1a1a1a; border:1px solid #333; color:white; border-radius:12px;">
+            <div class="auth-row">
+                <button style="background:#222; color:white;" onclick="handleAuth('reg')">Регистрация</button>
+                <button style="background:var(--main); color:black;" onclick="handleAuth('login')">Войти</button>
             </div>
             <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:30px;">CLOSE</p>
         </div>
     </div>
 
     <script>
-        // Данные для красивого отображения в меню
         const displayLangs = {
             ru: { c: "ru", n: "Русский" },
             en: { c: "us", n: "English" },
             fa: { c: "ir", n: "فارسی" },
-            fr: { c: "fr", n: "Français" },
-            tr: { c: "tr", n: "Türkçe" },
-            ko: { c: "ko", n: "한국어" },
-            kk: { c: "kz", n: "Қазақ" },
-            ar: { c: "sa", n: "العربية" }
-            // Добавь остальные сюда...
+            fr: { c: "fr", n: "Français" }
+            // Добавь коды для остальных 20 языков сюда
         };
 
         function renderLangMenu() {
             const menu = document.getElementById('l-menu');
-            // Отрисовываем только те, что есть в languages.js
             menu.innerHTML = Object.keys(langs).map(k => {
                 const info = displayLangs[k] || { c: k, n: k.toUpperCase() };
-                return `
-                <div onclick="setLang('${k}')">
-                    <span class="lang-code">${info.c}</span>
-                    <span class="lang-name">${info.n}</span>
-                </div>`;
+                return `<div onclick="setLang('${k}')"><span class="lang-code">${info.c}</span><span class="lang-name">${info.n}</span></div>`;
             }).join('');
         }
 
         function toggleLangMenu() {
             const m = document.getElementById('l-menu');
-            const isVisible = m.style.display === 'grid';
-            m.style.display = isVisible ? 'none' : 'grid';
+            m.style.display = m.style.display === 'grid' ? 'none' : 'grid';
         }
 
         function setLang(l) {
             localStorage.setItem('lang', l);
             document.getElementById('cur-lang-label').innerText = l.toUpperCase();
             document.getElementById('l-menu').style.display = 'none';
-            // Здесь должна быть логика перевода из твоего файла
             if(window.langs) {
                 const t = langs[l] || langs['ru'];
                 document.querySelectorAll('.order-btn').forEach(b => b.innerText = t.buy);
@@ -225,7 +190,7 @@
         function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
         function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
 
-        // Плексус
+        // Эффект Плексуса
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
@@ -250,7 +215,7 @@
         }
 
         window.onload = () => { init(); draw(); renderLangMenu(); };
+        window.onresize = init;
     </script>
 </body>
 </html>
-
