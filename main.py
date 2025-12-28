@@ -25,12 +25,12 @@ def save_db(data):
 user_profiles = load_db()
 user_orders_temp = {}
 
-# --- СЕРВЕР С ЛОГИКОЙ ОБНОВЛЕНИЯ СЧЕТЧИКА ---
+# --- ВЕБ-СЕРВЕР (ОБРАБОТКА САЙТА И КНОПКИ "ГОТОВО") ---
 class MyHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed_path = urllib.parse.urlparse(self.path)
         
-        # 1. Получение счетчика для сайта
+        # Получение счетчика для любого ника
         if parsed_path.path == '/get_orders':
             query = urllib.parse.parse_qs(parsed_path.query)
             nick = query.get('nick', [None])[0]
@@ -44,7 +44,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({'count': count}).encode())
 
-        # 2. ЛОГИКА КНОПКИ "ГОТОВО" (Прибавление +1 и уведомление)
+        # Логика кнопки "Готово!" для любого ника
         elif parsed_path.path == '/order_ready':
             query = urllib.parse.parse_qs(parsed_path.query)
             target_nick = query.get('user_nick', [None])[0]
@@ -52,11 +52,8 @@ class MyHandler(SimpleHTTPRequestHandler):
             found = False
             for uid, profile in user_profiles.items():
                 if profile.get('nick') == target_nick:
-                    # Прибавляем +1 к счетчику
                     profile['orders_count'] = profile.get('orders_count', 0) + 1
                     save_db(user_profiles)
-                    
-                    # Отправляем сообщение через бота
                     bot.send_message(uid, "Ваш позинг готов, пожалуйста свяжитесь с @HokhikyanHokhikyans, чтобы получить позинг!")
                     found = True
                     break
@@ -73,38 +70,32 @@ def run_website():
 
 threading.Thread(target=run_website, daemon=True).start()
 
-# --- ЛОГИКА БОТА (РЕГИСТРАЦИЯ И ЗАКАЗЫ) ---
+# --- ЛОГИКА БОТА ---
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    msg = bot.send_message(message.chat.id, "Привет! 🔥 Напиши ник в Roblox (**английские буквы**):")
+    msg = bot.send_message(message.chat.id, "Привет! 🔥 Напиши ник в Roblox:")
     bot.register_next_step_handler(msg, save_roblox_nick)
 
 def save_roblox_nick(message):
     nick = message.text
     if not re.match("^[A-Za-z0-9_]+$", nick):
-        msg = bot.send_message(message.chat.id, "❌ Только английские буквы! Попробуй еще раз:")
+        msg = bot.send_message(message.chat.id, "❌ Только английские буквы! Еще раз:")
         bot.register_next_step_handler(msg, save_roblox_nick)
         return
     
-    # Проверка уникальности
+    # Проверка, не занят ли ник
     for uid, profile in user_profiles.items():
         if profile.get('nick') == nick and uid != str(message.chat.id):
-            msg = bot.send_message(message.chat.id, f"⚠️ Ник `{nick}` уже занят! Придумай другой:")
+            msg = bot.send_message(message.chat.id, f"⚠️ Ник `{nick}` занят! Введи другой:")
             bot.register_next_step_handler(msg, save_roblox_nick)
             return
 
-    msg = bot.send_message(message.chat.id, f"Ник `{nick}` свободен! Теперь придумай пароль:")
+    msg = bot.send_message(message.chat.id, f"Ник `{nick}` свободен! Придумай пароль:")
     bot.register_next_step_handler(msg, lambda m: save_password(m, nick))
 
 def save_password(message, nick):
     password = message.text
-    for uid, profile in user_profiles.items():
-        if profile.get('password') == password and uid != str(message.chat.id):
-            msg = bot.send_message(message.chat.id, "⚠️ Такой пароль занят. Выбери другой:")
-            bot.register_next_step_handler(msg, lambda m: save_password(m, nick))
-            return
-
     user_profiles[str(message.chat.id)] = {
         'nick': nick, 
         'password': password, 
@@ -132,10 +123,13 @@ def process_photo(message):
         bot.register_next_step_handler(msg, process_photo)
         return
     user_orders_temp[message.chat.id] = {'photo': message.photo[-1].file_id}
-    # ... здесь идет остальная твоя логика выбора кнопок (1-10 лиц, фон и т.д.)
-    # В конце функции finish() просто отправляй данные админу БЕЗ прибавления +1.
-    # +1 прибавится только через сайт!
-    bot.send_message(message.chat.id, "Заказ отправлен! Ожидайте уведомления о готовности.")
+    # Здесь можно добавить кнопки выбора лиц/фона, как в твоем старом коде
+    bot.send_message(message.chat.id, "Заказ принят! После того как админ нажмет 'Готово', твой счетчик на сайте вырастет.")
+    
+    # Отправка админу инфо о заказе
+    prof = user_profiles.get(str(message.chat.id))
+    bot.send_photo(ADMIN_ID, user_orders_temp[message.chat.id]['photo'], 
+                   caption=f"🚀 **НОВЫЙ ЗАКАЗ**\n👤 Ник аккаунта: `{prof['nick']}`\n🎮 Roblox: `{prof['nick']}`", parse_mode="Markdown")
 
-print("Сервер запущен!")
+print("Система запущена!")
 bot.infinity_polling()
