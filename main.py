@@ -2,8 +2,22 @@ import telebot
 from telebot import types
 import re
 import os
+import threading
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 
-# --- НАСТРОЙКА ---
+# --- БЛОК ВЕБ-СЕРВЕРА ДЛЯ GOOGLE И RAILWAY ---
+def run_website():
+    port = int(os.environ.get("PORT", 8080))
+    server_address = ('', port)
+    httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
+    # Это позволит Google видеть твой index.html и файл подтверждения
+    print(f"Сайт активен на порту {port}")
+    httpd.serve_forever()
+
+# Запускаем сайт в фоновом режиме
+threading.Thread(target=run_website, daemon=True).start()
+
+# --- ТВОЯ НАСТРОЙКА БОТА ---
 TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
 ADMIN_ID = 2039589760
 bot = telebot.TeleBot(TOKEN)
@@ -11,7 +25,7 @@ bot = telebot.TeleBot(TOKEN)
 user_profiles = {} 
 user_orders_temp = {} 
 
-# --- ЛОГИКА ---
+# --- ТВОЯ ЛОГИКА (БЕЗ ИЗМЕНЕНИЙ) ---
 @bot.message_handler(commands=['start'])
 def start(message):
     msg = bot.send_message(message.chat.id, "Привет! 🔥 Напиши ник в Roblox (**английские буквы**):")
@@ -71,7 +85,8 @@ def finish(call):
     prof = user_profiles.get(call.message.chat.id)
     bot.send_message(call.message.chat.id, "готово, для подробностей напишите @HokhikyanHokhikyans")
     if prof: prof['orders_count'] += 1
+    # Отправка данных админу
     bot.send_photo(ADMIN_ID, data['photo'], caption=f"🚀 **ЗАКАЗ**\n👤 ТГ: @{call.from_user.username}\n🎮 Roblox: `{prof['nick']}`\n👥 Лица: {data['count']}\n🌌 Фон: {data['bg']}\n💸 Оплата: {pay}", parse_mode="Markdown")
 
-if __name__ == '__main__':
-    bot.infinity_polling(skip_pending=True)
+print("Бот и Сайт успешно запущены!")
+bot.infinity_polling()
