@@ -35,7 +35,7 @@ def my_profile(message):
 
 @bot.message_handler(func=lambda m: m.text == "🛒 СДЕЛАТЬ ЗАКАЗ")
 def ask_photo(message):
-    msg = bot.send_message(message.chat.id, "📸 Пришли фото позинга:")
+    msg = bot.send_message(message.chat.id, "📸 Пришли фото Фона:")
     bot.register_next_step_handler(msg, process_photo)
 
 def process_photo(message):
