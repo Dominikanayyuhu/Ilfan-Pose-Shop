@@ -5,139 +5,179 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ilfan's Poses Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="languages.js"></script>
     <style>
-        :root { --main: #00ff88; --gold: #ffcc00; --bg: #000; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
-        #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        :root { --main: #00ff88; --bg: #000; --card-bg: #111; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; }
         
-        .top-bar { position: fixed; top: 20px; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; box-sizing: border-box; z-index: 100; }
-        
-        /* Счетчик заказов */
-        .orders-status { display: none; background: rgba(255, 77, 77, 0.2); border: 1px solid #ff4d4d; padding: 8px 15px; border-radius: 20px; color: #ff4d4d; font-weight: bold; align-items: center; gap: 8px; }
+        /* Фон с созвездиями */
+        #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
-        .title { color: var(--main); font-size: 2.8rem; letter-spacing: 6px; text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); font-weight: 900; }
-        .content { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; height: 100vh; gap: 30px; }
-        .card-wrapper { width: 450px; background: #0a0a0a; border-radius: 40px; padding: 20px; border: 1px solid #222; text-align: center; }
-        .card { display: none; }
-        .card.active { display: block; animation: zoomIn 0.4s; }
-        .card img { width: 100%; border-radius: 30px; margin-bottom: 20px; }
-        .order-btn { background: linear-gradient(90deg, #00ff88, #00ffe5); border: none; padding: 15px; width: 95%; border-radius: 15px; font-weight: 900; cursor: pointer; }
+        /* Шапка */
+        .top-bar { position: fixed; top: 20px; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; box-sizing: border-box; z-index: 100; }
+        .orders-status { display: none; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--main); padding: 8px 15px; border-radius: 20px; color: var(--main); font-weight: bold; align-items: center; gap: 8px; backdrop-filter: blur(5px); }
+        .title { color: var(--main); font-size: 2.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(0, 255, 136, 0.5); font-weight: 900; margin: 0; }
+        .lang-btn { background: none; border: 1px solid #333; color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+        .lang-btn:hover { border-color: var(--main); color: var(--main); }
+
+        /* Контент и слайдер */
+        .content { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; height: 100vh; gap: 40px; }
+        .card-wrapper { width: 450px; height: 550px; position: relative; perspective: 1000px; }
+        .card { position: absolute; width: 100%; height: 100%; background: var(--card-bg); border-radius: 40px; padding: 20px; border: 1px solid #222; text-align: center; box-sizing: border-box;
+                opacity: 0; transform: scale(0.8) rotateY(10deg); transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
+        .card.active { opacity: 1; transform: scale(1) rotateY(0); pointer-events: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .card img { width: 100%; height: 380px; object-fit: cover; border-radius: 30px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         
-        .auth-circle { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: black; cursor: pointer; z-index: 1000; }
+        .order-btn { background: linear-gradient(90deg, #00ff88, #00ffe5); border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 900; cursor: pointer; font-size: 1.1rem; transition: 0.3s; box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2); }
+        .order-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 255, 136, 0.4); }
+
+        .arrow { font-size: 3rem; color: var(--main); cursor: pointer; user-select: none; transition: 0.3s; z-index: 100; text-shadow: 0 0 15px var(--main); }
+        .arrow:hover { transform: scale(1.2); }
+
+        /* Модальные окна (Плавные) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(15px);
+                        opacity: 0; visibility: hidden; transition: 0.4s ease; }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        .modal-box { background: #0a0a0a; padding: 40px; border-radius: 35px; width: 400px; border: 1px solid #222; text-align: center; transform: translateY(30px); transition: 0.4s ease; }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+
+        /* Формы и кнопки (Симметричные) */
+        .input-group { width: 100%; margin-bottom: 15px; }
+        input { width: 100%; padding: 18px; background: #151515; border: 1px solid #333; color: white; border-radius: 18px; text-align: center; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--main); box-shadow: 0 0 15px rgba(0, 255, 136, 0.2); }
         
-        #admin-panel { position: fixed; bottom: 110px; right: 30px; background: rgba(0,0,0,0.9); border: 2px solid var(--main); padding: 20px; border-radius: 25px; display: none; z-index: 1000; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(10px); }
-        .modal-overlay.show { display: flex; }
-        .modal-box { background: #111; padding: 40px; border-radius: 35px; width: 380px; border: 1px solid #333; text-align: center; }
-        input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 12px; text-align: center; }
-        
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .auth-btn { width: 100%; padding: 18px; background: var(--main); border: none; border-radius: 18px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; transition: 0.3s; }
+        .auth-btn:hover { background: #00e67a; }
+
+        .auth-circle { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: black; cursor: pointer; z-index: 1000; box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3); transition: 0.3s; }
+        .auth-circle:hover { transform: scale(1.1) rotate(15deg); }
+
+        #admin-panel { position: fixed; bottom: 120px; right: 30px; background: rgba(10,10,10,0.95); border: 2px solid var(--main); padding: 25px; border-radius: 30px; display: none; z-index: 1000; backdrop-filter: blur(10px); }
     </style>
 </head>
 <body>
     <canvas id="plexus"></canvas>
+
     <div class="top-bar">
         <div id="orders-counter" class="orders-status"><i class="fas fa-box"></i> <span id="order-num">0</span></div>
         <h1 class="title">ILFAN'S POSES</h1>
-        <div style="width:100px"></div>
+        <button class="lang-btn" onclick="toggleLang()">RU / EN</button>
     </div>
 
     <div class="content">
-        <div class="arrow" onclick="nav(-1)" style="cursor:pointer; font-size:3rem;">❮</div>
-        <div class="card-wrapper">
+        <div class="arrow" onclick="nav(-1)">❮</div>
+        <div class="card-wrapper" id="slider">
             <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
-            </div>
-        <div class="arrow" onclick="nav(1)" style="cursor:pointer; font-size:3rem;">❯</div>
+            <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose3.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose4.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose5.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose6.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose7.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose8.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose9.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose10.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose11.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
+        </div>
+        <div class="arrow" onclick="nav(1)">❯</div>
     </div>
 
-    <div id="admin-panel">
-        <h3 style="color:var(--main); margin:0 0 10px 0;">ADMIN</h3>
-        <input type="text" id="target-nick" placeholder="Ник клиента" style="width:150px;">
-        <button onclick="markReady()" style="width:100%; padding:10px; background:var(--main); border:none; border-radius:10px; font-weight:bold;">ГОТОВО</button>
-    </div>
+    <div class="auth-circle" onclick="openModal()"><i class="fas fa-user-astronaut"></i></div>
 
-    <div class="auth-circle" onclick="openModal('auth-modal')"><i class="fas fa-user-circle"></i></div>
-
-    <div class="modal-overlay" id="auth-modal">
+    <div class="modal-overlay" id="auth-modal" onclick="if(event.target==this) closeModal()">
         <div class="modal-box">
-            <h2 style="color:var(--main);">ACCOUNT</h2>
+            <h2 id="modal-title" style="color:var(--main); margin-bottom:25px; letter-spacing:2px;">ACCOUNT</h2>
             <div id="auth-inputs">
-                <input type="text" id="u-nick" placeholder="Roblox Username">
-                <button onclick="handleAuth()" style="width:100%; padding:15px; background:var(--main); border:none; border-radius:12px; font-weight:bold;">ВОЙТИ</button>
+                <div class="input-group"><input type="text" id="u-nick" placeholder="Roblox Username"></div>
+                <div class="input-group"><input type="password" id="u-pass" placeholder="Password (Optional)"></div>
+                <button class="auth-btn" onclick="handleAuth()">ВХОД / РЕГИСТРАЦИЯ</button>
             </div>
             <div id="user-info" style="display:none;">
                 <h3 id="hi-msg"></h3>
-                <button onclick="logout()" style="width:100%; padding:10px; background:#222; color:white; border:none; border-radius:12px;">ВЫЙТИ</button>
+                <button onclick="logout()" style="width:100%; padding:15px; background:#222; color:white; border:none; border-radius:15px; cursor:pointer;">ВЫЙТИ</button>
             </div>
-            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;">CLOSE</p>
+            <p onclick="closeModal()" style="cursor:pointer; color:#555; margin-top:25px; font-weight:bold;">CLOSE</p>
         </div>
     </div>
 
+    <div id="admin-panel">
+        <h3 style="color:var(--main); margin:0 0 15px 0;">ADMIN PANEL</h3>
+        <input type="text" id="target-nick" placeholder="Ник клиента" style="margin-bottom:10px;">
+        <button onclick="markReady()" class="auth-btn" style="margin:0;">ГОТОВО</button>
+    </div>
+
     <script>
-        function sync() {
-            const user = JSON.parse(localStorage.getItem('ilfan_user'));
-            if(user) {
-                document.getElementById('orders-counter').style.display = 'flex';
-                fetch(`/get_orders?nick=${user.name}`).then(r => r.json()).then(d => { document.getElementById('order-num').innerText = d.count; });
-                if(user.name === 'Ankapchel') document.getElementById('admin-panel').style.display = 'block';
-            }
+        let currentPose = 0;
+        const cards = document.querySelectorAll('.card');
+
+        function nav(direction) {
+            cards[currentPose].classList.remove('active');
+            currentPose = (currentPose + direction + cards.length) % cards.length;
+            cards[currentPose].classList.add('active');
         }
 
-        function handleAuth() {
-            const u = document.getElementById('u-nick').value.trim();
-            if(!u) return;
-            localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
-            location.reload();
-        }
+        function openModal() { document.getElementById('auth-modal').classList.add('show'); checkUser(); }
+        function closeModal() { document.getElementById('auth-modal').classList.remove('show'); }
 
-        function markReady() {
-            const n = document.getElementById('target-nick').value;
-            fetch(`/order_ready?user_nick=${n}`).then(res => { if(res.ok) { alert("Готово!"); location.reload(); } });
-        }
-
-        function openModal(id) {
-            document.getElementById(id).classList.add('show');
+        function checkUser() {
             const user = JSON.parse(localStorage.getItem('ilfan_user'));
             if(user) {
                 document.getElementById('auth-inputs').style.display = 'none';
                 document.getElementById('user-info').style.display = 'block';
                 document.getElementById('hi-msg').innerText = "Привет, " + user.name;
+                syncOrders(user.name);
             }
         }
 
-        function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
-        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
-        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
-        
-        let cur = 0;
-        function nav(d) {
-            const cards = document.querySelectorAll('.card');
-            cards[cur].classList.remove('active');
-            cur = (cur + d + cards.length) % cards.length;
-            cards[cur].classList.add('active');
+        function handleAuth() {
+            const nick = document.getElementById('u-nick').value.trim();
+            if(!nick) return alert("Введите ник!");
+            localStorage.setItem('ilfan_user', JSON.stringify({name: nick}));
+            location.reload();
         }
 
-        // Эффект Plexus (упрощенно)
+        function syncOrders(nick) {
+            fetch(`/get_orders?nick=${nick}`).then(r => r.json()).then(d => {
+                if(d.count !== undefined) {
+                    document.getElementById('orders-counter').style.display = 'flex';
+                    document.getElementById('order-num').innerText = d.count;
+                }
+            });
+            if(nick === 'Ankapchel') document.getElementById('admin-panel').style.display = 'block';
+        }
+
+        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
+        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
+
+        // Эффект созвездий (Plexus)
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
-        function init() { 
+        function initPlexus() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            dots = []; for(let i=0; i<50; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:Math.random()-0.5, vy:Math.random()-0.5});
+            dots = [];
+            for(let i=0; i<60; i++) {
+                dots.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
+            }
         }
-        function draw() {
+        function drawPlexus() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle="#00ff88"; ctx.strokeStyle="#00ff88";
-            dots.forEach(d => {
-                d.x+=d.vx; d.y+=d.vy;
-                if(d.x<0||d.x>canvas.width) d.vx*=-1; if(d.y<0||d.y>canvas.height) d.vy*=-1;
-                ctx.beginPath(); ctx.arc(d.x,d.y,2,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle = "rgba(0, 255, 136, 0.5)";
+            ctx.strokeStyle = "rgba(0, 255, 136, 0.1)";
+            dots.forEach((d, i) => {
+                d.x += d.vx; d.y += d.vy;
+                if(d.x<0 || d.x>canvas.width) d.vx *= -1;
+                if(d.y<0 || d.y>canvas.height) d.vy *= -1;
+                ctx.beginPath(); ctx.arc(d.x, d.y, 1.5, 0, Math.PI*2); ctx.fill();
+                for(let j=i+1; j<dots.length; j++) {
+                    let dist = Math.hypot(d.x-dots[j].x, d.y-dots[j].y);
+                    if(dist < 150) { ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(dots[j].x, dots[j].y); ctx.stroke(); }
+                }
             });
-            requestAnimationFrame(draw);
+            requestAnimationFrame(drawPlexus);
         }
-        window.onload = () => { init(); draw(); sync(); };
+
+        window.onload = () => { initPlexus(); drawPlexus(); const u = JSON.parse(localStorage.getItem('ilfan_user')); if(u) syncOrders(u.name); };
+        window.onresize = initPlexus;
     </script>
 </body>
 </html>
