@@ -2,30 +2,47 @@ import telebot
 from telebot import types
 import re
 import os
+import json
 import threading
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 
-# --- БЛОК ВЕБ-СЕРВЕРА ДЛЯ GOOGLE И RAILWAY ---
+# --- НАСТРОЙКИ И БАЗА ДАННЫХ ---
+TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
+ADMIN_ID = 2039589760
+DB_FILE = 'database.json'
+bot = telebot.TeleBot(TOKEN)
+
+# Функция для загрузки базы данных из файла
+def load_db():
+    if os.path.exists(DB_FILE):
+        try:
+            with open(DB_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+# Функция для сохранения базы данных в файл
+def save_db(data):
+    with open(DB_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+# Инициализация данных
+user_profiles = load_db()
+user_orders_temp = {}
+
+# --- БЛОК ВЕБ-СЕРВЕРА (ДЛЯ GOOGLE И RAILWAY) ---
 def run_website():
     port = int(os.environ.get("PORT", 8080))
     server_address = ('', port)
     httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
-    # Это позволит Google видеть твой index.html и файл подтверждения
-    print(f"Сайт активен на порту {port}")
+    print(f"Сайт работает на порту {port}")
     httpd.serve_forever()
 
-# Запускаем сайт в фоновом режиме
 threading.Thread(target=run_website, daemon=True).start()
 
-# --- ТВОЯ НАСТРОЙКА БОТА ---
-TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
-ADMIN_ID = 2039589760
-bot = telebot.TeleBot(TOKEN)
+# --- ЛОГИКА БОТА ---
 
-user_profiles = {} 
-user_orders_temp = {} 
-
-# --- ТВОЯ ЛОГИКА (БЕЗ ИЗМЕНЕНИЙ) ---
 @bot.message_handler(commands=['start'])
 def start(message):
     msg = bot.send_message(message.chat.id, "Привет! 🔥 Напиши ник в Roblox (**английские буквы**):")
@@ -37,15 +54,43 @@ def save_roblox_nick(message):
         msg = bot.send_message(message.chat.id, "❌ Только английские буквы! Попробуй еще раз:")
         bot.register_next_step_handler(msg, save_roblox_nick)
         return
-    user_profiles[message.chat.id] = {'nick': nick, 'orders_count': 0}
+
+    # ПРОВЕРКА: занят ли ник кем-то другим
+    for uid, profile in user_profiles.items():
+        if profile.get('nick') == nick and uid != str(message.chat.id):
+            msg = bot.send_message(message.chat.id, f"⚠️ Ник `{nick}` уже занят! Придумай другой:")
+            bot.register_next_step_handler(msg, save_roblox_nick)
+            return
+
+    msg = bot.send_message(message.chat.id, f"Ник `{nick}` свободен! Теперь придумай пароль:")
+    bot.register_next_step_handler(msg, lambda m: save_password(m, nick))
+
+def save_password(message, nick):
+    password = message.text
+    
+    # ПРОВЕРКА: занят ли пароль кем-то другим
+    for uid, profile in user_profiles.items():
+        if profile.get('password') == password and uid != str(message.chat.id):
+            msg = bot.send_message(message.chat.id, "⚠️ Такой пароль уже используется другим игроком. Выбери другой:")
+            bot.register_next_step_handler(msg, lambda m: save_password(m, nick))
+            return
+
+    # Сохраняем аккаунт
+    user_profiles[str(message.chat.id)] = {
+        'nick': nick, 
+        'password': password, 
+        'orders_count': user_profiles.get(str(message.chat.id), {}).get('orders_count', 0)
+    }
+    save_db(user_profiles)
+    
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add("🛒 СДЕЛАТЬ ЗАКАЗ", "👤 МОЙ АККАУНТ")
-    bot.send_message(message.chat.id, f"✅ Ник {nick} сохранен!", reply_markup=markup)
+    bot.send_message(message.chat.id, f"✅ Аккаунт готов!\nНик: `{nick}`\nПароль: `{password}`", reply_markup=markup, parse_mode="Markdown")
 
 @bot.message_handler(func=lambda m: m.text == "👤 МОЙ АККАУНТ")
 def my_profile(message):
-    p = user_profiles.get(message.chat.id, {'nick': '?', 'orders_count': 0})
-    bot.send_message(message.chat.id, f"✨ **АНКЕТА**\n👤 ТГ: @{message.from_user.username}\n🎮 Roblox: `{p['nick']}`\n📦 Заказов: {p['orders_count']}", parse_mode="Markdown")
+    p = user_profiles.get(str(message.chat.id), {'nick': '?', 'orders_count': 0})
+    bot.send_message(message.chat.id, f"✨ **АНКЕТА**\n👤 ТГ: @{message.from_user.username}\n🎮 Roblox: `{p['nick']}`\n📦 Заказов: {p.get('orders_count', 0)}", parse_mode="Markdown")
 
 @bot.message_handler(func=lambda m: m.text == "🛒 СДЕЛАТЬ ЗАКАЗ")
 def ask_photo(message):
@@ -82,11 +127,15 @@ def choose_pay(call):
 def finish(call):
     pay = call.data.split('_')[1]
     data = user_orders_temp.get(call.message.chat.id)
-    prof = user_profiles.get(call.message.chat.id)
+    prof = user_profiles.get(str(call.message.chat.id))
+    
     bot.send_message(call.message.chat.id, "готово, для подробностей напишите @HokhikyanHokhikyans")
-    if prof: prof['orders_count'] += 1
-    # Отправка данных админу
-    bot.send_photo(ADMIN_ID, data['photo'], caption=f"🚀 **ЗАКАЗ**\n👤 ТГ: @{call.from_user.username}\n🎮 Roblox: `{prof['nick']}`\n👥 Лица: {data['count']}\n🌌 Фон: {data['bg']}\n💸 Оплата: {pay}", parse_mode="Markdown")
+    
+    if prof:
+        prof['orders_count'] = prof.get('orders_count', 0) + 1
+        save_db(user_profiles)
 
-print("Бот и Сайт успешно запущены!")
+    bot.send_photo(ADMIN_ID, data['photo'], caption=f"🚀 **ЗАКАЗ**\n👤 ТГ: @{call.from_user.username}\n🎮 Roblox: `{prof['nick'] if prof else '?'}`\n👥 Лица: {data['count']}\n🌌 Фон: {data['bg']}\n💸 Оплата: {pay}", parse_mode="Markdown")
+
+print("Бот и Сайт запущены!")
 bot.infinity_polling()
