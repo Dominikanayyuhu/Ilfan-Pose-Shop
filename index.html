@@ -3,129 +3,368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ilfan's Poses Premium</title>
+    
+    <title>Ilfan's Poses Premium — Магазин эксклюзивных поз</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="languages.js"></script>
     <style>
         :root { --main: #00ff88; --gold: #ffcc00; --bg: #000; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
-        #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        
-        .top-bar { position: fixed; top: 20px; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; box-sizing: border-box; z-index: 100; }
-        
-        /* Счетчик заказов */
-        .orders-status { display: none; background: rgba(255, 77, 77, 0.2); border: 1px solid #ff4d4d; padding: 8px 15px; border-radius: 20px; color: #ff4d4d; font-weight: bold; align-items: center; gap: 8px; }
 
-        .title { color: var(--main); font-size: 2.8rem; letter-spacing: 6px; text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); font-weight: 900; }
-        .content { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; height: 100vh; gap: 30px; }
-        .card-wrapper { width: 450px; background: #0a0a0a; border-radius: 40px; padding: 20px; border: 1px solid #222; text-align: center; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--bg); color: white;
+            font-family: 'Poppins', sans-serif; overflow-x: hidden;
+        }
+
+        #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* ВЕРХНЯЯ ПАНЕЛЬ */
+        .top-bar {
+            position: fixed; top: 20px; width: 100%; 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; box-sizing: border-box; z-index: 100;
+        }
+
+        /* СТИЛЬ ДЛЯ ТВОЕГО НОВОГО СЧЕТЧИКА */
+        .orders-status {
+            display: none; /* Покажем после входа */
+            background: rgba(255, 77, 77, 0.2);
+            border: 1px solid #ff4d4d;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #ff4d4d;
+            font-weight: bold;
+            font-size: 14px;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
+        }
+
+        .lang-container { position: relative; display: flex; gap: 15px; align-items: center; }
+        .lang-btn {
+            background: rgba(0, 0, 0, 0.5); border: 1.5px solid white; color: white;
+            padding: 8px 20px; border-radius: 25px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: bold;
+        }
+        .lang-menu {
+            position: absolute; top: 50px; right: 0; background: #121212; 
+            border: 1px solid #333; border-radius: 25px; 
+            display: none; grid-template-columns: repeat(2, 1fr); 
+            gap: 10px; padding: 20px; min-width: 350px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 1000;
+        }
+        .lang-menu div { 
+            padding: 10px; cursor: pointer; display: flex; 
+            align-items: center; gap: 12px; border-radius: 10px; transition: 0.2s;
+        }
+        .lang-menu div:hover { background: rgba(255,255,255,0.05); }
+        .lang-code { color: #888; font-size: 11px; font-weight: bold; }
+        .lang-name { font-size: 14px; color: #fff; }
+
+        .title {
+            color: var(--main); font-size: 2.8rem; letter-spacing: 6px;
+            text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); margin: 0; font-weight: 900;
+            text-align: center; flex-grow: 1;
+        }
+
+        /* КОНТЕНТ */
+        .content {
+            position: relative; z-index: 10; display: flex;
+            align-items: center; justify-content: center; height: 100vh; gap: 30px;
+            padding: 0 20px;
+        }
+
+        .rev-trigger { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.4s; }
+        .rev-trigger:hover { transform: scale(1.1); }
+        .rev-icon {
+            width: 75px; height: 75px; border: 2.5px solid var(--gold);
+            border-radius: 20px; display: flex; align-items: center;
+            justify-content: center; font-size: 32px; color: var(--gold);
+        }
+        .rev-label { color: var(--gold); font-size: 12px; font-weight: bold; margin-top: 10px; }
+
+        .card-wrapper {
+            width: 450px; background: #0a0a0a; border-radius: 40px;
+            padding: 20px; border: 1px solid #222; text-align: center;
+            transition: 0.3s;
+        }
         .card { display: none; }
-        .card.active { display: block; animation: zoomIn 0.4s; }
+        .card.active { display: block; animation: zoomIn 0.4s ease-out; }
         .card img { width: 100%; border-radius: 30px; margin-bottom: 20px; }
-        .order-btn { background: linear-gradient(90deg, #00ff88, #00ffe5); border: none; padding: 15px; width: 95%; border-radius: 15px; font-weight: 900; cursor: pointer; }
-        
-        .auth-circle { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: black; cursor: pointer; z-index: 1000; }
-        
-        #admin-panel { position: fixed; bottom: 110px; right: 30px; background: rgba(0,0,0,0.9); border: 2px solid var(--main); padding: 20px; border-radius: 25px; display: none; z-index: 1000; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(10px); }
-        .modal-overlay.show { display: flex; }
-        .modal-box { background: #111; padding: 40px; border-radius: 35px; width: 380px; border: 1px solid #333; text-align: center; }
-        input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 12px; text-align: center; }
-        
+
+        .order-btn {
+            background: linear-gradient(90deg, #00ff88, #00ffe5);
+            border: none; padding: 15px; width: 95%; border-radius: 15px;
+            font-weight: 900; cursor: pointer; color: #000; transition: 0.3s;
+        }
+
+        .arrow { font-size: 3.5rem; color: var(--gold); cursor: pointer; transition: 0.2s; }
+        .arrow:active { transform: scale(0.8); }
+
+        .auth-circle {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 65px; height: 65px; background: var(--main);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 28px; color: black;
+            cursor: pointer; z-index: 1000;
+        }
+
+        /* АДМИН ПАНЕЛЬ ДЛЯ ANKAPCHEL */
+        #admin-panel {
+            position: fixed; bottom: 110px; right: 30px;
+            background: rgba(0,0,0,0.9); border: 2px solid var(--main);
+            padding: 20px; border-radius: 25px; display: none;
+            z-index: 1000; width: 220px; text-align: center;
+            box-shadow: 0 0 20px var(--main);
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none;
+            justify-content: center; align-items: center; z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+        .modal-overlay.show { display: flex; animation: fadeIn 0.3s forwards; }
+        .modal-box { background: #111; padding: 40px; border-radius: 35px; width: 380px; border: 1px solid #333; text-align: center; max-width: 90%; }
+
+        input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 12px; box-sizing: border-box; text-align: center; }
+        .auth-row { display: flex; gap: 10px; width: 100%; margin-top: 5px; }
+        .auth-row button { flex: 1; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.3s; }
+
+        @media screen and (max-width: 600px) {
+            .top-bar { padding: 0 15px; }
+            .title { font-size: 1.1rem !important; }
+            .orders-status { font-size: 11px; padding: 5px 10px; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
+
     <canvas id="plexus"></canvas>
+
     <div class="top-bar">
-        <div id="orders-counter" class="orders-status"><i class="fas fa-box"></i> <span id="order-num">0</span></div>
-        <h1 class="title">ILFAN'S POSES</h1>
-        <div style="width:100px"></div>
+        <div id="orders-counter" class="orders-status">
+            <i class="fas fa-box"></i> <span id="order-num">0</span>
+        </div>
+
+        <h1 class="title" id="t-main">ILFAN'S POSES</h1>
+
+        <div class="lang-container">
+            <button class="lang-btn" onclick="toggleLangMenu()">
+                <i class="fas fa-globe"></i> <span id="cur-lang-label">RU</span>
+            </button>
+            <div class="lang-menu" id="l-menu"></div>
+        </div>
     </div>
 
     <div class="content">
-        <div class="arrow" onclick="nav(-1)" style="cursor:pointer; font-size:3rem;">❮</div>
+        <div class="rev-trigger" onclick="openModal('rev-modal')">
+            <div class="rev-icon"><i class="fas fa-comment-dots"></i></div>
+            <div class="rev-label" id="t-rev-label">ОТЗЫВЫ</div>
+        </div>
+
+        <div class="arrow" onclick="nav(-1)">❮</div>
+        
         <div class="card-wrapper">
-            <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
-            </div>
-        <div class="arrow" onclick="nav(1)" style="cursor:pointer; font-size:3rem;">❯</div>
+            <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()" id="b1">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose2.jpg"><button class="order-btn" onclick="buy()" id="b2">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose3.jpg"><button class="order-btn" onclick="buy()" id="b3">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose4.jpg"><button class="order-btn" onclick="buy()" id="b4">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose5.jpg"><button class="order-btn" onclick="buy()" id="b5">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose6.jpg"><button class="order-btn" onclick="buy()" id="b6">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose7.jpg"><button class="order-btn" onclick="buy()" id="b7">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose8.jpg"><button class="order-btn" onclick="buy()" id="b8">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose9.jpg"><button class="order-btn" onclick="buy()" id="b9">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose10.jpg"><button class="order-btn" onclick="buy()" id="b10">ЗАКАЗАТЬ</button></div>
+            <div class="card"><img src="pose11.jpg"><button class="order-btn" onclick="buy()" id="b11">ЗАКАЗАТЬ</button></div>
+        </div>
+
+        <div class="arrow" onclick="nav(1)">❯</div>
     </div>
 
     <div id="admin-panel">
-        <h3 style="color:var(--main); margin:0 0 10px 0;">ADMIN</h3>
-        <input type="text" id="target-nick" placeholder="Ник клиента" style="width:150px;">
-        <button onclick="markReady()" style="width:100%; padding:10px; background:var(--main); border:none; border-radius:10px; font-weight:bold;">ГОТОВО</button>
+        <h3 style="color:var(--main); margin-top:0;">ADMIN</h3>
+        <input type="text" id="target-nick" placeholder="Ник клиента" style="font-size:12px;">
+        <button class="order-btn" style="padding:10px; font-size:12px;" onclick="markReady()">ГОТОВО!</button>
     </div>
 
     <div class="auth-circle" onclick="openModal('auth-modal')"><i class="fas fa-user-circle"></i></div>
 
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-box">
-            <h2 style="color:var(--main);">ACCOUNT</h2>
+            <h2 id="t-acc-title" style="color:var(--main); margin-bottom: 25px;">ACCOUNT</h2>
             <div id="auth-inputs">
-                <input type="text" id="u-nick" placeholder="Roblox Username">
-                <button onclick="handleAuth()" style="width:100%; padding:15px; background:var(--main); border:none; border-radius:12px; font-weight:bold;">ВОЙТИ</button>
+                <input type="text" id="u-nick" placeholder="Username">
+                <input type="password" id="u-pass" placeholder="Password">
+                <div class="auth-row">
+                    <button id="t-reg-btn" style="background:#222; color:white;" onclick="handleAuth('reg')">Регистрация</button>
+                    <button id="t-login-btn" style="background:var(--main); color:black;" onclick="handleAuth('login')">Войти</button>
+                </div>
             </div>
             <div id="user-info" style="display:none;">
                 <h3 id="hi-msg"></h3>
-                <button onclick="logout()" style="width:100%; padding:10px; background:#222; color:white; border:none; border-radius:12px;">ВЫЙТИ</button>
+                <button id="t-logout-btn" class="order-btn" style="background:#222; color:white; margin-top:10px;" onclick="logout()">ВЫЙТИ</button>
             </div>
+            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:30px;">CLOSE</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rev-modal">
+        <div class="modal-box" style="width: 450px;">
+            <h2 id="t-rev-head" style="color:var(--gold)">ОТЗЫВЫ</h2>
+            <div id="rev-list" style="max-height: 250px; overflow-y: auto; text-align: left; padding: 10px; border: 1px solid #222; border-radius: 15px; margin-bottom: 10px;"></div>
+            <input type="text" id="rev-in" placeholder="...">
+            <button id="t-send-btn" class="order-btn" style="background:var(--gold)" onclick="sendRev()">ОТПРАВИТЬ</button>
             <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;">CLOSE</p>
         </div>
     </div>
 
     <script>
-        function sync() {
+        // ЛОГИКА СЧЕТЧИКА И АДМИНКИ ДЛЯ ТВОЕГО ДИЗАЙНА
+        function syncOrders() {
             const user = JSON.parse(localStorage.getItem('ilfan_user'));
             if(user) {
                 document.getElementById('orders-counter').style.display = 'flex';
-                fetch(`/get_orders?nick=${user.name}`).then(r => r.json()).then(d => { document.getElementById('order-num').innerText = d.count; });
-                if(user.name === 'Ankapchel') document.getElementById('admin-panel').style.display = 'block';
+                fetch(`/get_orders?nick=${user.name}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        document.getElementById('order-num').innerText = data.count;
+                    });
+                
+                if(user.name === 'Ankapchel') {
+                    document.getElementById('admin-panel').style.display = 'block';
+                }
             }
         }
 
-        function handleAuth() {
-            const u = document.getElementById('u-nick').value.trim();
-            if(!u) return;
-            localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
-            location.reload();
+        function markReady() {
+            const nick = document.getElementById('target-nick').value;
+            if(!nick) return alert("Введите ник!");
+            fetch(`/order_ready?user_nick=${nick}`)
+                .then(res => {
+                    if(res.ok) {
+                        alert("Уведомление отправлено клиенту!");
+                        document.getElementById('target-nick').value = '';
+                        syncOrders();
+                    } else {
+                        alert("Пользователь не найден!");
+                    }
+                });
         }
 
-        function markReady() {
-            const n = document.getElementById('target-nick').value;
-            fetch(`/order_ready?user_nick=${n}`).then(res => { if(res.ok) { alert("Готово!"); location.reload(); } });
+        // Твои оригинальные JS функции
+        const displayLangs = {
+            ru: { c: "ru", n: "Русский" }, en: { c: "us", n: "English" }, am: { c: "am", n: "Հայերեն" },
+            ar: { c: "sa", n: "العربية" }, fr: { c: "fr", n: "Français" }, tr: { c: "tr", n: "Türkçe" },
+            ko: { c: "ko", n: "한국어" }, ja: { c: "ja", n: "日本語" }, zh: { c: "cn", n: "中文" },
+            kk: { c: "kz", n: "Қазақ" }, es: { c: "es", n: "Español" }, it: { c: "it", n: "Italiano" },
+            fa: { c: "ir", n: "فارسی" }, el: { c: "gr", n: "Ελληνικά" }, uk: { c: "ua", n: "Українська" },
+            hi: { c: "in", n: "हिन्दी" }, uz: { c: "uz", n: "O'zbek" }, ky: { c: "kg", n: "Кыргызча" },
+            he: { c: "il", n: "עברית" }, vi: { c: "vn", n: "Tiếng Việt" }
+        };
+
+        function renderLangMenu() {
+            const menu = document.getElementById('l-menu');
+            if (typeof langs !== 'undefined') {
+                menu.innerHTML = Object.keys(langs).map(k => {
+                    const info = displayLangs[k] || { c: k, n: k.toUpperCase() };
+                    return `<div onclick="setLang('${k}')"><span class="lang-code">${info.c}</span><span class="lang-name">${info.n}</span></div>`;
+                }).join('');
+            }
+        }
+
+        function setLang(l) {
+            localStorage.setItem('lang', l);
+            document.getElementById('cur-lang-label').innerText = l.toUpperCase();
+            document.getElementById('l-menu').style.display = 'none';
+            if (typeof langs !== 'undefined') {
+                const t = langs[l] || langs['ru'];
+                document.getElementById('t-main').innerText = t.title;
+                document.getElementById('t-rev-label').innerText = t.label;
+                document.getElementById('t-rev-head').innerText = t.head;
+                document.getElementById('t-send-btn').innerText = t.send;
+                document.getElementById('rev-in').placeholder = t.msg;
+                document.getElementById('u-nick').placeholder = t.nick;
+                document.getElementById('t-reg-btn').innerText = t.reg || "Регистрация";
+                document.getElementById('t-login-btn').innerText = t.login || "Войти";
+                document.querySelectorAll('.order-btn').forEach(b => { if(b.id.startsWith('b')) b.innerText = t.buy; });
+            }
+        }
+
+        function toggleLangMenu() {
+            const m = document.getElementById('l-menu');
+            m.style.display = m.style.display === 'grid' ? 'none' : 'grid';
+        }
+
+        let curCard = 0;
+        function nav(d) {
+            const cards = document.querySelectorAll('.card');
+            cards[curCard].classList.remove('active');
+            curCard = (curCard + d + cards.length) % cards.length;
+            cards[curCard].classList.add('active');
+        }
+
+        function handleAuth(mode) {
+            const u = document.getElementById('u-nick').value.trim();
+            const p = document.getElementById('u-pass').value.trim();
+            if(!u || !p) return;
+            
+            // Мы всё еще используем localStorage для мгновенного входа, 
+            // но база данных у нас теперь в боте.
+            let db = JSON.parse(localStorage.getItem('ilfan_db') || '{}');
+            if(mode === 'reg') {
+                if(db[u]) return alert("Ник занят!");
+                db[u] = p; localStorage.setItem('ilfan_db', JSON.stringify(db));
+                alert("Успешно!");
+            }
+            if(db[u] === p) {
+                localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
+                location.reload();
+            } else { alert("Ошибка пароля!"); }
         }
 
         function openModal(id) {
+            let user = JSON.parse(localStorage.getItem('ilfan_user'));
+            if(id === 'rev-modal' && !user) { alert("Сначала войдите в аккаунт!"); return openModal('auth-modal'); }
             document.getElementById(id).classList.add('show');
-            const user = JSON.parse(localStorage.getItem('ilfan_user'));
-            if(user) {
+            if(id === 'auth-modal' && user) {
                 document.getElementById('auth-inputs').style.display = 'none';
                 document.getElementById('user-info').style.display = 'block';
                 document.getElementById('hi-msg').innerText = "Привет, " + user.name;
             }
+            if(id === 'rev-modal') renderRevs();
         }
 
         function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
         function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
         function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
-        
-        let cur = 0;
-        function nav(d) {
-            const cards = document.querySelectorAll('.card');
-            cards[cur].classList.remove('active');
-            cur = (cur + d + cards.length) % cards.length;
-            cards[cur].classList.add('active');
+
+        function sendRev() {
+            const m = document.getElementById('rev-in').value; if(!m) return;
+            let user = JSON.parse(localStorage.getItem('ilfan_user'));
+            let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
+            list.push({u: user.name, t: m});
+            localStorage.setItem('ilfan_revs', JSON.stringify(list));
+            document.getElementById('rev-in').value = ''; renderRevs();
         }
 
-        // Эффект Plexus (упрощенно)
+        function renderRevs() {
+            const box = document.getElementById('rev-list');
+            let list = JSON.parse(localStorage.getItem('ilfan_revs') || '[]');
+            box.innerHTML = list.map(i => `<div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:5px;"><b style="color:var(--main)">@${i.u}</b>: ${i.t}</div>`).join('');
+        }
+
+        // Plexus effect
         const canvas = document.getElementById('plexus');
         const ctx = canvas.getContext('2d');
         let dots = [];
-        function init() { 
+        function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            dots = []; for(let i=0; i<50; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:Math.random()-0.5, vy:Math.random()-0.5});
+            dots = [];
+            for(let i=0; i<85; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:Math.random()-0.5, vy:Math.random()-0.5});
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -134,10 +373,20 @@
                 d.x+=d.vx; d.y+=d.vy;
                 if(d.x<0||d.x>canvas.width) d.vx*=-1; if(d.y<0||d.y>canvas.height) d.vy*=-1;
                 ctx.beginPath(); ctx.arc(d.x,d.y,2,0,Math.PI*2); ctx.fill();
+                dots.forEach(d2 => {
+                    let dist = Math.hypot(d.x-d2.x, d.y-d2.y);
+                    if(dist<120) { ctx.globalAlpha=1-dist/120; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(d2.x,d2.y); ctx.stroke(); }
+                });
             });
-            requestAnimationFrame(draw);
+            ctx.globalAlpha=1; requestAnimationFrame(draw);
         }
-        window.onload = () => { init(); draw(); sync(); };
+
+        window.onload = () => { 
+            init(); draw(); renderLangMenu(); 
+            setLang(localStorage.getItem('lang')||'ru');
+            syncOrders(); // Запускаем синхронизацию заказов
+        };
+        window.onresize = init;
     </script>
 </body>
 </html>
