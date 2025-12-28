@@ -5,129 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ilfan's Poses Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="languages.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;900&display=swap');
-        :root { --main: #00ff88; --bg: #000; --card-bg: rgba(15, 15, 15, 0.98); }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; }
-        #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        :root { --main: #00ff88; --gold: #ffcc00; --bg: #000; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+        #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
-        .top-bar { position: fixed; top: 25px; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 100; }
-        .title { color: var(--main); font-size: 2.2rem; letter-spacing: 4px; font-weight: 900; text-shadow: 0 0 20px var(--main); }
+        .top-bar { position: fixed; top: 20px; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; box-sizing: border-box; z-index: 100; }
         
-        select { background: #111; color: var(--main); border: 2px solid var(--main); padding: 8px 12px; border-radius: 12px; cursor: pointer; outline: none; font-weight: bold; }
+        /* Счетчик заказов */
+        .orders-status { display: none; background: rgba(255, 77, 77, 0.2); border: 1px solid #ff4d4d; padding: 8px 15px; border-radius: 20px; color: #ff4d4d; font-weight: bold; align-items: center; gap: 8px; }
 
-        .content { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; height: 100vh; gap: 40px; }
-        .card-wrapper { width: 460px; height: 580px; position: relative; perspective: 1000px; }
-        .card { position: absolute; width: 100%; height: 100%; background: var(--card-bg); border-radius: 45px; padding: 30px; border: 1px solid #222; text-align: center; box-sizing: border-box; opacity: 0; transform: scale(0.8); transition: 0.5s; pointer-events: none; }
-        .card.active { opacity: 1; transform: scale(1); pointer-events: auto; }
-        .card img { width: 100%; height: 410px; object-fit: cover; border-radius: 35px; margin-bottom: 25px; }
+        .title { color: var(--main); font-size: 2.8rem; letter-spacing: 6px; text-shadow: 0 0 25px rgba(0, 255, 136, 0.6); font-weight: 900; }
+        .content { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; height: 100vh; gap: 30px; }
+        .card-wrapper { width: 450px; background: #0a0a0a; border-radius: 40px; padding: 20px; border: 1px solid #222; text-align: center; }
+        .card { display: none; }
+        .card.active { display: block; animation: zoomIn 0.4s; }
+        .card img { width: 100%; border-radius: 30px; margin-bottom: 20px; }
+        .order-btn { background: linear-gradient(90deg, #00ff88, #00ffe5); border: none; padding: 15px; width: 95%; border-radius: 15px; font-weight: 900; cursor: pointer; }
         
-        .order-btn { background: var(--main); border: none; padding: 18px; width: 100%; border-radius: 22px; font-weight: 900; cursor: pointer; font-size: 1.1rem; color: #000; }
-        .arrow { font-size: 4rem; color: var(--main); cursor: pointer; z-index: 100; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: 0.4s; backdrop-filter: blur(15px); }
-        .modal-overlay.show { opacity: 1; visibility: visible; }
-        .modal-box { background: #0a0a0a; padding: 45px; border-radius: 45px; width: 400px; border: 1px solid #222; text-align: center; }
+        .auth-circle { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: black; cursor: pointer; z-index: 1000; }
         
-        input { width: 100%; padding: 20px; background: #151515; border: 1px solid #333; color: white; border-radius: 20px; margin-bottom: 15px; box-sizing: border-box; text-align: center; outline: none; }
-
-        .btn-row { display: flex; gap: 12px; margin-top: 10px; }
-        .auth-btn { flex: 1; padding: 20px; border: none; border-radius: 20px; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .active-green { background: var(--main); color: #000; }
-        .inactive-black { background: #1a1a1a; color: #fff; border: 1px solid #333; }
-
-        .auth-circle { position: fixed; bottom: 40px; right: 40px; width: 80px; height: 80px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; color: black; cursor: pointer; z-index: 1000; }
+        #admin-panel { position: fixed; bottom: 110px; right: 30px; background: rgba(0,0,0,0.9); border: 2px solid var(--main); padding: 20px; border-radius: 25px; display: none; z-index: 1000; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(10px); }
+        .modal-overlay.show { display: flex; }
+        .modal-box { background: #111; padding: 40px; border-radius: 35px; width: 380px; border: 1px solid #333; text-align: center; }
+        input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 12px; text-align: center; }
+        
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
     <canvas id="plexus"></canvas>
     <div class="top-bar">
-        <div style="color:var(--main); font-weight:bold;"><span id="txt-orders">ЗАКАЗОВ</span>: <span id="num">0</span></div>
-        <h1 class="title" id="txt-title">ПОЗИНГИ ИЛЬФАНА</h1>
-        <select id="lang-sel" onchange="applyLang()">
-            <option value="ru">Русский</option><option value="en">English</option><option value="zh">中文</option>
-            <option value="es">Español</option><option value="ar">العربية</option><option value="fr">Français</option>
-            <option value="ja">日本語</option><option value="de">Deutsch</option><option value="ko">한국어</option>
-            <option value="tr">Türkçe</option><option value="it">Italiano</option><option value="pt">Português</option>
-            <option value="vi">Tiếng Việt</option><option value="pl">Polski</option><option value="uk">Українська</option>
-            <option value="hi">हिन्दी</option><option value="th">ไทย</option><option value="id">Indonesia</option>
-            <option value="nl">Nederlands</option><option value="ro">Română</option>
-        </select>
+        <div id="orders-counter" class="orders-status"><i class="fas fa-box"></i> <span id="order-num">0</span></div>
+        <h1 class="title">ILFAN'S POSES</h1>
+        <div style="width:100px"></div>
     </div>
 
     <div class="content">
-        <div class="arrow" onclick="nav(-1)">❮</div>
-        <div class="card-wrapper" id="slider">
-            <div class="card active"><img src="pose1.jpg"><button class="order-btn cl-order">ЗАКАЗАТЬ</button></div>
+        <div class="arrow" onclick="nav(-1)" style="cursor:pointer; font-size:3rem;">❮</div>
+        <div class="card-wrapper">
+            <div class="card active"><img src="pose1.jpg"><button class="order-btn" onclick="buy()">ЗАКАЗАТЬ</button></div>
             </div>
-        <div class="arrow" onclick="nav(1)">❯</div>
+        <div class="arrow" onclick="nav(1)" style="cursor:pointer; font-size:3rem;">❯</div>
     </div>
 
-    <div class="auth-circle" onclick="openM()"><i class="fas fa-user"></i></div>
+    <div id="admin-panel">
+        <h3 style="color:var(--main); margin:0 0 10px 0;">ADMIN</h3>
+        <input type="text" id="target-nick" placeholder="Ник клиента" style="width:150px;">
+        <button onclick="markReady()" style="width:100%; padding:10px; background:var(--main); border:none; border-radius:10px; font-weight:bold;">ГОТОВО</button>
+    </div>
 
-    <div class="modal-overlay" id="m-over">
+    <div class="auth-circle" onclick="openModal('auth-modal')"><i class="fas fa-user-circle"></i></div>
+
+    <div class="modal-overlay" id="auth-modal">
         <div class="modal-box">
-            <h2 id="txt-acc" style="color:var(--main); margin-bottom:30px;">АККАУНТ</h2>
-            <div id="auth-forms">
-                <input type="text" id="n-in" placeholder="Roblox Nickname">
-                <input type="password" id="p-in" placeholder="Password">
-                <div class="btn-row">
-                    <button class="auth-btn active-green" id="l-btn" onclick="toggleAuth('login')">ВХОД</button>
-                    <button class="auth-btn inactive-black" id="r-btn" onclick="toggleAuth('reg')">РЕГИСТРАЦИЯ</button>
-                </div>
-                <button class="order-btn" id="txt-confirm" style="margin-top:20px;" onclick="processAuth()">ПОДТВЕРДИТЬ</button>
+            <h2 style="color:var(--main);">ACCOUNT</h2>
+            <div id="auth-inputs">
+                <input type="text" id="u-nick" placeholder="Roblox Username">
+                <button onclick="handleAuth()" style="width:100%; padding:15px; background:var(--main); border:none; border-radius:12px; font-weight:bold;">ВОЙТИ</button>
             </div>
             <div id="user-info" style="display:none;">
-                <h3 id="u-msg"></h3>
-                <button onclick="logout()" id="txt-logout" class="auth-btn inactive-black" style="width:100%">ВЫЙТИ</button>
+                <h3 id="hi-msg"></h3>
+                <button onclick="logout()" style="width:100%; padding:10px; background:#222; color:white; border:none; border-radius:12px;">ВЫЙТИ</button>
             </div>
-            <p onclick="closeM()" id="txt-close" style="cursor:pointer; color:#444; margin-top:25px;">ЗАКРЫТЬ</p>
+            <p onclick="closeAll()" style="cursor:pointer; color:#555; margin-top:20px;">CLOSE</p>
         </div>
     </div>
 
     <script>
-        const translations = {
-            ru: { title: "ПОЗИНГИ ИЛЬФАНА", orders: "ЗАКАЗОВ", orderBtn: "ЗАКАЗАТЬ", acc: "АККАУНТ", login: "ВХОД", reg: "РЕГИСТРАЦИЯ", confirm: "ПОДТВЕРДИТЬ", close: "ЗАКРЫТЬ", logout: "ВЫЙТИ", welcome: "Привет, " },
-            en: { title: "ILFAN'S POSES", orders: "ORDERS", orderBtn: "ORDER", acc: "ACCOUNT", login: "LOGIN", reg: "REGISTER", confirm: "CONFIRM", close: "CLOSE", logout: "LOGOUT", welcome: "Hello, " },
-            zh: { title: "伊尔凡的姿势", orders: "订单", orderBtn: "订购", acc: "账户", login: "登录", reg: "注册", confirm: "确认", close: "关闭", logout: "登出", welcome: "你好, " },
-            es: { title: "POSES DE ILFAN", orders: "PEDIDOS", orderBtn: "ORDENAR", acc: "CUENTA", login: "ENTRAR", reg: "REGISTRO", confirm: "CONFIRMAR", close: "CERRAR", logout: "SALIR", welcome: "Hola, " },
-            ar: { title: "وضعيات إلفان", orders: "طلبات", orderBtn: "اطلب الآن", acc: "الحساب", login: "دخول", reg: "تسجيل", confirm: "تأكيد", close: "إغلاق", logout: "خروج", welcome: "مرحباً, " },
-            fr: { title: "POSES D'ILFAN", orders: "COMMANDES", orderBtn: "COMMANDER", acc: "COMPTE", login: "CONNEXION", reg: "S'INSCRIRE", confirm: "CONFIRMER", close: "FERMER", logout: "DECONNEXION", welcome: "Bonjour, " },
-            ja: { title: "イルファンのポーズ", orders: "注文", orderBtn: "注文する", acc: "アカウント", login: "ログイン", reg: "登録", confirm: "確認", close: "閉じる", logout: "ログアウト", welcome: "こんにちは, " },
-            de: { title: "ILFANS POSEN", orders: "BESTELLUNGEN", orderBtn: "BESTELLEN", acc: "KONTO", login: "LOGIN", reg: "REGISTRIEREN", confirm: "BESTÄTIGEN", close: "SCHLIESSEN", logout: "LOGOUT", welcome: "Hallo, " },
-            ko: { title: "일판의 포즈", orders: "주문", orderBtn: "주문하기", acc: "계정", login: "로그인", reg: "회원가입", confirm: "확인", close: "닫기", logout: "로그아웃", welcome: "안녕하세요, " },
-            tr: { title: "ILFAN POZLARI", orders: "SİPARİŞLER", orderBtn: "SİPARİŞ VER", acc: "HESAP", login: "GİRİŞ", reg: "KAYIT", confirm: "ONAYLA", close: "KAPAT", logout: "ÇIKIŞ", welcome: "Merhaba, " },
-            it: { title: "POSE DI ILFAN", orders: "ORDINI", orderBtn: "ORDINA", acc: "ACCOUNT", login: "ACCEDI", reg: "REGISTRATI", confirm: "CONFERMA", close: "CHIUDI", logout: "ESCI", welcome: "Ciao, " },
-            pt: { title: "POSES DO ILFAN", orders: "PEDIDOS", orderBtn: "ENCOMENDAR", acc: "CONTA", login: "ENTRAR", reg: "REGISTRO", confirm: "CONFIRMAR", close: "FECHAR", logout: "SAIR", welcome: "Olá, " },
-            vi: { title: "DÁNG CỦA ILFAN", orders: "ĐƠN HÀNG", orderBtn: "ĐẶT HÀNG", acc: "TÀI KHOẢN", login: "ĐĂNG NHẬP", reg: "ĐĂNG KÝ", confirm: "XÁC NHẬN", close: "ĐÓNG", logout: "ĐĂNG XUẤT", welcome: "Chào, " },
-            pl: { title: "POZY ILFANA", orders: "ZAMÓWIENIA", orderBtn: "ZAMÓW", acc: "KONTO", login: "ZALOGUJ", reg: "ZAREJESTRUJ", confirm: "POTWIERDŹ", close: "ZAMKNIJ", logout: "WYLOGUJ", welcome: "Cześć, " },
-            uk: { title: "ПОЗИНГИ ІЛЬФАНА", orders: "ЗАМОВЛЕНЬ", orderBtn: "ЗАМОВИТИ", acc: "АКАУНТ", login: "ВХІД", reg: "РЕЄСТРАЦІЯ", confirm: "ПІДТВЕРДИТИ", close: "ЗАКРИТИ", logout: "ВИЙТИ", welcome: "Привіт, " },
-            hi: { title: "इल्फान की पोज़", orders: "आदेश", orderBtn: "ऑर्डर करें", acc: "खाता", login: "लॉगिन", reg: "पंजीकरण", confirm: "पुष्टि करें", close: "बंद करें", logout: "लॉगआउट", welcome: "नमस्ते, " },
-            th: { title: "ท่าโพสต์ของ ILFAN", orders: "คำสั่งซื้อ", orderBtn: "สั่งซื้อ", acc: "บัญชี", login: "เข้าสู่ระบบ", reg: "ลงทะเบียน", confirm: "ยืนยัน", close: "ปิด", logout: "ออกจากระบบ", welcome: "สวัสดี, " },
-            id: { title: "POSE ILFAN", orders: "PESANAN", orderBtn: "PESAN", acc: "AKUN", login: "MASUK", reg: "DAFTAR", confirm: "KONFIRMASI", close: "TUTUP", logout: "KELUAR", welcome: "Halo, " },
-            nl: { title: "ILFAN'S POSES", orders: "BESTELLINGEN", orderBtn: "BESTELLEN", acc: "ACCOUNT", login: "INLOGGEN", reg: "REGISTREREN", confirm: "BEVESTIGEN", close: "SLUITEN", logout: "UITLOGGEN", welcome: "Hallo, " },
-            ro: { title: "POZELE LUI ILFAN", orders: "COMENZI", orderBtn: "COMANDĂ", acc: "CONT", login: "AUTENTIFICARE", reg: "ÎNREGISTRARE", confirm: "CONFIRMĂ", close: "ÎNCHIDE", logout: "DECONECTARE", welcome: "Salut, " }
-        };
-
-        function applyLang() {
-            const lang = document.getElementById('lang-sel').value;
-            const t = translations[lang];
-            document.getElementById('txt-title').innerText = t.title;
-            document.getElementById('txt-orders').innerText = t.orders;
-            document.getElementById('txt-acc').innerText = t.acc;
-            document.getElementById('l-btn').innerText = t.login;
-            document.getElementById('r-btn').innerText = t.reg;
-            document.getElementById('txt-confirm').innerText = t.confirm;
-            document.getElementById('txt-close').innerText = t.close;
-            document.getElementById('txt-logout').innerText = t.logout;
-            document.querySelectorAll('.cl-order').forEach(b => b.innerText = t.orderBtn);
-            
-            const u = localStorage.getItem('cur_user');
-            if(u) document.getElementById('u-msg').innerText = t.welcome + u;
+        function sync() {
+            const user = JSON.parse(localStorage.getItem('ilfan_user'));
+            if(user) {
+                document.getElementById('orders-counter').style.display = 'flex';
+                fetch(`/get_orders?nick=${user.name}`).then(r => r.json()).then(d => { document.getElementById('order-num').innerText = d.count; });
+                if(user.name === 'Ankapchel') document.getElementById('admin-panel').style.display = 'block';
+            }
         }
 
-        // Остальные функции (nav, auth, plexus) остаются прежними
-        window.onload = () => { applyLang(); initPlexus(); };
+        function handleAuth() {
+            const u = document.getElementById('u-nick').value.trim();
+            if(!u) return;
+            localStorage.setItem('ilfan_user', JSON.stringify({name: u}));
+            location.reload();
+        }
+
+        function markReady() {
+            const n = document.getElementById('target-nick').value;
+            fetch(`/order_ready?user_nick=${n}`).then(res => { if(res.ok) { alert("Готово!"); location.reload(); } });
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+            const user = JSON.parse(localStorage.getItem('ilfan_user'));
+            if(user) {
+                document.getElementById('auth-inputs').style.display = 'none';
+                document.getElementById('user-info').style.display = 'block';
+                document.getElementById('hi-msg').innerText = "Привет, " + user.name;
+            }
+        }
+
+        function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); }
+        function logout() { localStorage.removeItem('ilfan_user'); location.reload(); }
+        function buy() { window.open("https://t.me/ZakazIlfanaBot", "_blank"); }
+        
+        let cur = 0;
+        function nav(d) {
+            const cards = document.querySelectorAll('.card');
+            cards[cur].classList.remove('active');
+            cur = (cur + d + cards.length) % cards.length;
+            cards[cur].classList.add('active');
+        }
+
+        // Эффект Plexus (упрощенно)
+        const canvas = document.getElementById('plexus');
+        const ctx = canvas.getContext('2d');
+        let dots = [];
+        function init() { 
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            dots = []; for(let i=0; i<50; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:Math.random()-0.5, vy:Math.random()-0.5});
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle="#00ff88"; ctx.strokeStyle="#00ff88";
+            dots.forEach(d => {
+                d.x+=d.vx; d.y+=d.vy;
+                if(d.x<0||d.x>canvas.width) d.vx*=-1; if(d.y<0||d.y>canvas.height) d.vy*=-1;
+                ctx.beginPath(); ctx.arc(d.x,d.y,2,0,Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        window.onload = () => { init(); draw(); sync(); };
     </script>
 </body>
 </html>
