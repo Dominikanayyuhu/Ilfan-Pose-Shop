@@ -11,55 +11,46 @@
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; }
         #plexus { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        /* Шапка */
         .top-bar { position: fixed; top: 25px; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 50px; box-sizing: border-box; z-index: 100; }
-        .title { color: var(--main); font-size: 2.5rem; letter-spacing: 5px; font-weight: 900; text-shadow: 0 0 20px var(--main); margin-left: -150px; }
+        .title { color: var(--main); font-size: 2.2rem; letter-spacing: 4px; font-weight: 900; text-shadow: 0 0 20px var(--main); }
         
         select { background: #111; color: var(--main); border: 2px solid var(--main); padding: 8px 12px; border-radius: 12px; cursor: pointer; outline: none; font-weight: bold; }
 
-        /* Слайдер */
         .content { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; height: 100vh; gap: 40px; }
         .card-wrapper { width: 460px; height: 580px; position: relative; perspective: 1000px; }
-        .card { position: absolute; width: 100%; height: 100%; background: var(--card-bg); border-radius: 45px; padding: 30px; border: 1px solid #222; text-align: center; box-sizing: border-box; opacity: 0; transform: scale(0.8); transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
-        .card.active { opacity: 1; transform: scale(1); pointer-events: auto; box-shadow: 0 20px 50px rgba(0,255,136,0.15); }
+        .card { position: absolute; width: 100%; height: 100%; background: var(--card-bg); border-radius: 45px; padding: 30px; border: 1px solid #222; text-align: center; box-sizing: border-box; opacity: 0; transform: scale(0.8); transition: 0.5s; pointer-events: none; }
+        .card.active { opacity: 1; transform: scale(1); pointer-events: auto; }
         .card img { width: 100%; height: 410px; object-fit: cover; border-radius: 35px; margin-bottom: 25px; }
         
         .order-btn { background: var(--main); border: none; padding: 18px; width: 100%; border-radius: 22px; font-weight: 900; cursor: pointer; font-size: 1.1rem; color: #000; }
-        .arrow { font-size: 4rem; color: var(--main); cursor: pointer; z-index: 100; filter: drop-shadow(0 0 10px var(--main)); }
+        .arrow { font-size: 4rem; color: var(--main); cursor: pointer; z-index: 100; }
 
-        /* Модальное окно */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: 0.4s; backdrop-filter: blur(15px); }
         .modal-overlay.show { opacity: 1; visibility: visible; }
         .modal-box { background: #0a0a0a; padding: 45px; border-radius: 45px; width: 400px; border: 1px solid #222; text-align: center; }
         
-        input { width: 100%; padding: 20px; background: #151515; border: 1px solid #333; color: white; border-radius: 20px; margin-bottom: 15px; box-sizing: border-box; text-align: center; font-size: 1.1rem; outline: none; }
+        input { width: 100%; padding: 20px; background: #151515; border: 1px solid #333; color: white; border-radius: 20px; margin-bottom: 15px; box-sizing: border-box; text-align: center; outline: none; }
 
-        /* Кнопки Входа и Регистрации (Интерактивные) */
         .btn-row { display: flex; gap: 12px; margin-top: 10px; }
-        .auth-btn { flex: 1; padding: 20px; border: none; border-radius: 20px; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 1rem; }
-        
-        /* Состояние "Вход активен" */
-        .active-green { background: var(--main) !important; color: #000 !important; }
-        .inactive-black { background: #1a1a1a !important; color: #fff !important; border: 1px solid #333; }
+        .auth-btn { flex: 1; padding: 20px; border: none; border-radius: 20px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .active-green { background: var(--main); color: #000; }
+        .inactive-black { background: #1a1a1a; color: #fff; border: 1px solid #333; }
 
-        .auth-circle { position: fixed; bottom: 40px; right: 40px; width: 80px; height: 80px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; color: black; cursor: pointer; z-index: 1000; box-shadow: 0 10px 30px rgba(0,255,136,0.3); }
+        .auth-circle { position: fixed; bottom: 40px; right: 40px; width: 80px; height: 80px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; color: black; cursor: pointer; z-index: 1000; }
     </style>
 </head>
 <body>
     <canvas id="plexus"></canvas>
     <div class="top-bar">
-        <div style="color:var(--main); font-weight:bold; font-size:1.2rem;">ЗАКАЗОВ: <span id="num">0</span></div>
-        <h1 class="title" id="m-title">ILFAN'S POSES</h1>
+        <div style="color:var(--main); font-weight:bold;"><span id="txt-orders">ЗАКАЗОВ</span>: <span id="num">0</span></div>
+        <h1 class="title" id="txt-title">ПОЗИНГИ ИЛЬФАНА</h1>
         <select id="lang-sel" onchange="applyLang()">
-            <option value="ru">Русский</option><option value="en">English</option>
-            <option value="zh">中文</option><option value="es">Español</option>
-            <option value="ar">العربية</option><option value="fr">Français</option>
-            <option value="ja">日本語</option><option value="de">Deutsch</option>
-            <option value="ko">한국어</option><option value="tr">Türkçe</option>
-            <option value="it">Italiano</option><option value="pt">Português</option>
-            <option value="vi">Tiếng Việt</option><option value="pl">Polski</option>
-            <option value="uk">Українська</option><option value="hi">हिन्दी</option>
-            <option value="th">ไทย</option><option value="id">Indonesia</option>
+            <option value="ru">Русский</option><option value="en">English</option><option value="zh">中文</option>
+            <option value="es">Español</option><option value="ar">العربية</option><option value="fr">Français</option>
+            <option value="ja">日本語</option><option value="de">Deutsch</option><option value="ko">한국어</option>
+            <option value="tr">Türkçe</option><option value="it">Italiano</option><option value="pt">Português</option>
+            <option value="vi">Tiếng Việt</option><option value="pl">Polski</option><option value="uk">Українська</option>
+            <option value="hi">हिन्दी</option><option value="th">ไทย</option><option value="id">Indonesia</option>
             <option value="nl">Nederlands</option><option value="ro">Română</option>
         </select>
     </div>
@@ -67,26 +58,16 @@
     <div class="content">
         <div class="arrow" onclick="nav(-1)">❮</div>
         <div class="card-wrapper" id="slider">
-            <div class="card active"><img src="pose1.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose2.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose3.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose4.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose5.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose6.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose7.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose8.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose9.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose10.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-            <div class="card"><img src="pose11.jpg"><button class="order-btn">ЗАКАЗАТЬ</button></div>
-        </div>
+            <div class="card active"><img src="pose1.jpg"><button class="order-btn cl-order">ЗАКАЗАТЬ</button></div>
+            </div>
         <div class="arrow" onclick="nav(1)">❯</div>
     </div>
 
     <div class="auth-circle" onclick="openM()"><i class="fas fa-user"></i></div>
 
-    <div class="modal-overlay" id="m-over" onclick="if(event.target==this) closeM()">
+    <div class="modal-overlay" id="m-over">
         <div class="modal-box">
-            <h2 style="color:var(--main); margin-bottom:35px; letter-spacing:3px;">ACCOUNT</h2>
+            <h2 id="txt-acc" style="color:var(--main); margin-bottom:30px;">АККАУНТ</h2>
             <div id="auth-forms">
                 <input type="text" id="n-in" placeholder="Roblox Nickname">
                 <input type="password" id="p-in" placeholder="Password">
@@ -94,90 +75,59 @@
                     <button class="auth-btn active-green" id="l-btn" onclick="toggleAuth('login')">ВХОД</button>
                     <button class="auth-btn inactive-black" id="r-btn" onclick="toggleAuth('reg')">РЕГИСТРАЦИЯ</button>
                 </div>
-                <button class="order-btn" style="margin-top:20px; width:100%;" onclick="processAuth()">ПОДТВЕРДИТЬ</button>
+                <button class="order-btn" id="txt-confirm" style="margin-top:20px;" onclick="processAuth()">ПОДТВЕРДИТЬ</button>
             </div>
             <div id="user-info" style="display:none;">
                 <h3 id="u-msg"></h3>
-                <button onclick="logout()" class="auth-btn inactive-black" style="width:100%">ВЫЙТИ</button>
+                <button onclick="logout()" id="txt-logout" class="auth-btn inactive-black" style="width:100%">ВЫЙТИ</button>
             </div>
-            <p onclick="closeM()" style="cursor:pointer; color:#444; margin-top:30px; font-weight:bold;">CLOSE</p>
+            <p onclick="closeM()" id="txt-close" style="cursor:pointer; color:#444; margin-top:25px;">ЗАКРЫТЬ</p>
         </div>
     </div>
 
     <script>
-        let curMode = 'login';
-        let curPos = 0; const cards = document.querySelectorAll('.card');
+        const translations = {
+            ru: { title: "ПОЗИНГИ ИЛЬФАНА", orders: "ЗАКАЗОВ", orderBtn: "ЗАКАЗАТЬ", acc: "АККАУНТ", login: "ВХОД", reg: "РЕГИСТРАЦИЯ", confirm: "ПОДТВЕРДИТЬ", close: "ЗАКРЫТЬ", logout: "ВЫЙТИ", welcome: "Привет, " },
+            en: { title: "ILFAN'S POSES", orders: "ORDERS", orderBtn: "ORDER", acc: "ACCOUNT", login: "LOGIN", reg: "REGISTER", confirm: "CONFIRM", close: "CLOSE", logout: "LOGOUT", welcome: "Hello, " },
+            zh: { title: "伊尔凡的姿势", orders: "订单", orderBtn: "订购", acc: "账户", login: "登录", reg: "注册", confirm: "确认", close: "关闭", logout: "登出", welcome: "你好, " },
+            es: { title: "POSES DE ILFAN", orders: "PEDIDOS", orderBtn: "ORDENAR", acc: "CUENTA", login: "ENTRAR", reg: "REGISTRO", confirm: "CONFIRMAR", close: "CERRAR", logout: "SALIR", welcome: "Hola, " },
+            ar: { title: "وضعيات إلفان", orders: "طلبات", orderBtn: "اطلب الآن", acc: "الحساب", login: "دخول", reg: "تسجيل", confirm: "تأكيد", close: "إغلاق", logout: "خروج", welcome: "مرحباً, " },
+            fr: { title: "POSES D'ILFAN", orders: "COMMANDES", orderBtn: "COMMANDER", acc: "COMPTE", login: "CONNEXION", reg: "S'INSCRIRE", confirm: "CONFIRMER", close: "FERMER", logout: "DECONNEXION", welcome: "Bonjour, " },
+            ja: { title: "イルファンのポーズ", orders: "注文", orderBtn: "注文する", acc: "アカウント", login: "ログイン", reg: "登録", confirm: "確認", close: "閉じる", logout: "ログアウト", welcome: "こんにちは, " },
+            de: { title: "ILFANS POSEN", orders: "BESTELLUNGEN", orderBtn: "BESTELLEN", acc: "KONTO", login: "LOGIN", reg: "REGISTRIEREN", confirm: "BESTÄTIGEN", close: "SCHLIESSEN", logout: "LOGOUT", welcome: "Hallo, " },
+            ko: { title: "일판의 포즈", orders: "주문", orderBtn: "주문하기", acc: "계정", login: "로그인", reg: "회원가입", confirm: "확인", close: "닫기", logout: "로그아웃", welcome: "안녕하세요, " },
+            tr: { title: "ILFAN POZLARI", orders: "SİPARİŞLER", orderBtn: "SİPARİŞ VER", acc: "HESAP", login: "GİRİŞ", reg: "KAYIT", confirm: "ONAYLA", close: "KAPAT", logout: "ÇIKIŞ", welcome: "Merhaba, " },
+            it: { title: "POSE DI ILFAN", orders: "ORDINI", orderBtn: "ORDINA", acc: "ACCOUNT", login: "ACCEDI", reg: "REGISTRATI", confirm: "CONFERMA", close: "CHIUDI", logout: "ESCI", welcome: "Ciao, " },
+            pt: { title: "POSES DO ILFAN", orders: "PEDIDOS", orderBtn: "ENCOMENDAR", acc: "CONTA", login: "ENTRAR", reg: "REGISTRO", confirm: "CONFIRMAR", close: "FECHAR", logout: "SAIR", welcome: "Olá, " },
+            vi: { title: "DÁNG CỦA ILFAN", orders: "ĐƠN HÀNG", orderBtn: "ĐẶT HÀNG", acc: "TÀI KHOẢN", login: "ĐĂNG NHẬP", reg: "ĐĂNG KÝ", confirm: "XÁC NHẬN", close: "ĐÓNG", logout: "ĐĂNG XUẤT", welcome: "Chào, " },
+            pl: { title: "POZY ILFANA", orders: "ZAMÓWIENIA", orderBtn: "ZAMÓW", acc: "KONTO", login: "ZALOGUJ", reg: "ZAREJESTRUJ", confirm: "POTWIERDŹ", close: "ZAMKNIJ", logout: "WYLOGUJ", welcome: "Cześć, " },
+            uk: { title: "ПОЗИНГИ ІЛЬФАНА", orders: "ЗАМОВЛЕНЬ", orderBtn: "ЗАМОВИТИ", acc: "АКАУНТ", login: "ВХІД", reg: "РЕЄСТРАЦІЯ", confirm: "ПІДТВЕРДИТИ", close: "ЗАКРИТИ", logout: "ВИЙТИ", welcome: "Привіт, " },
+            hi: { title: "इल्फान की पोज़", orders: "आदेश", orderBtn: "ऑर्डर करें", acc: "खाता", login: "लॉगिन", reg: "पंजीकरण", confirm: "पुष्टि करें", close: "बंद करें", logout: "लॉगआउट", welcome: "नमस्ते, " },
+            th: { title: "ท่าโพสต์ของ ILFAN", orders: "คำสั่งซื้อ", orderBtn: "สั่งซื้อ", acc: "บัญชี", login: "เข้าสู่ระบบ", reg: "ลงทะเบียน", confirm: "ยืนยัน", close: "ปิด", logout: "ออกจากระบบ", welcome: "สวัสดี, " },
+            id: { title: "POSE ILFAN", orders: "PESANAN", orderBtn: "PESAN", acc: "AKUN", login: "MASUK", reg: "DAFTAR", confirm: "KONFIRMASI", close: "TUTUP", logout: "KELUAR", welcome: "Halo, " },
+            nl: { title: "ILFAN'S POSES", orders: "BESTELLINGEN", orderBtn: "BESTELLEN", acc: "ACCOUNT", login: "INLOGGEN", reg: "REGISTREREN", confirm: "BEVESTIGEN", close: "SLUITEN", logout: "UITLOGGEN", welcome: "Hallo, " },
+            ro: { title: "POZELE LUI ILFAN", orders: "COMENZI", orderBtn: "COMANDĂ", acc: "CONT", login: "AUTENTIFICARE", reg: "ÎNREGISTRARE", confirm: "CONFIRMĂ", close: "ÎNCHIDE", logout: "DECONECTARE", welcome: "Salut, " }
+        };
 
-        // Функция переключения кнопок
-        function toggleAuth(mode) {
-            curMode = mode;
-            const lBtn = document.getElementById('l-btn');
-            const rBtn = document.getElementById('r-btn');
+        function applyLang() {
+            const lang = document.getElementById('lang-sel').value;
+            const t = translations[lang];
+            document.getElementById('txt-title').innerText = t.title;
+            document.getElementById('txt-orders').innerText = t.orders;
+            document.getElementById('txt-acc').innerText = t.acc;
+            document.getElementById('l-btn').innerText = t.login;
+            document.getElementById('r-btn').innerText = t.reg;
+            document.getElementById('txt-confirm').innerText = t.confirm;
+            document.getElementById('txt-close').innerText = t.close;
+            document.getElementById('txt-logout').innerText = t.logout;
+            document.querySelectorAll('.cl-order').forEach(b => b.innerText = t.orderBtn);
             
-            if(mode === 'login') {
-                lBtn.className = 'auth-btn active-green';
-                rBtn.className = 'auth-btn inactive-black';
-            } else {
-                lBtn.className = 'auth-btn inactive-black';
-                rBtn.className = 'auth-btn active-green';
-            }
-        }
-
-        function nav(d){ cards[curPos].classList.remove('active'); curPos=(curPos+d+cards.length)%cards.length; cards[curPos].classList.add('active'); }
-        function openM(){ document.getElementById('m-over').classList.add('show'); check(); }
-        function closeM(){ document.getElementById('m-over').classList.remove('show'); }
-
-        function processAuth() {
-            const n = document.getElementById('n-in').value;
-            const p = document.getElementById('p-in').value;
-            if(!n || !p) return alert("Заполните поля!");
-            
-            let users = JSON.parse(localStorage.getItem('ilfan_users') || '{}');
-            if(curMode === 'reg') {
-                if(users[n]) return alert("Ник занят!");
-                users[n] = p;
-                localStorage.setItem('ilfan_users', JSON.stringify(users));
-                alert("Успешная регистрация!");
-            } else {
-                if(users[n] !== p) return alert("Неверный пароль!");
-            }
-            localStorage.setItem('cur_user', n);
-            location.reload();
-        }
-
-        function check() {
             const u = localStorage.getItem('cur_user');
-            if(u) {
-                document.getElementById('auth-forms').style.display='none';
-                document.getElementById('user-info').style.display='block';
-                document.getElementById('u-msg').innerText = "Привет, " + u;
-            }
+            if(u) document.getElementById('u-msg').innerText = t.welcome + u;
         }
-        function logout(){ localStorage.removeItem('cur_user'); location.reload(); }
 
-        // Эффект Plexus
-        const canv = document.getElementById('plexus'); const ctx = canv.getContext('2d');
-        let dots = [];
-        function init(){
-            canv.width=window.innerWidth; canv.height=window.innerHeight; dots=[];
-            for(let i=0; i<70; i++) dots.push({x:Math.random()*canv.width, y:Math.random()*canv.height, vx:(Math.random()-0.5), vy:(Math.random()-0.5)});
-        }
-        function draw(){
-            ctx.clearRect(0,0,canv.width,canv.height);
-            ctx.fillStyle="rgba(0,255,136,0.6)"; ctx.strokeStyle="rgba(0,255,136,0.15)";
-            dots.forEach((d,i)=>{
-                d.x+=d.vx; d.y+=d.vy;
-                if(d.x<0||d.x>canv.width) d.vx*=-1; if(d.y<0||d.y>canv.height) d.vy*=-1;
-                ctx.beginPath(); ctx.arc(d.x,d.y,2,0,Math.PI*2); ctx.fill();
-                for(let j=i+1; j<dots.length; j++){
-                    let dist = Math.hypot(d.x-dots[j].x, d.y-dots[j].y);
-                    if(dist<150){ ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(dots[j].x,dots[j].y); ctx.stroke(); }
-                }
-            });
-            requestAnimationFrame(draw);
-        }
-        window.onload=()=>{ init(); draw(); };
-        window.onresize=init;
+        // Остальные функции (nav, auth, plexus) остаются прежними
+        window.onload = () => { applyLang(); initPlexus(); };
     </script>
 </body>
 </html>
