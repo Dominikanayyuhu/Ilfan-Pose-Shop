@@ -23,14 +23,13 @@ def save_db(data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 user_profiles = load_db()
-user_orders_temp = {}
 
-# --- ВЕБ-СЕРВЕР (ОБРАБОТКА САЙТА И КНОПКИ "ГОТОВО") ---
+# --- ВЕБ-СЕРВЕР ---
 class MyHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed_path = urllib.parse.urlparse(self.path)
         
-        # Получение счетчика для любого ника
+        # Получение кол-ва заказов для сайта
         if parsed_path.path == '/get_orders':
             query = urllib.parse.parse_qs(parsed_path.query)
             nick = query.get('nick', [None])[0]
@@ -44,92 +43,61 @@ class MyHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({'count': count}).encode())
 
-        # Логика кнопки "Готово!" для любого ника
+        # Логика админ-кнопки "ГОТОВО"
         elif parsed_path.path == '/order_ready':
             query = urllib.parse.parse_qs(parsed_path.query)
             target_nick = query.get('user_nick', [None])[0]
-            
             found = False
             for uid, profile in user_profiles.items():
                 if profile.get('nick') == target_nick:
                     profile['orders_count'] = profile.get('orders_count', 0) + 1
                     save_db(user_profiles)
-                    bot.send_message(uid, "Ваш позинг готов, пожалуйста свяжитесь с @HokhikyanHokhikyans, чтобы получить позинг!")
+                    bot.send_message(uid, f"✅ Ваш заказ готов! Свяжитесь с @HokhikyanHokhikyans")
                     found = True
                     break
-            
             self.send_response(200 if found else 404)
             self.end_headers()
         else:
             super().do_GET()
 
-def run_website():
+def run_server():
     port = int(os.environ.get("PORT", 8080))
     server = HTTPServer(('', port), MyHandler)
     server.serve_forever()
 
-threading.Thread(target=run_website, daemon=True).start()
+threading.Thread(target=run_server, daemon=True).start()
 
-# --- ЛОГИКА БОТА ---
-
+# --- ЛОГИКА БОТА (БЕЗ ПАРОЛЯ) ---
 @bot.message_handler(commands=['start'])
 def start(message):
-    msg = bot.send_message(message.chat.id, "Привет! 🔥 Напиши ник в Roblox:")
-    bot.register_next_step_handler(msg, save_roblox_nick)
+    msg = bot.send_message(message.chat.id, "Привет! 🔥 Напиши свой ник в Roblox для регистрации:")
+    bot.register_next_step_handler(msg, register_user)
 
-def save_roblox_nick(message):
-    nick = message.text
+def register_user(message):
+    nick = message.text.strip()
     if not re.match("^[A-Za-z0-9_]+$", nick):
-        msg = bot.send_message(message.chat.id, "❌ Только английские буквы! Еще раз:")
-        bot.register_next_step_handler(msg, save_roblox_nick)
+        msg = bot.send_message(message.chat.id, "❌ Только английские буквы и цифры! Попробуй еще раз:")
+        bot.register_next_step_handler(msg, register_user)
         return
-    
-    # Проверка, не занят ли ник
-    for uid, profile in user_profiles.items():
-        if profile.get('nick') == nick and uid != str(message.chat.id):
-            msg = bot.send_message(message.chat.id, f"⚠️ Ник `{nick}` занят! Введи другой:")
-            bot.register_next_step_handler(msg, save_roblox_nick)
-            return
 
-    msg = bot.send_message(message.chat.id, f"Ник `{nick}` свободен! Придумай пароль:")
-    bot.register_next_step_handler(msg, lambda m: save_password(m, nick))
-
-def save_password(message, nick):
-    password = message.text
     user_profiles[str(message.chat.id)] = {
-        'nick': nick, 
-        'password': password, 
+        'nick': nick,
         'orders_count': user_profiles.get(str(message.chat.id), {}).get('orders_count', 0)
     }
     save_db(user_profiles)
     
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add("🛒 СДЕЛАТЬ ЗАКАЗ", "👤 МОЙ АККАУНТ")
-    bot.send_message(message.chat.id, f"✅ Аккаунт готов!\nНик: `{nick}`\nПароль: `{password}`", reply_markup=markup, parse_mode="Markdown")
+    bot.send_message(message.chat.id, f"✅ Аккаунт `{nick}` успешно привязан! Пароль не требуется.", reply_markup=markup)
 
 @bot.message_handler(func=lambda m: m.text == "👤 МОЙ АККАУНТ")
 def my_profile(message):
     p = user_profiles.get(str(message.chat.id), {'nick': '?', 'orders_count': 0})
-    bot.send_message(message.chat.id, f"✨ **АНКЕТА**\n🎮 Roblox: `{p['nick']}`\n📦 Заказов: {p.get('orders_count', 0)}", parse_mode="Markdown")
+    bot.send_message(message.chat.id, f"👤 **ПРОФИЛЬ**\n🎮 Roblox: `{p['nick']}`\n📦 Заказов: {p['orders_count']}", parse_mode="Markdown")
 
 @bot.message_handler(func=lambda m: m.text == "🛒 СДЕЛАТЬ ЗАКАЗ")
-def ask_photo(message):
-    msg = bot.send_message(message.chat.id, "📸 Пришли фото Фона:")
-    bot.register_next_step_handler(msg, process_photo)
+def make_order(message):
+    bot.send_message(message.chat.id, "Пришлите фото или описание заказа. Админ получит уведомление!")
 
-def process_photo(message):
-    if message.content_type != 'photo':
-        msg = bot.send_message(message.chat.id, "❌ Отправь фото!")
-        bot.register_next_step_handler(msg, process_photo)
-        return
-    user_orders_temp[message.chat.id] = {'photo': message.photo[-1].file_id}
-    # Здесь можно добавить кнопки выбора лиц/фона, как в твоем старом коде
-    bot.send_message(message.chat.id, "Заказ принят! После того как админ нажмет 'Готово', твой счетчик на сайте вырастет.")
-    
-    # Отправка админу инфо о заказе
-    prof = user_profiles.get(str(message.chat.id))
-    bot.send_photo(ADMIN_ID, user_orders_temp[message.chat.id]['photo'], 
-                   caption=f"🚀 **НОВЫЙ ЗАКАЗ**\n👤 Ник аккаунта: `{prof['nick']}`\n🎮 Roblox: `{prof['nick']}`", parse_mode="Markdown")
-
-print("Система запущена!")
+print("Бот и сервер запущены!")
 bot.infinity_polling()
