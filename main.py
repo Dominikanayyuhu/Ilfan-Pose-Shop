@@ -1,6 +1,8 @@
 import telebot
 from telebot import types
 import re
+# ШАГ 1: Импортируем проверку доступа из твоего нового файла
+from gatekeeper import check_access 
 
 # --- НАСТРОЙКИ ---
 TOKEN = '8595334091:AAFWypuC7IrrUG688hIlL0Nbdq4kCDLEzXU'
@@ -25,12 +27,17 @@ STRINGS = {
     }
 }
 
-# Копируем русский для всех остальных языков, чтобы код был полным
 for l in ["English", "Հայերեն", "日本語", "中文", "Français", "한국어", "Türkçe", "العربية", "فارسی", "Қазақша", "Italiano", "Español", "O'zbekcha", "Українська", "हिन्दी", "Кыргызча", "Tiếng Việt", "עברית", "Ελληνικά"]:
     if l not in STRINGS: STRINGS[l] = STRINGS["Русский"]
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    # ШАГ 2: Проверяем, не в отпуске ли мы. Если да — бот напишет текст и остановится.
+    error = check_access()
+    if error:
+        return bot.send_message(message.chat.id, error)
+
+    # Если всё хорошо — показываем выбор языка
     markup = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
     markup.add(*[types.KeyboardButton(l) for l in STRINGS.keys()])
     bot.send_message(message.chat.id, "🌍 Select Language / Выберите язык:", reply_markup=markup)
@@ -60,20 +67,15 @@ def get_pay_step(message):
     msg = bot.send_message(message.chat.id, STRINGS[lang]["ask_bg"], reply_markup=types.ReplyKeyboardRemove())
     bot.register_next_step_handler(msg, get_bg_step)
 
-# --- ГЛАВНОЕ ИСПРАВЛЕНИЕ ТУТ ---
 def get_bg_step(message):
     lang = user_data[message.chat.id].get("lang", "Русский")
-    
-    # Если пользователь прислал фото
     if message.content_type == 'photo':
         user_data[message.chat.id]["bg_id"] = message.photo[-1].file_id
-        
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add("PNG", "Обычный фон")
         msg = bot.send_message(message.chat.id, STRINGS[lang]["ask_mat"], reply_markup=markup)
         bot.register_next_step_handler(msg, get_mat_step)
     else:
-        # Если прислал текст или что-то другое — ругаемся и ждем ФОТО снова
         msg = bot.send_message(message.chat.id, STRINGS[lang]["err_photo"])
         bot.register_next_step_handler(msg, get_bg_step)
 
