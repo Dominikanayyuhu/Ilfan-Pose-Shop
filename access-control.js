@@ -3,7 +3,7 @@
     const now = new Date();
     
     // Устанавливаем период закрытия (30 декабря 2025 - 7 января 2026)
-    const startVacation = new Date('2025-12-28T00:00:00');
+    const startVacation = new Date('2025-12-30T00:00:00');
     const endVacation = new Date('2026-01-07T00:00:00');
 
     // Если текущее время попадает в этот промежуток
